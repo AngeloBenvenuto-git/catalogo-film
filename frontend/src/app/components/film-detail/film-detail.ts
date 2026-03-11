@@ -1,15 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-
 
 @Component({
-  selector: 'app-film-list',
+  selector: 'app-film-detail',
   imports: [CommonModule, RouterLink],
-  templateUrl: './film-list.html',
-  styleUrl: './film-list.css',
+  templateUrl: './film-detail.html',
+  styleUrl: './film-detail.css',
 })
-export class FilmList {
+export class FilmDetail implements OnInit {
+  film: any = null;
+
   films = [
     { id: 1, titolo: 'Il Padrino', anno: 1972, genere: 'Dramma', descrizione: 'La storia della famiglia Corleone.' },
     { id: 2, titolo: 'Inception', anno: 2010, genere: 'Fantascienza', descrizione: 'Un ladro che ruba segreti dai sogni.' },
@@ -18,4 +19,11 @@ export class FilmList {
     { id: 5, titolo: 'Forrest Gump', anno: 1994, genere: 'Commedia', descrizione: 'La vita straordinaria di un uomo semplice.' },
     { id: 6, titolo: 'Schindler\'s List', anno: 1993, genere: 'Storico', descrizione: 'La storia vera di Oskar Schindler.' },
   ];
+
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.film = this.films.find(f => f.id === id);
+  }
 }

@@ -7,7 +7,7 @@
           <h5 class="card-title">{{ film.titolo }}</h5>
           <h6 class="card-subtitle mb-2 text-muted">{{ film.anno }} — {{ film.genere }}</h6>
           <p class="card-text">{{ film.descrizione }}</p>
-          <a href="#" class="btn btn-primary">Dettagli</a>
+          <a [routerLink]="['/films', film.id]" class="btn btn-primary">Dettagli</a>
         </div>
       </div>
     </div>
