@@ -1,9 +1,20 @@
 <div class="container mt-4" *ngIf="film">
-  <h2>{{ film.titolo }}</h2>
-  <p><strong>Anno:</strong> {{ film.anno }}</p>
-  <p><strong>Genere:</strong> {{ film.genere }}</p>
-  <p><strong>Descrizione:</strong> {{ film.descrizione }}</p>
-  <a routerLink="/" class="btn btn-secondary">← Torna alla lista</a>
+  <div class="row">
+    <div class="col-md-4">
+      <img *ngIf="film.posterUrl" [src]="film.posterUrl" class="img-fluid rounded" alt="{{ film.titolo }}">
+    </div>
+    <div class="col-md-8">
+      <h2>{{ film.titolo }}</h2>
+      <p><strong>Anno:</strong> {{ film.anno }}</p>
+      <p><strong>Durata:</strong> {{ film.durata }} min</p>
+      <p><strong>Tipologia:</strong> {{ film.tipologia }}</p>
+      <p><strong>Generi:</strong> {{ film.generi?.join(', ') }}</p>
+      <p><strong>Attori:</strong> {{ film.attori?.join(', ') }}</p>
+      <p><strong>Valutazione:</strong> ⭐ {{ film.valutazione ?? 'N/D' }}</p>
+      <p><strong>Trama:</strong> {{ film.trama }}</p>
+      <a routerLink="/" class="btn btn-secondary mt-3">← Torna alla lista</a>
+    </div>
+  </div>
 </div>
 
 <div class="container mt-4" *ngIf="!film">
