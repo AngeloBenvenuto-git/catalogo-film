@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -15,12 +14,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, { email, password }).pipe(
-      tap((risposta) => {
-        this.salvaToken(risposta.token);
-        this.loggedIn.next(true);
-      })
-    );
+    return this.http.post<any>(`${this.apiUrl}/login`, { email, password });
   }
 
   registra(username: string, email: string, password: string): Observable<any> {
@@ -29,6 +23,7 @@ export class AuthService {
 
   salvaToken(token: string) {
     localStorage.setItem('token', token);
+    this.loggedIn.next(true);
   }
 
   getToken(): string | null {

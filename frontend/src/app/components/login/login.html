@@ -23,7 +23,10 @@
 
       <div *ngIf="errore" class="alert alert-danger py-2 small">{{errore}}</div>
 
-      <button type="submit" class="btn btn-netflix w-100">Accedi</button>
+      <button type="submit" class="btn btn-netflix w-100" [disabled]="caricamento">
+        <span *ngIf="caricamento" class="spinner-border spinner-border-sm me-2"></span>
+        {{ caricamento ? 'Accesso in corso...' : 'Accedi' }}
+      </button>
 
       <div class="login-footer mt-4 text-center">
         <p>Nuovo su NetFilm? <a routerLink="/registrazione" class="text-white fw-bold text-decoration-none">Registrati ora</a>.</p>
