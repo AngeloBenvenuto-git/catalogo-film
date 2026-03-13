@@ -1,0 +1,69 @@
+/* 1. Sfondo semi-trasparente (Glassmorphism) */
+.custom-nav {
+  background-color: rgba(20, 20, 20, 0.95);
+  backdrop-filter: blur(10px); /* Sfocatura stile iPhone */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 15px 40px;
+  transition: all 0.3s ease;
+}
+
+/* 2. Logo stile Cinema */
+.brand-logo {
+  font-weight: 900;
+  font-size: 1.8rem;
+  letter-spacing: -1px;
+  color: white !important;
+}
+
+.red-text {
+  color: #e50914; /* Il rosso Netflix */
+}
+
+/* 3. Link con animazione sottolineatura */
+.nav-link {
+  color: #e5e5e5 !important;
+  font-weight: 500;
+  margin: 0 10px;
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #e50914;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after, .nav-link.active::after {
+  width: 100%;
+}
+
+/* 4. Bottone Login "da paura" */
+.btn-login {
+  background-color: #e50914;
+  color: white;
+  font-weight: bold;
+  padding: 8px 25px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.btn-login:hover {
+  background-color: #b20710;
+  color: white;
+}
+
+/* 5. Responsive: Navbar compatta su Mobile */
+@media (max-width: 991px) {
+  .custom-nav {
+    padding: 10px 20px;
+  }
+  .nav-item {
+    padding: 10px 0;
+    text-align: center;
+  }
+}

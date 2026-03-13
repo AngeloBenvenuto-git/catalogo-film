@@ -1,0 +1,79 @@
+/* 1. Sfondo a tutto schermo con immagine scura */
+.login-container {
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+  url('https://assets.nflxext.com/ffe/siteui/vlv3/f841d4c7-10e1-40af-9a10-87d3f7717690/web/IT-it-20220502-popsignuptwoweeks-perspective_alpha_website_large.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 2. Il Box del Login (Semi-trasparente) */
+.login-box {
+  background-color: rgba(0, 0, 0, 0.75);
+  padding: 60px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+}
+
+.login-title {
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 28px;
+}
+
+/* 3. Input personalizzati */
+.custom-input {
+  background-color: #333 !important;
+  border: none !important;
+  color: white !important;
+  height: 50px;
+  padding: 10px 20px;
+}
+
+.custom-input:focus {
+  background-color: #454545 !important;
+  box-shadow: none !important;
+  border-bottom: 2px solid #e50914 !important;
+}
+
+.form-label {
+  color: #8c8c8c;
+  font-size: 0.9rem;
+}
+
+/* 4. Bottone Rosso Netflix */
+.btn-login-submit {
+  background-color: #e50914;
+  color: white;
+  font-weight: bold;
+  height: 50px;
+  font-size: 1.1rem;
+  margin-top: 10px;
+  border: none;
+  transition: background 0.2s;
+}
+
+.btn-login-submit:hover {
+  background-color: #b20710;
+}
+
+/* 5. Footer del Login */
+.login-footer {
+  color: #737373;
+  font-size: 0.9rem;
+}
+
+.login-footer a {
+  color: white;
+  text-decoration: none;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+}

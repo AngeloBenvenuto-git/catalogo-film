@@ -1,2 +1,63 @@
-/* You can add global styles to this file, and also import other style files */
 @import "bootstrap/dist/css/bootstrap.min.css";
+
+/* TEMA DARK GLOBALE */
+body {
+  background-color: #141414 !important;
+  color: white;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/* SFONDO LOGIN CON IMMAGINE */
+.login-container {
+  background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+  url('https://assets.nflxext.com/ffe/siteui/vlv3/f841d4c7-10e1-40af-9a10-87d3f7717690/web/IT-it-20220502-popsignuptwoweeks-perspective_alpha_website_large.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  background-color: rgba(0, 0, 0, 0.75);
+  padding: 40px 60px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 450px;
+}
+
+.login-title {
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+/* INPUT NERI STILE NETFLIX */
+.custom-input {
+  background-color: #333 !important;
+  border: none !important;
+  color: white !important;
+  height: 50px;
+}
+
+.custom-input:focus {
+  background-color: #454545 !important;
+  box-shadow: none !important;
+  border-bottom: 2px solid #e50914 !important;
+}
+
+/* BOTTONE ROSSO */
+.btn-netflix {
+  background-color: #e50914 !important;
+  color: white !important;
+  font-weight: bold !important;
+  height: 50px;
+  font-size: 1.1rem;
+  border: none !important;
+}
+
+.btn-netflix:hover {
+  background-color: #b20710 !important;
+}

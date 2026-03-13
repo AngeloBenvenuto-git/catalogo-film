@@ -1,0 +1,115 @@
+/* 1. Sfondo scuro e font moderno */
+.movie-gallery {
+  background-color: #141414; /* Nero cinematografico */
+  padding: 40px;
+  min-height: 100vh;
+}
+
+/* 2. Titolo con effetto sfumato */
+.section-title {
+  color: #e50914; /* Rosso stile Netflix/YouTube */
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* 3. Effetto Hover sulla Card (Trasformazione 3D) */
+.movie-card {
+  border: none;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.movie-card:hover {
+  transform: scale(1.1); /* Ingrandimento al passaggio del mouse */
+  z-index: 10;
+  box-shadow: 0px 10px 25px rgba(0,0,0,0.8);
+}
+
+/* 4. Overlay con pulsante a comparsa */
+.poster-container {
+  position: relative;
+}
+
+.movie-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0; /* Invisibile di base */
+  transition: opacity 0.3s ease;
+}
+
+.movie-card:hover .movie-overlay {
+  opacity: 1; /* Appare al passaggio del mouse */
+}
+
+/* 5. Responsive: Adatta i testi sui piccoli schermi */
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+}
+
+/* HERO SECTION */
+.hero-section {
+  position: relative;
+  height: 80vh;
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: -100px; /* Sfuma verso la griglia */
+}
+
+.hero-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.6);
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(70deg, rgba(0,0,0,0.9) 10%, rgba(0,0,0,0) 60%),
+  linear-gradient(0deg, rgba(20,20,20,1) 5%, rgba(0,0,0,0) 30%);
+  display: flex;
+  align-items: center;
+  z-index: 1;
+}
+
+.hero-content {
+  padding-left: 2rem;
+}
+
+/* CARDS */
+.card-film {
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.card-film:hover {
+  transform: scale(1.1);
+  z-index: 5;
+}
+
+.card-hover-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-film:hover .card-hover-info {
+  opacity: 1;
+}

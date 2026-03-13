@@ -1,32 +1,30 @@
-import { RouterLink } from '@angular/router';
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-registrazione',
-  imports: [FormsModule, RouterLink],
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './registrazione.html',
-  styleUrl: './registrazione.css',
+  styleUrl: './registrazione.css', // Puoi lasciarlo vuoto perché usiamo styles.css
 })
 export class Registrazione {
   nome: string = '';
   email: string = '';
   password: string = '';
-  confermaPassword: string = '';
 
   constructor(private router: Router) {}
 
-  onRegistrazione() {
-    if (this.password !== this.confermaPassword) {
-      alert('Le password non coincidono!');
-      return;
+  onRegistrati() {
+    console.log("Registrazione per:", this.nome);
+
+    if (this.nome && this.email && this.password) {
+      alert('Account creato con successo! Ora puoi accedere.');
+      this.router.navigate(['/login']);
+    } else {
+      alert('Per favore, compila tutti i campi.');
     }
-    if (this.nome === '' || this.email === '' || this.password === '') {
-      alert('Compila tutti i campi!');
-      return;
-    }
-    alert('Registrazione effettuata! Ora puoi fare il login.');
-    this.router.navigate(['/login']);
   }
 }

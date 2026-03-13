@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common'; // Fondamentale per le direttive base
+import { RouterLink, RouterLinkActive } from '@angular/router'; // Aggiunto RouterLinkActive
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink],
+  standalone: true, // Indica che il componente si gestisce da solo
+  imports: [CommonModule, RouterLink, RouterLinkActive], // Carichiamo i moduli necessari
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })

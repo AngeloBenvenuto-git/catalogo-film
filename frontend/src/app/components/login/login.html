@@ -1,21 +1,32 @@
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-4">
-      <div class="card">
-        <div class="card-body">
-          <h3 class="card-title text-center mb-4">🔐 Login</h3>
-          <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" class="form-control" [(ngModel)]="email" placeholder="Inserisci email">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Password</label>
-            <input type="password" class="form-control" [(ngModel)]="password" placeholder="Inserisci password">
-          </div>
-          <button class="btn btn-primary w-100" (click)="onLogin()">Accedi</button>
-          <p class="text-center mt-3">Non hai un account? <a routerLink="/registrazione">Registrati</a></p>
-        </div>
+<div class="login-container">
+  <div class="login-box">
+    <h2 class="login-title text-center">Accedi</h2>
+
+    <form (ngSubmit)="onLogin()">
+      <div class="mb-4">
+        <label class="form-label text-white-50 small">Email o Username</label>
+        <input type="text"
+               class="form-control custom-input"
+               [(ngModel)]="email"
+               name="email"
+               placeholder="Inserisci la tua email">
       </div>
-    </div>
+
+      <div class="mb-4">
+        <label class="form-label text-white-50 small">Password</label>
+        <input type="password"
+               class="form-control custom-input"
+               [(ngModel)]="password"
+               name="password"
+               placeholder="Password">
+      </div>
+
+      <button type="submit" class="btn btn-netflix w-100">Accedi</button>
+
+      <div class="login-footer mt-4 text-center">
+        <p>Nuovo su NetFilm? <a routerLink="/registrazione" class="text-white fw-bold text-decoration-none">Registrati ora</a>.</p>
+        <small class="d-block mt-3 text-secondary">Questa pagina è protetta dai sistemi di sicurezza dell'esame.</small>
+      </div>
+    </form>
   </div>
 </div>
