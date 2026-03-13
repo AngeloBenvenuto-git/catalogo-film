@@ -11,14 +11,30 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto align-items-center">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/film-list" routerLinkActive="active">Catalogo</a>
+          <a class="nav-link" routerLink="/" routerLinkActive="active">Catalogo</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/registrazione" routerLinkActive="active">Registrati</a>
-        </li>
-        <li class="nav-item ms-lg-3">
-          <a class="btn btn-login" routerLink="/login">Accedi</a>
-        </li>
+
+        <ng-container *ngIf="!isLoggato">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/registrazione" routerLinkActive="active">Registrati</a>
+          </li>
+          <li class="nav-item ms-lg-3">
+            <a class="btn btn-login" routerLink="/login">Accedi</a>
+          </li>
+        </ng-container>
+
+        <ng-container *ngIf="isLoggato">
+          <li class="nav-item" *ngIf="getRuolo() === 'ADMIN'">
+            <a class="nav-link" routerLink="/admin" routerLinkActive="active">Admin</a>
+          </li>
+          <li class="nav-item ms-lg-2">
+            <span class="nav-link text-white-50 small">{{getEmail()}}</span>
+          </li>
+          <li class="nav-item ms-lg-2">
+            <button class="btn btn-login" (click)="logout()">Logout</button>
+          </li>
+        </ng-container>
+
       </ul>
     </div>
   </div>

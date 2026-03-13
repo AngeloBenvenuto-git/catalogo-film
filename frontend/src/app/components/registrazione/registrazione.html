@@ -4,24 +4,34 @@
 
     <form (ngSubmit)="onRegistrati()">
       <div class="mb-3">
-        <label class="form-label text-white-50 small">Nome Completo</label>
-        <input type="text" class="form-control custom-input" [(ngModel)]="nome" name="nome" placeholder="Inserisci nome e cognome">
+        <label class="form-label text-white-50 small">Username</label>
+        <input type="text" class="form-control custom-input"
+               [(ngModel)]="username" name="username"
+               placeholder="Scegli un username">
       </div>
 
       <div class="mb-3">
         <label class="form-label text-white-50 small">Email</label>
-        <input type="email" class="form-control custom-input" [(ngModel)]="email" name="email" placeholder="email@esempio.it">
+        <input type="email" class="form-control custom-input"
+               [(ngModel)]="email" name="email"
+               placeholder="email@esempio.it">
       </div>
 
       <div class="mb-3">
         <label class="form-label text-white-50 small">Password</label>
-        <input type="password" class="form-control custom-input" [(ngModel)]="password" name="password" placeholder="Minimo 8 caratteri">
+        <input type="password" class="form-control custom-input"
+               [(ngModel)]="password" name="password"
+               placeholder="Minimo 8 caratteri">
       </div>
+
+      <div *ngIf="errore" class="alert alert-danger py-2 small">{{errore}}</div>
 
       <button type="submit" class="btn btn-netflix w-100 mt-3">Crea Account</button>
 
       <div class="login-footer mt-4 text-center">
-        <p>Hai già un account? <a routerLink="/login" class="text-white fw-bold text-decoration-none">Accedi ora</a>.</p>
+        <p>Hai già un account?
+          <a routerLink="/login" class="text-white fw-bold text-decoration-none">Accedi ora</a>.
+        </p>
       </div>
     </form>
   </div>

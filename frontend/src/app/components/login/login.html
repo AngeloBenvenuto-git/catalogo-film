@@ -21,6 +21,8 @@
                placeholder="Password">
       </div>
 
+      <div *ngIf="errore" class="alert alert-danger py-2 small">{{errore}}</div>
+
       <button type="submit" class="btn btn-netflix w-100">Accedi</button>
 
       <div class="login-footer mt-4 text-center">
