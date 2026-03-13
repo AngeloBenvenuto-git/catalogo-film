@@ -1,0 +1,29 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title text-center mb-4">📝 Registrazione</h3>
+          <div class="mb-3">
+            <label class="form-label">Nome</label>
+            <input type="text" class="form-control" [(ngModel)]="nome" placeholder="Inserisci nome">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" [(ngModel)]="email" placeholder="Inserisci email">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" [(ngModel)]="password" placeholder="Inserisci password">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Conferma Password</label>
+            <input type="password" class="form-control" [(ngModel)]="confermaPassword" placeholder="Conferma password">
+          </div>
+          <button class="btn btn-success w-100" (click)="onRegistrazione()">Registrati</button>
+          <p class="text-center mt-3">Hai già un account? <a routerLink="/login">Accedi</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
