@@ -1,0 +1,64 @@
+<div class="container mt-5">
+  <h2 class="text-white mb-4">👑 Pannello Admin — Gestione Utenti</h2>
+
+  <div *ngIf="errore" class="alert alert-danger">{{errore}}</div>
+
+  <input type="text"
+         class="form-control custom-input mb-4"
+         [(ngModel)]="ricerca"
+         placeholder="Cerca per username o email...">
+
+  <div class="table-responsive">
+    <table class="table table-dark table-hover">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Ruolo</th>
+        <th>Stato</th>
+        <th>Azioni</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let utente of utentiFiltrati">
+        <td>{{utente.id}}</td>
+        <td>{{utente.username}}</td>
+        <td>{{utente.email}}</td>
+        <td>
+            <span class="badge"
+                  [class.bg-danger]="utente.ruolo === 'ADMIN'"
+                  [class.bg-warning]="utente.ruolo === 'REDATTORE'"
+                  [class.bg-secondary]="utente.ruolo === 'SPETTATORE'">
+              {{utente.ruolo}}
+            </span>
+        </td>
+        <td>
+            <span class="badge"
+                  [class.bg-danger]="utente.bannato"
+                  [class.bg-success]="!utente.bannato">
+              {{utente.bannato ? 'Bannato' : 'Attivo'}}
+            </span>
+        </td>
+        <td>
+          <button *ngIf="!utente.bannato && utente.ruolo !== 'ADMIN'"
+                  class="btn btn-sm btn-danger me-1"
+                  (click)="banna(utente.id)">Banna</button>
+
+          <button *ngIf="utente.bannato"
+                  class="btn btn-sm btn-success me-1"
+                  (click)="sbanna(utente.id)">Sbanna</button>
+
+          <button *ngIf="utente.ruolo === 'SPETTATORE'"
+                  class="btn btn-sm btn-warning me-1"
+                  (click)="promuovi(utente.id)">Promuovi</button>
+
+          <button *ngIf="utente.ruolo !== 'ADMIN'"
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="elimina(utente.id)">Elimina</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
