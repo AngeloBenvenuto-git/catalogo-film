@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FilmService } from '../../services/film';
@@ -15,13 +15,17 @@ export class FilmDetail implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private filmService: FilmService
+    private filmService: FilmService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.filmService.getFilmById(id).subscribe({
-      next: (res) => { this.film = res; },
+      next: (res) => {
+        this.film = res;
+        this.cdr.detectChanges();
+      },
       error: (err) => console.error("Errore nel recupero del film", err)
     });
   }
