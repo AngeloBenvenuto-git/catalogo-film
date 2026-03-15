@@ -10,7 +10,7 @@
       <p><strong>Tipologia:</strong> {{ film.tipologia }}</p>
       <p><strong>Generi:</strong> {{ film.generi?.join(', ') }}</p>
       <p><strong>Attori:</strong> {{ film.attori?.join(', ') }}</p>
-      <p><strong>Valutazione:</strong> ⭐ {{ film.valutazione ?? 'N/D' }}</p>
+      <p><strong>Valutazione:</strong> ⭐ {{ film.valutazione ? (film.valutazione | number:'1.0-1') : 'N/D' }}</p>
       <p><strong>Trama:</strong> {{ film.trama }}</p>
       <a routerLink="/" class="btn btn-secondary mt-3">← Torna alla lista</a>
     </div>
