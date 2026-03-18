@@ -7,7 +7,7 @@ import { FilmService } from '../../services/film';
 @Component({
   selector: 'app-film-list',
   standalone: true,
-  imports: [CommonModule, FormsModule], // RouterLink rimosso qui per togliere l'errore
+  imports: [CommonModule, FormsModule],
   templateUrl: './film-list.html',
   styleUrl: './film-list.css',
 })
@@ -37,10 +37,15 @@ export class FilmList implements OnInit {
 
   ngOnInit() {
     this.ricerca = localStorage.getItem('f_ricerca') || '';
+    this.ordinamento = localStorage.getItem('f_ord_val') || '';
+    this.ordinamentoAnno = localStorage.getItem('f_ord_anno') || '';
     this.valutazioneMin = Number(localStorage.getItem('f_val_min')) || 0;
     this.valutazioneMax = Number(localStorage.getItem('f_val_max')) || 10;
+
     const anniSalvati = localStorage.getItem('f_anni');
-    if (anniSalvati) this.anniSelezionati = new Set(JSON.parse(anniSalvati));
+    if (anniSalvati) {
+      this.anniSelezionati = new Set(JSON.parse(anniSalvati));
+    }
 
     this.filmService.getTuttiFilm().subscribe({
       next: (data) => {
@@ -51,9 +56,66 @@ export class FilmList implements OnInit {
     });
   }
 
+  // --- GESTIONE NAVIGAZIONE ---
   vaiAiDettagli(id: number) {
     this.salvaStatoBrowser();
     this.router.navigate(['/films', id]);
+  }
+
+  // --- LOGICA FILTRI ---
+  cercaFilm() {
+    this.applicaOrdinamento();
+  }
+
+  toggleAnno(anno: number) {
+    if (this.anniSelezionati.has(anno)) {
+      this.anniSelezionati.delete(anno);
+    } else {
+      this.anniSelezionati.add(anno);
+    }
+    this.applicaOrdinamento();
+    this.cdr.detectChanges();
+  }
+
+  getAnniPerIntervallo(min: number, max: number): number[] {
+    const anni: number[] = [];
+    const annoMax = max === 9999 ? new Date().getFullYear() : max;
+    for (let a = min; a <= annoMax; a++) {
+      if (this.films.some(f => f.anno === a)) {
+        anni.push(a);
+      }
+    }
+    return anni;
+  }
+
+  applicaOrdinamento() {
+    let risultato = this.films.filter(f => {
+      const titoloOk = f.titolo.toLowerCase().includes(this.ricerca.toLowerCase());
+      const valOk = f.valutazione >= this.valutazioneMin && f.valutazione <= this.valutazioneMax;
+      const annoOk = this.anniSelezionati.size === 0 || this.anniSelezionati.has(f.anno);
+      return titoloOk && valOk && annoOk;
+    });
+
+    // Applica Ordinamenti
+    if (this.ordinamento === 'val-desc') risultato.sort((a, b) => b.valutazione - a.valutazione);
+    if (this.ordinamento === 'val-asc') risultato.sort((a, b) => a.valutazione - b.valutazione);
+    if (this.ordinamentoAnno === 'anno-desc') risultato.sort((a, b) => b.anno - a.anno);
+    if (this.ordinamentoAnno === 'anno-asc') risultato.sort((a, b) => a.anno - b.anno);
+
+    this.filmsFiltrati = risultato;
+    this.salvaStatoBrowser();
+  }
+
+  rimuoviFiltri() {
+    localStorage.clear();
+    this.ricerca = '';
+    this.ordinamento = '';
+    this.ordinamentoAnno = '';
+    this.valutazioneMin = 0;
+    this.valutazioneMax = 10;
+    this.anniSelezionati = new Set();
+    this.applicaOrdinamento();
+    this.cdr.detectChanges();
   }
 
   private salvaStatoBrowser() {
@@ -61,17 +123,7 @@ export class FilmList implements OnInit {
     localStorage.setItem('f_val_min', this.valutazioneMin.toString());
     localStorage.setItem('f_val_max', this.valutazioneMax.toString());
     localStorage.setItem('f_anni', JSON.stringify(Array.from(this.anniSelezionati)));
+    localStorage.setItem('f_ord_val', this.ordinamento);
+    localStorage.setItem('f_ord_anno', this.ordinamentoAnno);
   }
-
-  applicaOrdinamento() {
-    this.filmsFiltrati = this.films.filter(f => {
-      const titoloOk = f.titolo.toLowerCase().includes(this.ricerca.toLowerCase());
-      const valOk = f.valutazione >= this.valutazioneMin && f.valutazione <= this.valutazioneMax;
-      const annoOk = this.anniSelezionati.size === 0 || this.anniSelezionati.has(f.anno);
-      return titoloOk && valOk && annoOk;
-    });
-    this.salvaStatoBrowser();
-  }
-
-  // Aggiungi qui le altre funzioni (toggleAnno, cercaFilm, rimuoviFiltri, getAnniPerIntervallo)
 }

@@ -169,4 +169,21 @@ public class TmdbService {
                 .bodyToMono(Map.class)
                 .block();
     }
+
+    public String getTopMoviesByGenre(String genreName, int count) {
+        // Cerchiamo nel nostro database i film che hanno quel genere
+        List<Film> films = filmRepository.findAll().stream()
+                .filter(f -> f.getGeneri().stream()
+                        .anyMatch(g -> g.getNome().toLowerCase().contains(genreName.toLowerCase())))
+                .limit(count)
+                .toList();
+
+        if (films.isEmpty()) {
+            return "Al momento non ho film di genere " + genreName + " nel catalogo, ma ne caricherò presto di nuovi!";
+        }
+
+        Film consigliato = films.get(0);
+        return "Ti consiglio di guardare '" + consigliato.getTitolo() + "' (" + consigliato.getAnno() + "). " +
+                "Ha una valutazione di " + consigliato.getValutazione() + " stelle. Ti piace come idea?";
+    }
 }

@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -38,16 +39,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable()) // Disabilita CSRF per permettere le chiamate POST da Angular
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Applica la configurazione CORS sotto
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Gestione token senza sessione
                 .authorizeHttpRequests(auth -> auth
+                        // Rotte accessibili a TUTTI senza login
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/film/**").permitAll()
                         .requestMatchers("/api/generi/**").permitAll()
+                        .requestMatchers("/api/chat/**").permitAll() // <--- SBLOCCATO IL CHATBOT!
+
+                        // Rotte protette per ruoli
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/redattore/**").hasAnyRole("REDATTORE", "ADMIN")
+
+                        // Tutto il resto richiede autenticazione
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -58,7 +65,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4200"));
+        config.setAllowedOrigins(List.of("http://localhost:4200")); // Permetti Angular
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

@@ -1,0 +1,42 @@
+<div class="chatbot-container">
+  <button class="chat-toggle btn btn-danger rounded-circle shadow-lg d-flex align-items-center justify-content-center"
+          (click)="chatOpen = !chatOpen">
+    <span *ngIf="!chatOpen" style="font-size: 24px;">🤖</span>
+    <span *ngIf="chatOpen" style="font-size: 20px;">✕</span>
+  </button>
+
+  <div class="chat-window shadow-lg border-0 rounded-4" *ngIf="chatOpen">
+
+    <div class="chat-header bg-dark text-white p-3 d-flex justify-content-between align-items-center border-bottom border-secondary">
+      <div class="d-flex align-items-center gap-2">
+        <div class="status-dot"></div>
+        <h6 class="mb-0 fw-bold">NetFilm Assistant</h6>
+      </div>
+    </div>
+
+    <div class="chat-body p-3 bg-black">
+      <div *ngFor="let m of messaggi"
+           class="d-flex mb-3"
+           [ngClass]="m.daUtente ? 'justify-content-end' : 'justify-content-start'">
+
+        <div [ngClass]="m.daUtente ? 'bubble-user' : 'bubble-bot'"
+             class="p-2 px-3 shadow-sm">
+          {{ m.testo }}
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-footer p-3 bg-dark border-top border-secondary">
+      <div class="input-group">
+        <input type="text"
+               class="form-control bg-secondary text-white border-0"
+               [(ngModel)]="messaggio"
+               (keyup.enter)="inviaMessaggio()"
+               placeholder="Chiedi un consiglio...">
+        <button class="btn btn-danger" (click)="inviaMessaggio()">
+          ➤
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
