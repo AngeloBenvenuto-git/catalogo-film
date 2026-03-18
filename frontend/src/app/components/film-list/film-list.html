@@ -16,20 +16,23 @@
       <div *ngIf="mostraFiltroValutazione" class="p-3 bg-dark border border-secondary rounded position-absolute" style="z-index:100; min-width:250px;">
         <div class="d-flex flex-column gap-2 mb-3">
           <span class="text-white small" style="cursor:pointer"
-            [style.fontWeight]="ordinamento === 'val-desc' ? 'bold' : 'normal'"
-            (click)="ordinamento='val-desc'; applicaOrdinamento()">
+                [style.fontWeight]="ordinamento === 'val-desc' ? 'bold' : 'normal'"
+                (click)="ordinamento='val-desc'">
             ↓ Ordine Decrescente
           </span>
           <span class="text-white small" style="cursor:pointer"
-            [style.fontWeight]="ordinamento === 'val-asc' ? 'bold' : 'normal'"
-            (click)="ordinamento='val-asc'; applicaOrdinamento()">
+                [style.fontWeight]="ordinamento === 'val-asc' ? 'bold' : 'normal'"
+                (click)="ordinamento='val-asc'">
             ↑ Ordine Crescente
           </span>
         </div>
-        <p class="text-white small mb-1">Min: {{valutazioneMin | number:'1.0-0'}}%</p>
-        <input type="range" class="form-range" min="0" max="100" step="1" [(ngModel)]="valutazioneMin" (input)="applicaOrdinamento()">
-        <p class="text-white small mb-1">Max: {{valutazioneMax | number:'1.0-0'}}%</p>
-        <input type="range" class="form-range" min="0" max="100" step="1" [(ngModel)]="valutazioneMax" (input)="applicaOrdinamento()">
+        <p class="text-white small mb-1">Min: {{valutazioneMin | number:'1.0-1'}}</p>
+        <input type="range" class="form-range" min="0" max="10" step="0.1" [(ngModel)]="valutazioneMin">
+        <p class="text-white small mb-1">Max: {{valutazioneMax | number:'1.0-1'}}</p>
+        <input type="range" class="form-range" min="0" max="10" step="0.1" [(ngModel)]="valutazioneMax">
+        <button class="btn btn-sm btn-outline-light w-100 mt-2" (click)="applicaOrdinamento(); mostraFiltroValutazione=false">
+          ✓ Applica
+        </button>
       </div>
     </div>
 
@@ -41,39 +44,43 @@
       <div *ngIf="mostraFiltroAnno" class="p-3 bg-dark border border-secondary rounded position-absolute" style="z-index:100; min-width:250px;">
         <div class="d-flex flex-column gap-2 mb-3">
           <span class="text-white small" style="cursor:pointer"
-            [style.fontWeight]="ordinamentoAnno === 'anno-desc' ? 'bold' : 'normal'"
-            (click)="ordinamentoAnno='anno-desc'; applicaOrdinamento()">
+                [style.fontWeight]="ordinamentoAnno === 'anno-desc' ? 'bold' : 'normal'"
+                (click)="ordinamentoAnno='anno-desc'">
             ↓ Ordine Decrescente
           </span>
           <span class="text-white small" style="cursor:pointer"
-            [style.fontWeight]="ordinamentoAnno === 'anno-asc' ? 'bold' : 'normal'"
-            (click)="ordinamentoAnno='anno-asc'; applicaOrdinamento()">
+                [style.fontWeight]="ordinamentoAnno === 'anno-asc' ? 'bold' : 'normal'"
+                (click)="ordinamentoAnno='anno-asc'">
             ↑ Ordine Crescente
           </span>
         </div>
         <hr class="border-secondary">
         <div *ngFor="let intervallo of intervalliAnni">
           <div class="d-flex align-items-center justify-content-between py-1" style="cursor:pointer"
-            (click)="intervalloAperto = intervalloAperto === intervallo.label ? null : intervallo.label">
+               (click)="intervalloAperto = intervalloAperto === intervallo.label ? null : intervallo.label">
             <span class="text-white small">{{ intervallo.label }}</span>
             <span class="text-white small">{{ intervalloAperto === intervallo.label ? '▲' : '▼' }}</span>
           </div>
           <div *ngIf="intervalloAperto === intervallo.label" class="ps-2 pb-2">
             <div *ngFor="let anno of getAnniPerIntervallo(intervallo.min, intervallo.max)"
-              class="d-flex align-items-center gap-2 py-1" style="cursor:pointer"
-              (click)="toggleAnno(anno)">
-              <input type="checkbox" [checked]="anniSelezionati.has(anno)" (click)="$event.stopPropagation()">
-              <span class="text-white small">{{ anno }}</span>
+                 class="d-flex align-items-center gap-2 py-1">
+              <input type="checkbox"
+                     [checked]="anniSelezionati.has(anno)"
+                     (change)="toggleAnno(anno)">
+              <span class="text-white small" (click)="toggleAnno(anno)" style="cursor:pointer">{{ anno }}</span>
             </div>
           </div>
         </div>
+        <button class="btn btn-sm btn-outline-light w-100 mt-2" (click)="applicaOrdinamento(); mostraFiltroAnno=false">
+          ✓ Applica
+        </button>
       </div>
     </div>
 
     <!-- Rimuovi filtri -->
     <button class="btn btn-outline-danger"
-      *ngIf="ricerca || ordinamento || ordinamentoAnno || anniSelezionati.size > 0 || valutazioneMin > 0 || valutazioneMax < 100"
-      (click)="rimuoviFiltri()">
+            *ngIf="ricerca || ordinamento || ordinamentoAnno || anniSelezionati.size > 0 || valutazioneMin > 0 || valutazioneMax < 10"
+            (click)="rimuoviFiltri()">
       ✕ Rimuovi filtri
     </button>
 
@@ -106,7 +113,7 @@
             <div class="p-3 text-white">
               <h6 class="fw-bold mb-1">{{f.titolo}}</h6>
               <div class="d-flex align-items-center gap-2 small">
-                <span class="text-success fw-bold">{{(f.valutazione * 10) | number:'1.0-2'}}% compatibile</span>
+                <span class="text-success fw-bold">{{(f.valutazione * 10) | number:'1.0-0'}}% compatibile</span>
                 <span class="border px-1 small">{{f.anno}}</span>
               </div>
             </div>

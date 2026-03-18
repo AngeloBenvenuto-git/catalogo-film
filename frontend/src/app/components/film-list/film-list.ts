@@ -17,7 +17,7 @@ export class FilmList implements OnInit {
   ricerca: string = '';
   ordinamento: string = '';
   valutazioneMin: number = 0;
-  valutazioneMax: number = 100;
+  valutazioneMax: number = 10;
   mostraFiltroValutazione: boolean = false;
   mostraFiltroAnno: boolean = false;
 
@@ -61,12 +61,14 @@ export class FilmList implements OnInit {
   }
 
   toggleAnno(anno: number) {
-    if (this.anniSelezionati.has(anno)) {
-      this.anniSelezionati.delete(anno);
+    const nuovoSet = new Set(this.anniSelezionati);
+    if (nuovoSet.has(anno)) {
+      nuovoSet.delete(anno);
     } else {
-      this.anniSelezionati.add(anno);
+      nuovoSet.add(anno);
     }
-    this.applicaOrdinamento();
+    this.anniSelezionati = nuovoSet;
+    this.cdr.detectChanges();
   }
 
   cercaFilm() {
@@ -76,7 +78,7 @@ export class FilmList implements OnInit {
   applicaOrdinamento() {
     let risultato = this.films.filter(f => {
       const titoloOk = f.titolo.toLowerCase().includes(this.ricerca.toLowerCase());
-      const valOk = f.valutazione * 10 >= this.valutazioneMin && f.valutazione * 10 <= this.valutazioneMax;
+      const valOk = f.valutazione >= this.valutazioneMin && f.valutazione <= this.valutazioneMax;
       const annoOk = this.anniSelezionati.size === 0 || this.anniSelezionati.has(f.anno);
       return titoloOk && valOk && annoOk;
     });
@@ -89,24 +91,19 @@ export class FilmList implements OnInit {
     this.filmsFiltrati = risultato;
   }
 
-  ordinaPerAnno() {
-    this.ordinamentoAnno = this.ordinamentoAnno === 'anno-asc' ? 'anno-desc' : 'anno-asc';
-    this.applicaOrdinamento();
-  }
-
-    rimuoviFiltri() {
+  rimuoviFiltri() {
     this.ricerca = '';
     this.ordinamento = '';
     this.ordinamentoAnno = '';
     this.valutazioneMin = 0;
-    this.valutazioneMax = 100;
+    this.valutazioneMax = 10;
     this.anniSelezionati = new Set();
     this.mostraFiltroValutazione = false;
     this.mostraFiltroAnno = false;
     this.intervalloAperto = null;
     this.filmsFiltrati = this.films;
   }
-  
+
   vaiAiDettagli(id: number) {
     this.router.navigate(['/film-detail', id]);
   }
