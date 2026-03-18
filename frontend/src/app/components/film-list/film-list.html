@@ -1,32 +1,43 @@
-<div class="hero-section" *ngIf="films.length > 0">
+<div class="container-fluid px-5 mt-4">
+  <div class="d-flex gap-3 align-items-center mb-4 flex-wrap">
+    <input
+      type="text"
+      class="form-control w-auto"
+      placeholder="🔍 Cerca un film..."
+      [(ngModel)]="ricerca"
+      (input)="cercaFilm()">
+    <button class="btn btn-outline-light" (click)="ordinaPerValutazione()">⭐ Valutazione</button>
+    <button class="btn btn-outline-light" (click)="ordinaPerAnno()">📅 Anno</button>
+  </div>
+
+<div class="hero-section" *ngIf="filmsFiltrati.length > 0">
   <div class="hero-overlay">
     <div class="container hero-content text-white">
-      <h1 class="display-1 fw-bold">{{films[0].titolo}}</h1>
-      <p class="lead w-50 d-none d-md-block">{{films[0].trama | slice:0:150}}...</p>
+      <h1 class="display-1 fw-bold">{{filmsFiltrati[0].titolo}}</h1>
+      <p class="lead w-50 d-none d-md-block">{{filmsFiltrati[0].trama | slice:0:150}}...</p>
       <div class="mt-4">
-        <button class="btn btn-light btn-lg me-2 px-4 fw-bold" [routerLink]="['/films', films[0].id]">
+        <button class="btn btn-light btn-lg me-2 px-4 fw-bold" [routerLink]="['/films', filmsFiltrati[0].id]">
           Dettagli
         </button>
       </div>
     </div>
   </div>
-  <img [src]="films[0].posterUrl" class="hero-bg" alt="Featured Movie">
+  <img [src]="filmsFiltrati[0].posterUrl" class="hero-bg" alt="Featured Movie">
 </div>
 
-<div class="container-fluid px-5 mt-5">
+
   <h3 class="text-white mb-4 fw-bold">I titoli del momento</h3>
 
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4">
-    <div class="col" *ngFor="let f of films">
+    <div class="col" *ngFor="let f of filmsFiltrati">
       <div class="card card-film h-100 bg-transparent border-0" [routerLink]="['/films', f.id]">
         <div class="position-relative overflow-hidden rounded">
           <img [src]="f.posterUrl" class="card-img-top img-fluid shadow-lg" alt="{{f.titolo}}">
-
           <div class="card-hover-info">
             <div class="p-3 text-white">
               <h6 class="fw-bold mb-1">{{f.titolo}}</h6>
               <div class="d-flex align-items-center gap-2 small">
-                <span class="text-success fw-bold">{{(f.valutazione * 10) | number:'1.0-0'}}% compatibile</span>
+                <span class="text-success fw-bold">{{(f.valutazione * 10) | number:'1.0-2'}}% compatibile</span>
                 <span class="border px-1 small">{{f.anno}}</span>
               </div>
             </div>
