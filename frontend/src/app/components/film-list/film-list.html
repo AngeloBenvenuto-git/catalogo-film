@@ -1,6 +1,6 @@
-<!-- Barra filtri -->
 <div class="container-fluid px-5 pt-4">
   <div class="d-flex gap-3 align-items-center mb-4 flex-wrap">
+
     <input
       type="text"
       class="form-control w-auto"
@@ -8,59 +8,71 @@
       [(ngModel)]="ricerca"
       (input)="cercaFilm()">
 
-    <!-- Bottone Valutazione con tendina -->
     <div class="position-relative">
       <button class="btn btn-outline-light" (click)="mostraFiltroValutazione = !mostraFiltroValutazione">
         ⭐ Valutazione
       </button>
+
       <div *ngIf="mostraFiltroValutazione" class="p-3 bg-dark border border-secondary rounded position-absolute" style="z-index:100; min-width:250px;">
         <div class="d-flex flex-column gap-2 mb-3">
           <span class="text-white small" style="cursor:pointer"
                 [style.fontWeight]="ordinamento === 'val-desc' ? 'bold' : 'normal'"
-                (click)="ordinamento='val-desc'">
+                (click)="ordinamento='val-desc'; applicaOrdinamento()">
             ↓ Ordine Decrescente
           </span>
           <span class="text-white small" style="cursor:pointer"
                 [style.fontWeight]="ordinamento === 'val-asc' ? 'bold' : 'normal'"
-                (click)="ordinamento='val-asc'">
+                (click)="ordinamento='val-asc'; applicaOrdinamento()">
             ↑ Ordine Crescente
           </span>
         </div>
+
+        <hr class="border-secondary">
+
         <p class="text-white small mb-1">Min: {{valutazioneMin | number:'1.0-1'}}</p>
-        <input type="range" class="form-range" min="0" max="10" step="0.1" [(ngModel)]="valutazioneMin">
+        <input type="range" class="form-range" min="0" max="10" step="0.1"
+               [(ngModel)]="valutazioneMin"
+               (input)="applicaOrdinamento()">
+
         <p class="text-white small mb-1">Max: {{valutazioneMax | number:'1.0-1'}}</p>
-        <input type="range" class="form-range" min="0" max="10" step="0.1" [(ngModel)]="valutazioneMax">
-        <button class="btn btn-sm btn-outline-light w-100 mt-2" (click)="applicaOrdinamento(); mostraFiltroValutazione=false">
-          ✓ Applica
+        <input type="range" class="form-range" min="0" max="10" step="0.1"
+               [(ngModel)]="valutazioneMax"
+               (input)="applicaOrdinamento()">
+
+        <button class="btn btn-sm btn-outline-light w-100 mt-2" (click)="mostraFiltroValutazione=false">
+          Chiudi
         </button>
       </div>
     </div>
 
-    <!-- Bottone Anno con tendina -->
     <div class="position-relative">
       <button class="btn btn-outline-light" (click)="mostraFiltroAnno = !mostraFiltroAnno">
         📅 Anno
       </button>
+
       <div *ngIf="mostraFiltroAnno" class="p-3 bg-dark border border-secondary rounded position-absolute" style="z-index:100; min-width:250px;">
         <div class="d-flex flex-column gap-2 mb-3">
           <span class="text-white small" style="cursor:pointer"
                 [style.fontWeight]="ordinamentoAnno === 'anno-desc' ? 'bold' : 'normal'"
-                (click)="ordinamentoAnno='anno-desc'">
-            ↓ Ordine Decrescente
+                (click)="ordinamentoAnno='anno-desc'; applicaOrdinamento()">
+            ↓ Più recenti
           </span>
           <span class="text-white small" style="cursor:pointer"
                 [style.fontWeight]="ordinamentoAnno === 'anno-asc' ? 'bold' : 'normal'"
-                (click)="ordinamentoAnno='anno-asc'">
-            ↑ Ordine Crescente
+                (click)="ordinamentoAnno='anno-asc'; applicaOrdinamento()">
+            ↑ Meno recenti
           </span>
         </div>
+
         <hr class="border-secondary">
+
         <div *ngFor="let intervallo of intervalliAnni">
           <div class="d-flex align-items-center justify-content-between py-1" style="cursor:pointer"
                (click)="intervalloAperto = intervalloAperto === intervallo.label ? null : intervallo.label">
             <span class="text-white small">{{ intervallo.label }}</span>
             <span class="text-white small">{{ intervalloAperto === intervallo.label ? '▲' : '▼' }}</span>
           </div>
+
           <div *ngIf="intervalloAperto === intervallo.label" class="ps-2 pb-2">
             <div *ngFor="let anno of getAnniPerIntervallo(intervallo.min, intervallo.max)"
                  class="d-flex align-items-center gap-2 py-1">
@@ -71,13 +83,13 @@
             </div>
           </div>
         </div>
-        <button class="btn btn-sm btn-outline-light w-100 mt-2" (click)="applicaOrdinamento(); mostraFiltroAnno=false">
-          ✓ Applica
+
+        <button class="btn btn-sm btn-outline-light w-100 mt-2" (click)="mostraFiltroAnno=false">
+          Chiudi
         </button>
       </div>
     </div>
 
-    <!-- Rimuovi filtri -->
     <button class="btn btn-outline-danger"
             *ngIf="ricerca || ordinamento || ordinamentoAnno || anniSelezionati.size > 0 || valutazioneMin > 0 || valutazioneMax < 10"
             (click)="rimuoviFiltri()">
@@ -87,13 +99,13 @@
   </div>
 </div>
 
-<div class="hero-section" *ngIf="filmsFiltrati.length > 0">
+<div class="hero-section" *ngIf="filmsFiltrati.length > 0 && !ricerca && anniSelezionati.size === 0 && valutazioneMin === 0 && valutazioneMax === 10">
   <div class="hero-overlay">
     <div class="container hero-content text-white">
       <h1 class="display-1 fw-bold">{{filmsFiltrati[0].titolo}}</h1>
       <p class="lead w-50 d-none d-md-block">{{filmsFiltrati[0].trama | slice:0:150}}...</p>
       <div class="mt-4">
-        <button class="btn btn-light btn-lg me-2 px-4 fw-bold" [routerLink]="['/films', filmsFiltrati[0].id]">
+        <button class="btn btn-light btn-lg me-2 px-4 fw-bold" (click)="vaiAiDettagli(filmsFiltrati[0].id)">
           Dettagli
         </button>
       </div>
@@ -104,9 +116,14 @@
 
 <div class="container-fluid px-5 mt-5">
   <h3 class="text-white mb-4 fw-bold">I titoli del momento</h3>
+
+  <div *ngIf="filmsFiltrati.length === 0" class="text-center text-white py-5">
+    <h4>Nessun film trovato con i filtri selezionati.</h4>
+  </div>
+
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4">
     <div class="col" *ngFor="let f of filmsFiltrati">
-      <div class="card card-film h-100 bg-transparent border-0" [routerLink]="['/films', f.id]">
+      <div class="card card-film h-100 bg-transparent border-0" (click)="vaiAiDettagli(f.id)" style="cursor: pointer;">
         <div class="position-relative overflow-hidden rounded">
           <img [src]="f.posterUrl" class="card-img-top img-fluid shadow-lg" alt="{{f.titolo}}">
           <div class="card-hover-info">
