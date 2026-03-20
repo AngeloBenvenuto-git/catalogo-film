@@ -29,6 +29,8 @@ public class Film {
 
     @Column(unique = true)
     private Integer tmdbId;
+    @Transient // Questo significa che NON viene creato nel DB, serve solo per passarlo al frontend
+    private String trailerKey;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "film_generi",

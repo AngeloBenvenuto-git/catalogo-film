@@ -1,10 +1,12 @@
 <div class="container mt-4" *ngIf="film">
   <div class="row">
     <div class="col-md-4">
-      <img *ngIf="film.posterUrl" [src]="film.posterUrl" class="img-fluid rounded" alt="{{ film.titolo }}">
+      <img *ngIf="film.posterUrl" [src]="film.posterUrl" class="img-fluid rounded shadow" alt="{{ film.titolo }}">
     </div>
+
     <div class="col-md-8">
       <h2>{{ film.titolo }}</h2>
+      <hr>
       <p><strong>Anno:</strong> {{ film.anno }}</p>
       <p><strong>Durata:</strong> {{ film.durata }} min</p>
       <p><strong>Tipologia:</strong> {{ film.tipologia }}</p>
@@ -12,13 +14,31 @@
       <p><strong>Attori:</strong> {{ film.attori?.join(', ') }}</p>
       <p><strong>Valutazione:</strong> ⭐ {{ film.valutazione ? (film.valutazione | number:'1.0-1') : 'N/D' }}</p>
       <p><strong>Trama:</strong> {{ film.trama }}</p>
-      <a (click)="tornaIndietro()" class="btn btn-secondary mt-3" style="cursor: pointer;">
-        ← Torna alla lista
-      </a>
-    </div>
-  </div>
-</div>
+
+      <div class="mt-3 mb-4">
+        <a (click)="tornaIndietro()" class="btn btn-secondary" style="cursor: pointer;">
+          ← Torna alla lista
+        </a>
+      </div>
+
+      <div class="mt-4" *ngIf="trailerUrl">
+        <h5>🎬 Guarda il Trailer</h5>
+        <div class="ratio ratio-16x9">
+          <iframe
+            [src]="trailerUrl"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            class="rounded shadow bg-dark">
+          </iframe>
+        </div>
+      </div>
+
+    </div> </div> </div>
 
 <div class="container mt-4" *ngIf="!film">
-  <p>Film non trovato.</p>
+  <div class="alert alert-warning">
+    Film non trovato o in caricamento...
+  </div>
 </div>
