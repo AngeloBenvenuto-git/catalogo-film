@@ -104,7 +104,7 @@
           <p class="text-white mt-2 mb-0">{{r.testo}}</p>
         </div>
 
-        <div *ngIf="isLoggedIn() && !isAdminOrRedattore() && !haGiaRecensito()" class="mt-4">
+        <div *ngIf="isLoggedIn() && !haGiaRecensito()" class="mt-4">
           <h5 class="text-white">Scrivi una recensione</h5>
           <div class="mb-2">
             <label class="text-white-50 small">Voto (1-10)</label>
