@@ -107,7 +107,12 @@ export class FilmList implements OnInit {
   }
 
   rimuoviFiltri() {
-    localStorage.clear();
+    localStorage.removeItem('f_ricerca');
+    localStorage.removeItem('f_val_min');
+    localStorage.removeItem('f_val_max');
+    localStorage.removeItem('f_anni');
+    localStorage.removeItem('f_ord_val');
+    localStorage.removeItem('f_ord_anno');
     this.ricerca = '';
     this.ordinamento = '';
     this.ordinamentoAnno = '';

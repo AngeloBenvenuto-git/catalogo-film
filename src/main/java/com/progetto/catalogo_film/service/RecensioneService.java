@@ -66,7 +66,10 @@ public class RecensioneService {
         Utente utente = utenteRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-        if (!recensione.getUtente().getId().equals(utente.getId())) {
+        boolean isAdmin = utente.getRuolo() == Utente.Ruolo.ADMIN;
+        boolean isProprietario = recensione.getUtente().getId().equals(utente.getId());
+
+        if (!isAdmin && !isProprietario) {
             throw new RuntimeException("Non puoi cancellare questa recensione");
         }
 

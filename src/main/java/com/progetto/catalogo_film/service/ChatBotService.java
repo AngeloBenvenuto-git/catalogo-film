@@ -16,7 +16,7 @@ public class ChatBotService {
 
     public String generateReply(String message) {
         // URL per il modello 1.5-flash (il più veloce e stabile per i test)
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=" + apiKey;
 
         // Struttura JSON minima richiesta da Google
         Map<String, Object> body = Map.of(

@@ -1,13 +1,10 @@
 package com.progetto.catalogo_film.config;
 
 import com.progetto.catalogo_film.security.JwtFilter;
-import com.progetto.catalogo_film.security.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,34 +26,30 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
-    private final UserDetailsServiceImpl userDetailsService;
 
-    public SecurityConfig(JwtFilter jwtFilter, UserDetailsServiceImpl userDetailsService) {
+    public SecurityConfig(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
-        this.userDetailsService = userDetailsService;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Disabilita CSRF per permettere le chiamate POST da Angular
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Applica la configurazione CORS sotto
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Gestione token senza sessione
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Rotte accessibili a TUTTI senza login
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/film/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/film/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/film/**").hasAnyRole("ADMIN", "REDATTORE")
+                        .requestMatchers(HttpMethod.PUT, "/api/film/**").hasAnyRole("ADMIN", "REDATTORE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/film/**").hasRole("ADMIN")
                         .requestMatchers("/api/generi/**").permitAll()
-                        .requestMatchers("/api/chat/**").permitAll() // <--- SBLOCCATO IL CHATBOT!
-
-                        // Rotte protette per ruoli
+                        .requestMatchers("/api/chat/**").permitAll()
+                        .requestMatchers("/api/recensioni/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/redattore/**").hasAnyRole("REDATTORE", "ADMIN")
-
-                        // Tutto il resto richiede autenticazione
                         .anyRequest().authenticated())
-                .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -65,7 +58,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4200")); // Permetti Angular
+        config.setAllowedOrigins(List.of("http://localhost:4200"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -73,19 +66,6 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-
-        // Imposta il service che carica gli utenti dal database
-        provider.setUserDetailsService(userDetailsService);
-
-        // Imposta il sistema di codifica password (usa il bean definito sotto)
-        provider.setPasswordEncoder(passwordEncoder());
-
-        return provider;
     }
 
     @Bean

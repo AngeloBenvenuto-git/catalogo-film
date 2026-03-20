@@ -21,9 +21,10 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private Long expiration;
 
-    public String generaToken(String email, String ruolo) {
+    public String generaToken(String email, String ruolo, String username) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("ruolo", ruolo);
+        claims.put("username", username);
 
         return Jwts.builder()
                 .setClaims(claims)

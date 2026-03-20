@@ -65,7 +65,7 @@ public class RecensioneController {
             @AuthenticationPrincipal UserDetails userDetails) {
         try {
             recensioneService.cancellaRecensione(id, userDetails.getUsername());
-            return ResponseEntity.ok(Map.of("messaggio", "Recensione cancellata"));
+            return ResponseEntity.ok(Map.of("messaggio", "RecensioneService cancellata"));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
         }

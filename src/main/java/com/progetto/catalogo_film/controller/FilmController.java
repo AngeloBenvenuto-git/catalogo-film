@@ -76,13 +76,11 @@ public class FilmController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'REDATTORE')")
     public ResponseEntity<FilmDTO> aggiungiFilm(@RequestBody Film film) {
         return ResponseEntity.ok(new FilmDTO(filmService.aggiungiFilm(film)));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'REDATTORE')")
     public ResponseEntity<?> modificaFilm(@PathVariable Long id, @RequestBody Film film) {
         try {
             return ResponseEntity.ok(new FilmDTO(filmService.modificaFilm(id, film)));
@@ -92,7 +90,6 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> cancellaFilm(@PathVariable Long id) {
         filmService.cancellaFilm(id);
         return ResponseEntity.ok(Map.of("messaggio", "Film cancellato"));

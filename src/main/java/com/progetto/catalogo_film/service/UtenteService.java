@@ -35,7 +35,7 @@ public class UtenteService {
             throw new RuntimeException("Password errata");
         }
 
-        return jwtService.generaToken(email, utente.getRuolo().name());
+        return jwtService.generaToken(email, utente.getRuolo().name(), utente.getUsername());
     }
 
     public Utente registra(String username, String email, String password) {
