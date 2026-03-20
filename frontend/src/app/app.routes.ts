@@ -4,6 +4,7 @@ import { FilmDetail } from './components/film-detail/film-detail';
 import { Login } from './components/login/login';
 import { Registrazione } from './components/registrazione/registrazione';
 import { Admin } from './components/admin/admin';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
 export const routes: Routes = [
   { path: '', component: FilmList },

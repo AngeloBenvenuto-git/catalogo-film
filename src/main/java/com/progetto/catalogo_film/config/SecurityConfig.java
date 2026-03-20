@@ -77,8 +77,14 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
-        provider.setPasswordEncoder(new BCryptPasswordEncoder());
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+
+        // Imposta il service che carica gli utenti dal database
+        provider.setUserDetailsService(userDetailsService);
+
+        // Imposta il sistema di codifica password (usa il bean definito sotto)
+        provider.setPasswordEncoder(passwordEncoder());
+
         return provider;
     }
 

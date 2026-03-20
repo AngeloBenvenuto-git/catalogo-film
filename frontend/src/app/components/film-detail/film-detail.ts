@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common'; // <--- AGGIUNTO Location qui
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FilmService } from '../../services/film';
 
@@ -16,7 +16,8 @@ export class FilmDetail implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private filmService: FilmService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private location: Location // <--- AGGIUNTO l'iniettore qui
   ) {}
 
   ngOnInit() {
@@ -28,5 +29,10 @@ export class FilmDetail implements OnInit {
       },
       error: (err) => console.error("Errore nel recupero del film", err)
     });
+  }
+
+  // <--- AGGIUNTA questa funzione per tornare indietro mantenendo lo scroll
+  tornaIndietro() {
+    this.location.back();
   }
 }

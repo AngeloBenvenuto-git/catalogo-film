@@ -12,7 +12,9 @@
       <p><strong>Attori:</strong> {{ film.attori?.join(', ') }}</p>
       <p><strong>Valutazione:</strong> ⭐ {{ film.valutazione ? (film.valutazione | number:'1.0-1') : 'N/D' }}</p>
       <p><strong>Trama:</strong> {{ film.trama }}</p>
-      <a routerLink="/" class="btn btn-secondary mt-3">← Torna alla lista</a>
+      <a (click)="tornaIndietro()" class="btn btn-secondary mt-3" style="cursor: pointer;">
+        ← Torna alla lista
+      </a>
     </div>
   </div>
 </div>
