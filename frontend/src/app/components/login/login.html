@@ -12,8 +12,7 @@
                placeholder="Inserisci la tua email">
       </div>
 
-      <div class="mb-4">
-        <label class="form-label text-white-50 small">Password</label>
+      <div class="mb-3"> <label class="form-label text-white-50 small">Password</label>
         <input type="password"
                class="form-control custom-input"
                [(ngModel)]="password"
@@ -21,6 +20,16 @@
                placeholder="Password">
       </div>
 
+      <div class="mb-4 form-check custom-check">
+        <input type="checkbox"
+               class="form-check-input"
+               id="checkRicordami"
+               [(ngModel)]="ricordami"
+               name="ricordami">
+        <label class="form-check-label text-white-50 small" for="checkRicordami" style="cursor: pointer;">
+          Ricordami su questo dispositivo
+        </label>
+      </div>
       <div *ngIf="errore" class="alert alert-danger py-2 small">{{errore}}</div>
 
       <button type="submit" class="btn btn-netflix w-100" [disabled]="caricamento">

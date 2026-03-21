@@ -47,8 +47,8 @@
   font-size: 0.9rem;
 }
 
-/* 4. Bottone Rosso Netflix */
-.btn-login-submit {
+/* 4. Bottone Rosso Netflix (usato come btn-netflix nell'html) */
+.btn-netflix {
   background-color: #e50914;
   color: white;
   font-weight: bold;
@@ -57,10 +57,14 @@
   margin-top: 10px;
   border: none;
   transition: background 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.btn-login-submit:hover {
+.btn-netflix:hover {
   background-color: #b20710;
+  color: white;
 }
 
 /* 5. Footer del Login */
@@ -76,4 +80,42 @@
 
 .login-footer a:hover {
   text-decoration: underline;
+}
+
+/* 6. AGGIUNTO: Stile personalizzato per Checkbox "Ricordami" */
+.custom-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.custom-check .form-check-input {
+  background-color: #333;
+  border: 1px solid #737373;
+  width: 1.2em;
+  height: 1.2em;
+  margin-top: 0;
+  cursor: pointer;
+}
+
+/* Quando la spunta è attiva diventa rossa */
+.custom-check .form-check-input:checked {
+  background-color: #e50914;
+  border-color: #e50914;
+}
+
+/* Rimuove l'alone blu di default e mette quello rosso */
+.custom-check .form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(229, 9, 20, 0.3);
+  border-color: #e50914;
+}
+
+/* Il testo della label diventa bianco quando ci passi sopra */
+.custom-check .form-check-label {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.custom-check .form-check-label:hover {
+  color: #fff !important;
 }

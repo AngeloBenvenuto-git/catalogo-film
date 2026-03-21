@@ -8,6 +8,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 export class AuthService {
 
   private apiUrl = 'http://localhost:8080/api/auth';
+  // Controlliamo entrambi i "cassetti" all'avvio
   private loggedIn = new BehaviorSubject<boolean>(this.getToken() !== null);
   loggedIn$ = this.loggedIn.asObservable();
 
@@ -21,17 +22,25 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/registra`, { username, email, password });
   }
 
-  salvaToken(token: string) {
-    localStorage.setItem('token', token);
+  // AGGIUNTO: parametro ricordami per decidere dove salvare
+  salvaToken(token: string, ricordami: boolean = false) {
+    if (ricordami) {
+      localStorage.setItem('token', token); // Resta dopo chiusura browser
+    } else {
+      sessionStorage.setItem('token', token); // Scompare alla chiusura browser
+    }
     this.loggedIn.next(true);
   }
 
+  // MODIFICATO: cerca il token ovunque sia stato salvato
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return localStorage.getItem('token') || sessionStorage.getItem('token');
   }
 
+  // MODIFICATO: pulisce tutto per sicurezza
   logout() {
     localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     this.loggedIn.next(false);
   }
 
@@ -39,6 +48,7 @@ export class AuthService {
     return this.getToken() !== null;
   }
 
+  // Funzioni di utility per estrarre dati dal JWT (rimaste uguali ma usano il nuovo getToken)
   getRuolo(): string | null {
     const token = this.getToken();
     if (!token) return null;
