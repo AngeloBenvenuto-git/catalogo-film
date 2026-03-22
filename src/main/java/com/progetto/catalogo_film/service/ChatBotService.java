@@ -1,11 +1,9 @@
 package com.progetto.catalogo_film.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-
+import reactor.core.publisher.Flux;
 import java.util.List;
 import java.util.Map;
 
@@ -15,9 +13,6 @@ public class ChatBotService {
     private final WebClient webClient;
 
     public ChatBotService(@Value("${groq.api.key}") String apiKey) {
-
-        System.out.println("API KEY: " + apiKey); // DEBUG
-
         this.webClient = WebClient.builder()
                 .baseUrl("https://api.groq.com/openai/v1")
                 .defaultHeader("Authorization", "Bearer " + apiKey)
@@ -25,60 +20,45 @@ public class ChatBotService {
                 .build();
     }
 
-    public String generateReply(String userMessage) {
-
+    public Flux<String> generateStreamingReply(String userMessage) {
         Map<String, Object> body = Map.of(
                 "model", "llama-3.1-8b-instant",
-                "max_tokens", 200,
-                "temperature", 0.7,
                 "messages", List.of(
-                        Map.of(
-                                "role", "system",
-                                "content", "Rispondi sempre in italiano. Sei un assistente utile per un sito di film."
-                        ),
-                        Map.of(
-                                "role", "user",
-                                "content", userMessage
-                        )
-                )
+                        Map.of("role", "system", "content", "Sei un assistente esperto di cinema. Rispondi in italiano."),
+                        Map.of("role", "user", "content", userMessage)
+                ),
+                "stream", true
         );
 
+        return webClient.post()
+                .uri("/chat/completions")
+                .bodyValue(body)
+                .retrieve()
+                .bodyToFlux(String.class)
+                .map(this::extractContentFromChunk)
+                .filter(content -> !content.isEmpty());
+    }
+
+    private String extractContentFromChunk(String chunk) {
+        if (chunk == null || chunk.contains("[DONE]")) return "";
+
+        // Pulizia del formato SSE "data: {...}"
+        String jsonPart = chunk.startsWith("data: ") ? chunk.substring(6).trim() : chunk.trim();
+
         try {
-            Map response = webClient.post()
-                    .uri("/chat/completions")
-                    .bodyValue(body)
-                    .retrieve()
-                    .onStatus(status -> status.isError(), clientResponse ->
-                            clientResponse.bodyToMono(String.class)
-                                    .flatMap(errorBody -> {
-                                        System.out.println("ERRORE API: " + errorBody);
-                                        return Mono.error(new RuntimeException("Errore API: " + errorBody));
-                                    })
-                    )
-
-                    .bodyToMono(Map.class)
-                    .block();
-
-            // DEBUG: stampa risposta completa
-            System.out.println("RESPONSE: " + response);
-
-            if (response == null || !response.containsKey("choices")) {
-                return "Errore: risposta non valida dall'API";
+            if (jsonPart.contains("\"content\":\"")) {
+                String marker = "\"content\":\"";
+                int start = jsonPart.indexOf(marker) + marker.length();
+                int end = jsonPart.indexOf("\"", start);
+                if (start > -1 && end > start) {
+                    return jsonPart.substring(start, end)
+                            .replace("\\n", "\n")
+                            .replace("\\\"", "\"");
+                }
             }
-
-            List choices = (List) response.get("choices");
-            if (choices.isEmpty()) {
-                return "Errore: nessuna risposta generata";
-            }
-
-            Map firstChoice = (Map) choices.get(0);
-            Map messageObj = (Map) firstChoice.get("message");
-
-            return (String) messageObj.get("content");
-
         } catch (Exception e) {
-            e.printStackTrace();
-            return "Errore durante la chiamata al chatbot: " + e.getMessage();
+            return "";
         }
+        return "";
     }
 }

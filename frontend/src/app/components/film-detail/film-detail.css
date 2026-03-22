@@ -1,0 +1,43 @@
+/* --- SOLO PER MOBILE E TABLET (Sotto i 991px) --- */
+@media screen and (max-width: 991px) {
+
+  /* 1. Forza il poster e i testi a incolonnarsi invece di stare affiancati */
+  .row {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  /* 2. Evita che il poster diventi gigante e occupi tutto lo schermo */
+  .col-md-4 img {
+    max-width: 280px !important;
+    margin-bottom: 20px !important;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* 3. Sistema i titoli e i testi per schermi piccoli */
+  h2 {
+    font-size: 1.8rem !important;
+    margin-top: 10px;
+  }
+
+  .d-flex.justify-content-between {
+    flex-direction: column !important;
+    gap: 10px;
+  }
+
+  /* 4. Il Trailer: lo rendiamo a tutto schermo per non avere bordi neri ai lati */
+  .ratio-16x9 {
+    margin-left: -15px !important;
+    margin-right: -15px !important;
+    width: calc(100% + 30px) !important;
+  }
+
+  /* 5. Padding generale per non far toccare i testi ai bordi del telefono */
+  .container {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+}

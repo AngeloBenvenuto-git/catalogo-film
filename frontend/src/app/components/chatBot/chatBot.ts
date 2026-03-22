@@ -1,65 +1,75 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-chatbot',
   standalone: true,
-  // Importante: aggiungiamo i moduli per gestire input (FormsModule) e chiamate API (HttpClientModule)
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './chatBot.html',
   styleUrl: './chatBot.css'
 })
 export class ChatBot {
   messaggio: string = '';
   chatOpen: boolean = false;
+  staScrivendo: boolean = false;
 
-  // Lista dei messaggi: inizialmente c'è solo il saluto del bot
   messaggi: { testo: string, daUtente: boolean }[] = [
-    { testo: "Ciao! Sono l'assistente NetFilm potenziato con IA. Chiedimi pure un consiglio su un film!", daUtente: false }
+    { testo: "Ciao! Sono l'assistente NetFilm. Come posso aiutarti?", daUtente: false }
   ];
 
-  constructor(private http: HttpClient) {}
+  constructor(private cdr: ChangeDetectorRef) {}
 
-  /**
-   * Invia il messaggio al backend Java
-   */
-  inviaMessaggio() {
-    if (!this.messaggio.trim()) return;
+  async inviaMessaggio() {
+    if (!this.messaggio.trim() || this.staScrivendo) return;
 
-    // Aggiungi il messaggio dell'utente alla lista
     const testoInviato = this.messaggio;
     this.messaggi.push({ testo: testoInviato, daUtente: true });
     this.messaggio = '';
+    this.staScrivendo = true;
 
-    // Chiamata POST al tuo controller Spring Boot
-    this.http.post<any>('http://localhost:8080/api/chat', { message: testoInviato })
-      .subscribe({
-        next: (res) => {
-          // La risposta dall'IA (Gemini) viene aggiunta alla chat
-          this.messaggi.push({ testo: res.reply, daUtente: false });
-          this.scrollaInBasso();
-        },
-        error: (err) => {
-          console.error("Errore chat:", err);
-          this.messaggi.push({
-            testo: "Ops! Non riesco a connettermi al server. Verifica che il backend sia attivo sulla porta 8080.",
-            daUtente: false
-          });
-        }
+    // Crea lo spazio per la risposta del bot
+    const indiceRisposta = this.messaggi.push({ testo: '', daUtente: false }) - 1;
+
+    try {
+      const response = await fetch('http://localhost:8080/api/chat/stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: testoInviato })
       });
+
+      if (!response.body) throw new Error("No body");
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+
+        // Aggiungi il chunk al testo esistente
+        this.messaggi[indiceRisposta].testo += chunk;
+
+        // Forza l'aggiornamento della grafica e scrolla
+        this.cdr.detectChanges();
+        this.scrollaInBasso();
+      }
+
+    } catch (err) {
+      console.error("Errore:", err);
+      this.messaggi[indiceRisposta].testo = "Errore di connessione.";
+    } finally {
+      this.staScrivendo = false;
+      this.cdr.detectChanges();
+    }
   }
 
-  /**
-   * Utility per far scorrere la chat all'ultimo messaggio
-   */
   private scrollaInBasso() {
-    setTimeout(() => {
-      const chatBody = document.querySelector('.chat-body');
-      if (chatBody) {
-        chatBody.scrollTop = chatBody.scrollHeight;
-      }
-    }, 100);
+    const chatBody = document.querySelector('.chat-body');
+    if (chatBody) {
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
   }
 }

@@ -58,12 +58,43 @@
 }
 
 /* 5. Responsive: Navbar compatta su Mobile */
+/* MANTENIAMO TUTTO IL TUO CODICE ORIGINALE SOPRA... */
+
+/* Integrazione per il responsive senza cambiare stile */
 @media (max-width: 991px) {
   .custom-nav {
-    padding: 10px 20px;
+    padding: 10px 20px; /* Riduce il padding laterale eccessivo (40px) solo su mobile */
   }
+
+  .navbar-collapse {
+    /* Assicura che il menu a tendina non sia trasparente sul testo della pagina */
+    background-color: rgba(20, 20, 20, 0.98);
+    margin: 15px -20px 0 -20px; /* Estende lo sfondo fino ai bordi dello schermo */
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
   .nav-item {
-    padding: 10px 0;
+    width: 100%;
     text-align: center;
+    padding: 8px 0;
+  }
+
+  /* Evita che l'animazione sottolineatura si attivi a caso su tutto lo schermo mobile */
+  .nav-link::after {
+    left: 25%;
+    right: 25%;
+    width: 0;
+  }
+
+  .nav-link.active::after {
+    width: 50%;
+  }
+
+  /* Il tuo bottone login rimane uguale, gli diamo solo respiro */
+  .btn-login {
+    display: block;
+    width: 100%;
+    margin-top: 5px;
   }
 }

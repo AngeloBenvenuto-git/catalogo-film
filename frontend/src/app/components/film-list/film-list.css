@@ -113,3 +113,44 @@
 .card-film:hover .card-hover-info {
   opacity: 1;
 }
+
+
+
+/* --- QUESTO BLOCCO VIENE LETTO SOLO DA SMARTPHONE E TABLET --- */
+@media screen and (max-width: 991px) {
+
+  /* Riduce il padding che su PC è 40px ma su mobile è troppo */
+  .movie-gallery {
+    padding: 15px !important;
+  }
+
+  /* Sistema la Hero Section per non farla sparire o diventare enorme */
+  .hero-section {
+    height: 50vh !important;
+    margin-bottom: 20px !important;
+  }
+
+  .hero-content {
+    padding-left: 1rem !important;
+    text-align: center;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem !important; /* Titolo leggibile su telefono */
+  }
+
+  /* Disattiva l'ingrandimento 1.1 che su touch crea problemi */
+  .movie-card:hover, .card-film:hover {
+    transform: none !important;
+  }
+
+  /* I filtri: invece di stare a destra, si centrano */
+  .d-flex.gap-3 {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .form-control.w-auto {
+    width: 100% !important;
+  }
+}
