@@ -41,3 +41,6 @@
     padding-right: 20px !important;
   }
 }
+.suggestion-item:hover {
+  background-color: #333;
+}

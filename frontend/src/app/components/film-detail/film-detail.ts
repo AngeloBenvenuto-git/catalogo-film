@@ -22,6 +22,10 @@ export class FilmDetail implements OnInit {
   recensioni: any[] = [];
   nuovaRecensione: string = '';
   nuovoVoto: number = 5;
+  citta: string = '';
+  cinema: any[] = [];
+  caricamentoCinema: boolean = false;
+  erroreCinema: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -166,6 +170,29 @@ export class FilmDetail implements OnInit {
         this.trailerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
           `https://www.youtube.com/embed?listType=search&list=${queryRicerca}`
         );
+        this.cdr.detectChanges();
+      });
+  }
+
+  trovaCinema() {
+    if (!this.citta.trim()) return;
+    this.caricamentoCinema = true;
+    this.erroreCinema = '';
+    this.cinema = [];
+
+    fetch(`http://localhost:8080/api/film/${this.film.id}/cinema?citta=${encodeURIComponent(this.citta)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.errore) {
+          this.erroreCinema = 'Proiezione non disponibile in questa città. Ecco i cinema vicini:';
+        }
+        this.cinema = Array.isArray(data) ? data : [data];
+        this.caricamentoCinema = false;
+        this.cdr.detectChanges();
+      })
+      .catch(() => {
+        this.erroreCinema = 'Errore nella ricerca cinema.';
+        this.caricamentoCinema = false;
         this.cdr.detectChanges();
       });
   }
