@@ -1,53 +1,84 @@
 package com.progetto.catalogo_film.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class ChatBotService {
 
-    @Value("${gemini.api.key}")
-    private String apiKey;
+    private final WebClient webClient;
 
-    private final WebClient webClient = WebClient.create();
+    public ChatBotService(@Value("${groq.api.key}") String apiKey) {
 
-    public String generateReply(String message) {
-        // URL per il modello 1.5-flash (il più veloce e stabile per i test)
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=" + apiKey;
+        System.out.println("API KEY: " + apiKey); // DEBUG
 
-        // Struttura JSON minima richiesta da Google
+        this.webClient = WebClient.builder()
+                .baseUrl("https://api.groq.com/openai/v1")
+                .defaultHeader("Authorization", "Bearer " + apiKey)
+                .defaultHeader("Content-Type", "application/json")
+                .build();
+    }
+
+    public String generateReply(String userMessage) {
+
         Map<String, Object> body = Map.of(
-                "contents", List.of(
-                        Map.of("parts", List.of(
-                                Map.of("text", "Rispondi come assistente del sito NetFilm. Utente: " + message)
-                        ))
+                "model", "llama-3.1-8b-instant",
+                "max_tokens", 200,
+                "temperature", 0.7,
+                "messages", List.of(
+                        Map.of(
+                                "role", "system",
+                                "content", "Rispondi sempre in italiano. Sei un assistente utile per un sito di film."
+                        ),
+                        Map.of(
+                                "role", "user",
+                                "content", userMessage
+                        )
                 )
         );
 
         try {
             Map response = webClient.post()
-                    .uri(url)
+                    .uri("/chat/completions")
                     .bodyValue(body)
                     .retrieve()
+                    .onStatus(status -> status.isError(), clientResponse ->
+                            clientResponse.bodyToMono(String.class)
+                                    .flatMap(errorBody -> {
+                                        System.out.println("ERRORE API: " + errorBody);
+                                        return Mono.error(new RuntimeException("Errore API: " + errorBody));
+                                    })
+                    )
+
                     .bodyToMono(Map.class)
                     .block();
 
-            // Estrazione del testo dalla "matrioska" di Google
-            if (response != null && response.get("candidates") != null) {
-                List candidates = (List) response.get("candidates");
-                Map candidate = (Map) candidates.get(0);
-                Map content = (Map) candidate.get("content");
-                List parts = (List) content.get("parts");
-                return (String) ((Map) parts.get(0)).get("text");
-            }
-        } catch (Exception e) {
-            // Se fallisce, stampa l'errore REALE nella console di IntelliJ
-            System.err.println("ERRORE API GEMINI: " + e.getMessage());
-        }
+            // DEBUG: stampa risposta completa
+            System.out.println("RESPONSE: " + response);
 
-        return "Scusa, sto ricaricando le mie conoscenze. Riprova tra un istante! 🍿";
+            if (response == null || !response.containsKey("choices")) {
+                return "Errore: risposta non valida dall'API";
+            }
+
+            List choices = (List) response.get("choices");
+            if (choices.isEmpty()) {
+                return "Errore: nessuna risposta generata";
+            }
+
+            Map firstChoice = (Map) choices.get(0);
+            Map messageObj = (Map) firstChoice.get("message");
+
+            return (String) messageObj.get("content");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Errore durante la chiamata al chatbot: " + e.getMessage();
+        }
     }
 }
