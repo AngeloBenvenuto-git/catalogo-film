@@ -73,6 +73,8 @@
         </div>
       </div>
 
+
+
       <!-- SEZIONE RECENSIONI -->
       <div class="mt-5">
         <h4 class="text-white mb-3">💬 Recensioni</h4>
@@ -130,10 +132,10 @@
       <!-- SEZIONE GOOGLE MAPS -->
       <div class="mt-5">
         <h4 class="text-white mb-3">🎥 Cinema vicini</h4>
-        
+
         <div class="d-flex gap-2 mb-3">
-          <input type="text" class="form-control custom-input" 
-            [(ngModel)]="citta" 
+          <input type="text" class="form-control custom-input"
+            [(ngModel)]="citta"
             placeholder="Inserisci la tua città..."
             (keyup.enter)="trovaCinema()">
           <button class="btn btn-netflix" (click)="trovaCinema()">Cerca</button>
@@ -150,8 +152,8 @@
         <div *ngFor="let c of cinema" class="card bg-dark border-secondary mb-2 p-3">
           <h6 class="text-white mb-1">{{ c.nome }}</h6>
           <p class="text-white-50 small mb-1">{{ c.indirizzo }}</p>
-          <a [href]="'https://www.google.com/maps?q=' + c.lat + ',' + c.lng" 
-            target="_blank" 
+          <a [href]="'https://www.google.com/maps?q=' + c.lat + ',' + c.lng"
+            target="_blank"
             class="btn btn-sm btn-outline-light mt-1">
             📍 Apri in Google Maps
           </a>

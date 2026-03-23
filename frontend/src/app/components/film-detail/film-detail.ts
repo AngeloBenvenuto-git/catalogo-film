@@ -6,11 +6,15 @@ import { FilmService } from '../../services/film';
 import { AuthService } from '../../services/auth.service';
 import { RecensioneService } from '../../services/recensione.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { GoogleMapsModule } from '@angular/google-maps';
+// Importa il modulo delle mappe se non lo hai già fatto nel modulo principale,
+// ma qui ci serve la dichiarazione globale per l'SDK JS
+declare var google: any;
 
 @Component({
   selector: 'app-film-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule,GoogleMapsModule],
   templateUrl: './film-detail.html',
   styleUrl: './film-detail.css'
 })
@@ -26,6 +30,11 @@ export class FilmDetail implements OnInit {
   cinema: any[] = [];
   caricamentoCinema: boolean = false;
   erroreCinema: string = '';
+
+  // Variabili per Google Maps
+  cinemas: any[] = [];
+  center: any = { lat: 41.9028, lng: 12.4964 }; // Default su Roma
+  zoom = 12;
 
   constructor(
     private route: ActivatedRoute,
@@ -52,7 +61,59 @@ export class FilmDetail implements OnInit {
       error: (err) => console.error("Errore nel recupero del film", err)
     });
     this.caricaRecensioni(id);
+
+    // Avvia la ricerca dei cinema vicini
+    this.ottieniPosizioneEIniziaRicerca();
   }
+
+  // --- LOGICA GOOGLE MAPS ---
+
+  ottieniPosizioneEIniziaRicerca() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        this.center = { lat, lng };
+        this.caricaCinemaVicini(lat, lng);
+      }, (error) => {
+        console.warn("Geolocalizzazione non disponibile, uso posizione di default.");
+        this.caricaCinemaVicini(this.center.lat, this.center.lng);
+      });
+    }
+  }
+
+  caricaCinemaVicini(lat: number, lng: number) {
+    try {
+      const posizione = new google.maps.LatLng(lat, lng);
+      const service = new google.maps.places.PlacesService(document.createElement('div'));
+
+      const request = {
+        location: posizione,
+        radius: '5000',
+        type: ['movie_theater']
+      };
+
+      service.nearbySearch(request, (results: any, status: any) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          this.cinemas = results.map((place: any) => ({
+            name: place.name,
+            address: place.vicinity,
+            rating: place.rating,
+            position: {
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng()
+            },
+            url: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name + ' ' + place.vicinity)}`
+          }));
+          this.cdr.detectChanges();
+        }
+      });
+    } catch (e) {
+      console.error("Errore SDK Google Maps:", e);
+    }
+  }
+
+  // --- FINE LOGICA MAPS ---
 
   caricaRecensioni(filmId: number) {
     this.recensioneService.getRecensioniFilm(filmId).subscribe({
@@ -209,4 +270,5 @@ export class FilmDetail implements OnInit {
   isRecensioneUtente(usernameUtente: string): boolean {
     return this.authService.getUsername() === usernameUtente;
   }
+
 }
