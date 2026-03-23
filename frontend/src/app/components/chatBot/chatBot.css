@@ -1,81 +1,193 @@
-/* Posizionamento generale nell'angolo in basso a destra */
+/* --- CONTAINER E POSIZIONAMENTO --- */
 .chatbot-container {
   position: fixed;
   bottom: 25px;
   right: 25px;
-  z-index: 2000; /* Assicura che sia sopra a tutto */
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  z-index: 9999;
+  font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Bottone rotondo del robot */
+/* --- IL TRIGGER (BOTTONE) ICONICO --- */
 .chat-toggle {
-  width: 60px;
-  height: 60px;
-  transition: transform 0.3s ease;
+  width: 65px;
+  height: 65px;
+  background: linear-gradient(135deg, #e50914 0%, #b20710 100%);
+  border-radius: 50%;
   border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 10px 30px rgba(229, 9, 20, 0.5),
+  inset 0 2px 5px rgba(255, 255, 255, 0.3);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
 }
 
 .chat-toggle:hover {
-  transform: scale(1.1);
+  transform: scale(1.1) rotate(10deg);
+  box-shadow: 0 15px 40px rgba(229, 9, 20, 0.7);
 }
 
-/* La finestra della chat */
+.chat-toggle.active {
+  background: #1a1a1a;
+  transform: rotate(90deg);
+}
+
+/* --- LA FINESTRA NEOMORFICA --- */
 .chat-window {
   position: absolute;
-  bottom: 80px;
+  bottom: 85px;
   right: 0;
   width: 320px;
   height: 450px;
   display: flex;
   flex-direction: column;
+  background: rgba(10, 10, 10, 0.85); /* Trasparenza scura */
+  backdrop-filter: blur(25px) saturate(150%); /* Effetto vetro iper-realistico */
+  -webkit-backdrop-filter: blur(25px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8),
+  0 0 15px rgba(229, 9, 20, 0.1); /* Glow rosso leggero esterno */
   overflow: hidden;
-  background-color: #000; /* Sfondo nero stile Netflix */
-  animation: slideUp 0.3s ease-out;
+  animation: entrance 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* Area dei messaggi */
-.chat-body {
-  flex-grow: 1;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #e50914 #000;
+/* --- HEADER STILE APPLE/NETFLIX --- */
+.chat-header {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-/* Bolle dei messaggi dell'utente */
-.bubble-user {
-  background-color: #e50914; /* Rosso Netflix */
-  color: white;
-  border-radius: 15px 15px 0 15px;
-  font-size: 0.9rem;
+.chat-header h6 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  background: linear-gradient(to right, #fff, #888);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* Bolle dei messaggi del bot */
-.bubble-bot {
-  background-color: #333;
-  color: #fff;
-  border-radius: 15px 15px 15px 0;
-  font-size: 0.9rem;
-}
-
-/* Pallino verde "Online" */
 .status-dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   background-color: #2ecc71;
   border-radius: 50%;
+  box-shadow: 0 0 12px #2ecc71;
+  animation: pulse-green 2s infinite;
 }
 
-/* Animazione di apertura */
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* --- AREA MESSAGGI --- */
+.chat-body {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
 }
 
-/* Stile scrollbar per Chrome/Safari */
+/* --- BOLLE MESSAGGI (IL CAPOLAVORO) --- */
+.bubble-user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #e50914 0%, #9b080f 100%);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 20px 20px 4px 20px;
+  font-size: 0.88rem;
+  max-width: 85%;
+  box-shadow: 0 4px 15px rgba(229, 9, 20, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bubble-bot {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.07);
+  color: #e0e0e0;
+  padding: 12px 16px;
+  border-radius: 20px 20px 20px 4px;
+  font-size: 0.88rem;
+  max-width: 85%;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  line-height: 1.5;
+}
+
+/* --- INPUT FOOTER (MINIMAL) --- */
+.chat-footer {
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.input-group {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.input-group:focus-within {
+  border-color: #e50914;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 15px rgba(229, 9, 20, 0.2);
+}
+
+.input-group input {
+  background: transparent !important;
+  color: white !important;
+  font-size: 0.85rem;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.btn-danger {
+  background: #e50914 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.btn-danger:hover {
+  transform: scale(1.05);
+}
+
+/* --- ANIMAZIONI --- */
+@keyframes entrance {
+  from { opacity: 0; transform: translateY(40px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pulse-green {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(46, 204, 113, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+}
+
+/* --- SCROLLBAR FUTURISTICA --- */
 .chat-body::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
+}
+.chat-body::-webkit-scrollbar-track {
+  background: transparent;
 }
 .chat-body::-webkit-scrollbar-thumb {
-  background-color: #e50914;
+  background: rgba(229, 9, 20, 0.4);
   border-radius: 10px;
+}
+.chat-body::-webkit-scrollbar-thumb:hover {
+  background: #e50914;
 }

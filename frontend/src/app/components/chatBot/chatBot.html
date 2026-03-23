@@ -1,40 +1,57 @@
 <div class="chatbot-container">
-  <button class="chat-toggle btn btn-danger rounded-circle shadow-lg d-flex align-items-center justify-content-center"
-          (click)="chatOpen = !chatOpen">
-    <span *ngIf="!chatOpen" style="font-size: 24px;">🤖</span>
-    <span *ngIf="chatOpen" style="font-size: 20px;">✕</span>
+  <button class="chat-toggle d-flex align-items-center justify-content-center"
+          (click)="toggleChat()" [class.active]="chatOpen">
+    <span *ngIf="!chatOpen" style="font-size: 28px;">🤖</span>
+    <span *ngIf="chatOpen" style="font-size: 22px;">✕</span>
   </button>
 
-  <div class="chat-window shadow-lg border-0 rounded-4" *ngIf="chatOpen">
+  <div class="chat-window" *ngIf="chatOpen">
 
-    <div class="chat-header bg-dark text-white p-3 d-flex justify-content-between align-items-center border-bottom border-secondary">
+    <div class="chat-header">
       <div class="d-flex align-items-center gap-2">
         <div class="status-dot"></div>
-        <h6 class="mb-0 fw-bold">NetFilm Assistant</h6>
+        <h6 class="mb-0">NetGPT</h6>
       </div>
+      <small class="text-success opacity-75 fw-bold">Online</small>
     </div>
 
-    <div class="chat-body p-3 bg-black">
+    <div class="chat-body" #chatBody>
       <div *ngFor="let m of messaggi"
-           class="d-flex mb-3"
+           class="d-flex"
            [ngClass]="m.daUtente ? 'justify-content-end' : 'justify-content-start'">
 
-        <div [ngClass]="m.daUtente ? 'bubble-user' : 'bubble-bot'"
-             class="p-2 px-3 shadow-sm">
-          {{ m.testo }}
+        <div [ngClass]="m.daUtente ? 'bubble-user' : 'bubble-bot'">
+          <span class="message-text">{{ m.testo }}</span>
+          <div class="msg-time mt-1">{{ m.ora | date:'HH:mm' }}</div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-start" *ngIf="staScrivendo && codaCaratteri.length === 0 && messaggi[messaggi.length-1].testo === ''">
+        <div class="bubble-bot typing-dots d-flex gap-1">
+          <span></span><span></span><span></span>
         </div>
       </div>
     </div>
 
-    <div class="chat-footer p-3 bg-dark border-top border-secondary">
-      <div class="input-group">
+    <div class="chat-footer">
+      <div class="input-group glass-input-group">
         <input type="text"
-               class="form-control bg-secondary text-white border-0"
+               class="form-control"
                [(ngModel)]="messaggio"
                (keyup.enter)="inviaMessaggio()"
-               placeholder="Chiedi un consiglio...">
-        <button class="btn btn-danger" (click)="inviaMessaggio()">
-          ➤
+               [disabled]="staScrivendo"
+               placeholder="Chiedi a NetFilm AI...">
+
+        <button *ngIf="!staScrivendo"
+                class="btn btn-danger"
+                (click)="inviaMessaggio()">
+          <span>➤</span>
+        </button>
+
+        <button *ngIf="staScrivendo"
+                class="btn btn-stop"
+                (click)="stopGenerazione()">
+          <span>■</span>
         </button>
       </div>
     </div>
