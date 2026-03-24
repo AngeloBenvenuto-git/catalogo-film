@@ -5,7 +5,6 @@ import com.progetto.catalogo_film.entity.Film;
 import com.progetto.catalogo_film.service.FilmService;
 import com.progetto.catalogo_film.service.GoogleMapsService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public class FilmController {
     private final FilmService filmService;
     private final GoogleMapsService googleMapsService;
 
-    public FilmController(FilmService filmService,GoogleMapsService googleMapsService) {
+    public FilmController(FilmService filmService, GoogleMapsService googleMapsService) {
         this.filmService = filmService;
         this.googleMapsService = googleMapsService;
     }
@@ -98,10 +97,11 @@ public class FilmController {
     @GetMapping("/{id}/cinema")
     public ResponseEntity<?> trovaCinemaVicino(
             @PathVariable Long id,
-            @RequestParam String citta) {
+            @RequestParam double lat,
+            @RequestParam double lng) {
         try {
-            filmService.getFilmById(id); // verifica che il film esista
-            return ResponseEntity.ok(googleMapsService.trovaCinemaVicino(citta));
+            filmService.getFilmById(id);
+            return ResponseEntity.ok(googleMapsService.trovaCinemaVicino(lat, lng));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
         }

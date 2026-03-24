@@ -6,6 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class GoogleMapsService {
@@ -19,10 +20,11 @@ public class GoogleMapsService {
         this.webClient = WebClient.create();
     }
 
-    public Map<String, Object> trovaCinemaVicino(String citta) {
-        String query = "cinema " + citta;
-        String url = "https://maps.googleapis.com/maps/api/place/textsearch/json"
-                + "?query=" + query.replace(" ", "+")
+    public List<Map<String, Object>> trovaCinemaVicino(double lat, double lng) {
+        String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+                + "?location=" + lat + "," + lng
+                + "&radius=30000"
+                + "&type=movie_theater"
                 + "&key=" + apiKey
                 + "&language=it";
 
@@ -32,20 +34,24 @@ public class GoogleMapsService {
                 .bodyToMono(Map.class)
                 .block();
 
-        if (response == null) return Map.of("errore", "Nessun risultato");
+        if (response == null) throw new RuntimeException("Nessun risultato da Google Maps");
 
         List<Map> results = (List<Map>) response.get("results");
-        if (results == null || results.isEmpty()) return Map.of("errore", "Nessun cinema trovato");
+        if (results == null || results.isEmpty())
+            throw new RuntimeException("Nessun cinema trovato nella zona. Prova con una città più grande vicina.");
 
-        Map primo = results.get(0);
-        Map geometry = (Map) primo.get("geometry");
-        Map location = (Map) geometry.get("location");
-
-        return Map.of(
-                "nome", primo.getOrDefault("name", ""),
-                "indirizzo", primo.getOrDefault("formatted_address", ""),
-                "lat", location.get("lat"),
-                "lng", location.get("lng")
-        );
+        return results.stream()
+                .limit(5)
+                .map(posto -> {
+                    Map geometry = (Map) posto.get("geometry");
+                    Map location = (Map) geometry.get("location");
+                    return Map.<String, Object>of(
+                            "nome", posto.getOrDefault("name", ""),
+                            "indirizzo", posto.getOrDefault("vicinity", ""),
+                            "lat", location.get("lat"),
+                            "lng", location.get("lng")
+                    );
+                })
+                .collect(Collectors.toList());
     }
 }
