@@ -72,18 +72,16 @@
     </div>
 
     <div class="nav-icon-group" *ngIf="isLoggato">
-      <button class="nav-icon-btn" title="I miei film" routerLink="/watchlist">
-        <i class="bi bi-bookmark-plus"></i>
+      <button class="nav-icon-btn" title="I miei film" routerLink="/favorites" routerLinkActive="active">
+        <i class="bi bi-bookmark-fill"></i>
       </button>
-    </div>
-
-    <div class="pv-profile-section">
-      <div class="profile-trigger">
-        <i class="bi bi-person-circle text-white"></i>
-        <span class="user-name-label ms-2 text-white" *ngIf="isLoggato">
+  </div> <div class="pv-profile-section">
+    <div class="profile-trigger">
+      <i class="bi bi-person-circle text-white"></i>
+      <span class="user-name-label ms-2 text-white" *ngIf="isLoggato">
           {{ getUsername() || 'Profilo' }}
         </span>
-      </div>
+    </div>
 
       <div class="profile-dropdown shadow-lg">
         <ng-container *ngIf="isLoggato">

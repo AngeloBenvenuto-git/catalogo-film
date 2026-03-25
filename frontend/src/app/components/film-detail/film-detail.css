@@ -45,56 +45,57 @@
   .suggestion-item:hover {
     background-color: #333;
   }
-/* Icona base */
-.favorite-icon-detail {
-  cursor: pointer;
+/* Icona base - Rinominata e potenziata per il click */
+.pv-favorite-btn {
+  cursor: pointer !important;
   color: gray;
   transition: transform 0.3s ease, color 0.3s ease, filter 0.3s ease;
-  font-size: 1.5rem;
+  font-size: 1.8rem; /* Un po' più grande per facilitare il click */
   text-shadow: 0 0 0px rgba(255,0,0,0);
+  position: relative !important;
+  z-index: 9999 !important; /* Sopra a tutto il lavoro del collega */
+  pointer-events: auto !important; /* Forza il click */
+  display: inline-block;
 }
 
 /* Stato attivo (rosso) */
-.favorite-icon-detail.active {
-  color: red;
+.pv-favorite-btn.active {
+  color: red !important;
 }
 
 /* Hover: effetto movimento + luminosità */
-.favorite-icon-detail:hover {
-  transform: translateY(-5px) scale(1.2) rotate(-10deg); /* leggero movimento */
-  filter: brightness(1.5) drop-shadow(0 0 8px rgba(255,0,0,0.7));
-  text-shadow: 0 0 8px rgba(255,0,0,0.6);
+.pv-favorite-btn:hover {
+  transform: translateY(-5px) scale(1.3) rotate(-15deg) !important;
+  filter: brightness(1.7) drop-shadow(0 0 12px rgba(255,0,0,0.8)) !important;
+  text-shadow: 0 0 12px rgba(255,0,0,0.7);
 }
 
 /* Animazione click / pulse */
-@keyframes pulse {
+@keyframes pulse-fav {
   0% { transform: scale(1); }
   50% { transform: scale(1.4); }
   100% { transform: scale(1.2); }
 }
 
-.favorite-icon-detail.animate {
-  animation: pulse 0.3s ease;
+.pv-favorite-btn.animate {
+  animation: pulse-fav 0.3s ease;
 }
-.favorite-icon-detail:hover {
-  transform: translateY(-5px) scale(1.3) rotate(-15deg);
-  filter: brightness(1.7) drop-shadow(0 0 12px rgba(255,0,0,0.8));
-  text-shadow: 0 0 12px rgba(255,0,0,0.7);
-}
-.added-message-detail {
+
+/* Messaggio a comparsa (quello nero 85% opacità) */
+.pv-added-msg {
   position: fixed;
-  top: 20px;
+  top: 80px; /* Abbassato un po' per non finire SOTTO la nuova navbar */
   right: 20px;
-  background: rgba(0, 0, 0, 0.85); /* Nero con 85% di opacità */
+  background: rgba(0, 0, 0, 0.85);
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
-  z-index: 9999;
-  border: 1px solid rgba(255, 255, 255, 0.2); /* Bordino sottile per staccare dallo sfondo */
+  z-index: 10000; /* Ancora più su della navbar */
+  border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   font-weight: 500;
-  pointer-events: none; /* Così non blocca i click sotto */
-  animation: slideInAndFade 3s forwards; /* Animazione automatica */
+  pointer-events: none;
+  animation: slideInAndFade 3s forwards;
 }
 
 @keyframes slideInAndFade {

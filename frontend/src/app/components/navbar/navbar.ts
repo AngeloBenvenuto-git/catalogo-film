@@ -106,4 +106,7 @@ export class Navbar implements OnInit {
     this.isLoggato = false;
     this.router.navigate(['/login']);
   }
+  goToFavorites() {
+    this.router.navigate(['/favorites']); // Assicurati che il path sia corretto nelle tue rotte
+  }
 }

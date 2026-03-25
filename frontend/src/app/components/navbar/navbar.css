@@ -227,3 +227,23 @@
   .nav-links-container { display: none; }
   .pv-mega-menu { width: 90vw; right: -40px; }
 }
+.nav-icon-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.nav-icon-btn:hover {
+  transform: scale(1.1);
+  color: #e50914; /* Rosso Netflix al passaggio del mouse */
+}
+
+.bookmark-icon {
+  width: 22px;
+  height: 22px;
+}

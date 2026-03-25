@@ -9,21 +9,20 @@
       <div class="d-flex justify-content-between align-items-start mb-2">
 
         <div class="d-flex align-items-center gap-3">
-          <h2>{{ film.titolo }}</h2>
+          <h2>{{ film?.titolo }}</h2>
 
-          <!-- Segnalibro animato -->
           <i
-            class="fa favorite-icon-detail"
-            [class.far]="!isFavoriteFilm(film.id)"
-            [class.fas]="isFavoriteFilm(film.id)"
+            class="fa pv-favorite-btn"
+            [class.far]="!isFavoriteFilm(film?.id)"
+            [class.fas]="isFavoriteFilm(film?.id)"
             [class.fa-bookmark]="true"
-            [class.active]="isFavoriteFilm(film.id)"
-            [class.animate]="animatedFilmId === film.id"
-            (click)="toggleFavorite()">
+            [class.active]="isFavoriteFilm(film?.id)"
+            [class.animate]="animatedFilmId === film?.id"
+            (click)="toggleFavorite(); $event.stopPropagation()">
           </i>
         </div>
 
-        <div *ngIf="message" class="added-message-detail">
+        <div *ngIf="message" class="pv-added-msg">
           {{ message }}
         </div>
 
