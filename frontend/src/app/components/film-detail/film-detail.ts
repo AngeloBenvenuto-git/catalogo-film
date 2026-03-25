@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { RecensioneService } from '../../services/recensione.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
+declare var google: any;
 
 @Component({
   selector: 'app-film-detail',
@@ -31,6 +32,8 @@ export class FilmDetail implements OnInit, AfterViewInit {
   erroreCinema: string = '';
   center: { lat: number, lng: number } = { lat: 41.9028, lng: 12.4964 };
   private readonly MAPS_KEY = 'AIzaSyAGWTr9oVHvICUVMgWrmdTbDPDy9CYceBs';
+  private mappa: any = null;
+  private markers: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -75,13 +78,64 @@ export class FilmDetail implements OnInit, AfterViewInit {
             const lng = place.geometry.location.lng();
             this.citta = place.name || place.formatted_address || this.citta;
             this.center = { lat, lng };
-            this.aggiornaMappaIframe(lat, lng);
+            this.aggiornaMappa(lat, lng);
             this.cercaCinemaPerCoordinate(lat, lng);
             this.cdr.detectChanges();
           }
         });
       }
     }, 1000);
+  }
+
+  // --- METODI MAPPA ---
+
+  inizializzaMappa(lat: number, lng: number) {
+    const container = document.getElementById('mappa-container');
+    if (!container || !(window as any).google) return;
+    this.mappa = new google.maps.Map(container, {
+      center: { lat, lng },
+      zoom: 11,
+      mapTypeControl: false,
+      streetViewControl: false,
+    });
+  }
+
+  aggiornaMappa(lat: number, lng: number) {
+    if (!this.mappa) {
+      this.inizializzaMappa(lat, lng);
+      return;
+    }
+    this.mappa.setCenter({ lat, lng });
+    this.mappa.setZoom(11);
+    // Rimuovi marker precedenti
+    this.markers.forEach(m => m.setMap(null));
+    this.markers = [];
+  }
+
+  aggiungiMarkers(cinemaList: any[]) {
+    if (!this.mappa) return;
+    // Rimuovi marker precedenti
+    this.markers.forEach(m => m.setMap(null));
+    this.markers = [];
+
+    cinemaList.forEach(c => {
+      const marker = new google.maps.Marker({
+        position: { lat: c.lat, lng: c.lng },
+        map: this.mappa,
+        title: c.nome,
+        icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+      });
+
+      const infoWindow = new google.maps.InfoWindow({
+        content: `<div style="color:#000"><strong>${c.nome}</strong><br>${c.indirizzo}</div>`
+      });
+
+      marker.addListener('click', () => {
+        infoWindow.open(this.mappa, marker);
+      });
+
+      this.markers.push(marker);
+    });
   }
 
   // --- METODI CINEMA ---
@@ -93,7 +147,6 @@ export class FilmDetail implements OnInit, AfterViewInit {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
           this.center = { lat, lng };
-          this.aggiornaMappaIframe(lat, lng);
           this.geocodingInverso(lat, lng);
         },
         () => {
@@ -105,7 +158,6 @@ export class FilmDetail implements OnInit, AfterViewInit {
 
   trovaCinema() {
     if (!this.citta.trim()) return;
-    console.log('cerco città:', this.citta);
     const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(this.citta)}&key=${this.MAPS_KEY}&language=it&region=it&components=country:IT`;
 
     fetch(geocodeUrl)
@@ -113,9 +165,8 @@ export class FilmDetail implements OnInit, AfterViewInit {
       .then(data => {
         if (data.status === 'OK' && data.results?.length) {
           const loc = data.results[0].geometry.location;
-          console.log('Coordinate trovate:', loc.lat, loc.lng);
           this.center = { lat: loc.lat, lng: loc.lng };
-          this.aggiornaMappaIframe(loc.lat, loc.lng);
+          this.aggiornaMappa(loc.lat, loc.lng);
           this.cercaCinemaPerCoordinate(loc.lat, loc.lng);
         } else {
           this.erroreCinema = 'Città non trovata. Prova con un nome diverso.';
@@ -140,6 +191,7 @@ export class FilmDetail implements OnInit, AfterViewInit {
           this.erroreCinema = data.errore;
         } else {
           this.cinema = Array.isArray(data) ? data : [data];
+          this.aggiungiMarkers(this.cinema);
         }
         this.caricamentoCinema = false;
         this.cdr.detectChanges();
@@ -164,30 +216,17 @@ export class FilmDetail implements OnInit, AfterViewInit {
             this.cdr.detectChanges();
           }
         }
-        // Cerca cinema direttamente per coordinate, senza passare dalla città
-        this.aggiornaMappaIframe(lat, lng);
-        this.cercaCinemaPerCoordinate(lat, lng);
+        setTimeout(() => {
+          this.aggiornaMappa(lat, lng);
+          this.cercaCinemaPerCoordinate(lat, lng);
+        }, 1200);
       })
       .catch(() => {
-        this.aggiornaMappaIframe(lat, lng);
-        this.cercaCinemaPerCoordinate(lat, lng);
+        setTimeout(() => {
+          this.aggiornaMappa(lat, lng);
+          this.cercaCinemaPerCoordinate(lat, lng);
+        }, 1200);
       });
-  }
-
-  aggiornaMappaIframe(lat: number, lng: number) {
-    setTimeout(() => {
-      const container = document.getElementById('mappa-container');
-      if (!container) return;
-      container.innerHTML = '';
-      const iframe = document.createElement('iframe');
-      iframe.src = `https://www.google.com/maps/embed/v1/search?key=${this.MAPS_KEY}&q=cinema+movie+theater&center=${lat},${lng}&zoom=11&language=it`;
-      iframe.width = '100%';
-      iframe.height = '400';
-      iframe.style.border = '0';
-      iframe.style.borderRadius = '8px';
-      iframe.allowFullscreen = true;
-      container.appendChild(iframe);
-    }, 100);
   }
 
   // --- FINE METODI CINEMA ---
