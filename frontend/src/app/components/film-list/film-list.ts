@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FilmService } from '../../services/film';
 
@@ -12,123 +12,114 @@ import { FilmService } from '../../services/film';
   styleUrl: './film-list.css',
 })
 export class FilmList implements OnInit {
-  films: any[] = [];
-  filmsFiltrati: any[] = [];
+  films: any[] = [];          // Database originale (non viene mai toccato)
+  filmsFiltrati: any[] = [];  // Lista mostrata nell'HTML
+
+  // Parametri URL
   ricerca: string = '';
+  genereSelezionato: string = '';
   ordinamento: string = '';
+  ordinamentoAnno: string = '';
+
+  // Filtri tecnici (opzionali)
   valutazioneMin: number = 0;
   valutazioneMax: number = 10;
-  ordinamentoAnno: string = '';
   anniSelezionati: Set<number> = new Set();
-  mostraFiltroValutazione: boolean = false;
-  mostraFiltroAnno: boolean = false;
-  intervalloAperto: string | null = null;
 
-  intervalliAnni = [
-    { label: '- 1980', min: 0, max: 1980 },
-    { label: '1980 - 1990', min: 1980, max: 1990 },
-    { label: '1990 - 2000', min: 1990, max: 2000 },
-    { label: '2000 - 2010', min: 2000, max: 2010 },
-    { label: '2010 - 2020', min: 2010, max: 2020 },
-    { label: '2020+', min: 2020, max: 9999 },
-  ];
-
-  constructor(private filmService: FilmService, private router: Router, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private filmService: FilmService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    this.ricerca = localStorage.getItem('f_ricerca') || '';
-    this.ordinamento = localStorage.getItem('f_ord_val') || '';
-    this.ordinamentoAnno = localStorage.getItem('f_ord_anno') || '';
-    this.valutazioneMin = Number(localStorage.getItem('f_val_min')) || 0;
-    this.valutazioneMax = Number(localStorage.getItem('f_val_max')) || 10;
-
-    const anniSalvati = localStorage.getItem('f_anni');
-    if (anniSalvati) {
-      this.anniSelezionati = new Set(JSON.parse(anniSalvati));
-    }
-
+    // 1. Carichiamo i film dal database
     this.filmService.getTuttiFilm().subscribe({
       next: (data) => {
         this.films = data;
-        this.applicaOrdinamento();
-        this.cdr.detectChanges();
+
+        // 2. Ascoltiamo l'URL. Ogni volta che cambia (click sulla Navbar), rieseguiamo la logica.
+        this.route.queryParams.subscribe(params => {
+          this.ricerca = params['q'] || '';
+          this.genereSelezionato = params['g'] || '';
+          this.ordinamento = params['ord'] || '';
+          this.ordinamentoAnno = params['ordAnno'] || '';
+
+          this.applicaLogicaProfessionale();
+          this.cdr.detectChanges();
+        });
       }
     });
   }
 
-  // --- GESTIONE NAVIGAZIONE ---
-  vaiAiDettagli(id: number) {
-    this.salvaStatoBrowser();
-    this.router.navigate(['/films', id]);
-  }
+  applicaLogicaProfessionale() {
+    // Partiamo da una copia pulita dell'intero database
+    let risultato = [...this.films];
 
-  // --- LOGICA FILTRI ---
-  cercaFilm() {
-    this.applicaOrdinamento();
-  }
+    // --- A. FILTRAGGIO ---
 
-  toggleAnno(anno: number) {
-    if (this.anniSelezionati.has(anno)) {
-      this.anniSelezionati.delete(anno);
-    } else {
-      this.anniSelezionati.add(anno);
+    // 1. Filtro per Genere (se selezionato)
+    if (this.genereSelezionato) {
+      const gCercato = this.genereSelezionato.toLowerCase().trim();
+      risultato = risultato.filter(f =>
+        f.genere && f.genere.toLowerCase().includes(gCercato)
+      );
     }
-    this.applicaOrdinamento();
-    this.cdr.detectChanges();
-  }
 
-  getAnniPerIntervallo(min: number, max: number): number[] {
-    const anni: number[] = [];
-    const annoMax = max === 9999 ? new Date().getFullYear() : max;
-    for (let a = min; a <= annoMax; a++) {
-      if (this.films.some(f => f.anno === a)) {
-        anni.push(a);
-      }
+    // 2. Filtro per Ricerca Testuale (se presente)
+    if (this.ricerca) {
+      const qCercata = this.ricerca.toLowerCase().trim();
+      risultato = risultato.filter(f =>
+        f.titolo.toLowerCase().includes(qCercata)
+      );
     }
-    return anni;
-  }
 
-  applicaOrdinamento() {
-    let risultato = this.films.filter(f => {
-      const titoloOk = f.titolo.toLowerCase().includes(this.ricerca.toLowerCase());
+    // 3. Filtri tecnici (Valutazione/Range anni se attivi)
+    risultato = risultato.filter(f => {
       const valOk = f.valutazione >= this.valutazioneMin && f.valutazione <= this.valutazioneMax;
       const annoOk = this.anniSelezionati.size === 0 || this.anniSelezionati.has(f.anno);
-      return titoloOk && valOk && annoOk;
+      return valOk && annoOk;
     });
 
-    // Applica Ordinamenti
-    if (this.ordinamento === 'val-desc') risultato.sort((a, b) => b.valutazione - a.valutazione);
-    if (this.ordinamento === 'val-asc') risultato.sort((a, b) => a.valutazione - b.valutazione);
-    if (this.ordinamentoAnno === 'anno-desc') risultato.sort((a, b) => b.anno - a.anno);
-    if (this.ordinamentoAnno === 'anno-asc') risultato.sort((a, b) => a.anno - b.anno);
+    // --- B. ORDINAMENTO ---
 
+    // Ordinamento Voto
+    if (this.ordinamento === 'val-desc') {
+      risultato.sort((a, b) => b.valutazione - a.valutazione);
+    } else if (this.ordinamento === 'val-asc') {
+      risultato.sort((a, b) => a.valutazione - b.valutazione);
+    }
+
+    // Ordinamento Anno
+    if (this.ordinamentoAnno === 'anno-desc') {
+      risultato.sort((a, b) => b.anno - a.anno);
+    } else if (this.ordinamentoAnno === 'anno-asc') {
+      risultato.sort((a, b) => a.anno - b.anno);
+    }
+
+    // --- C. AGGIORNAMENTO VISTA ---
     this.filmsFiltrati = risultato;
-    this.salvaStatoBrowser();
   }
 
+  /**
+   * Reset totale: Pulizia URL e ripristino stato originale
+   */
   rimuoviFiltri() {
-    localStorage.removeItem('f_ricerca');
-    localStorage.removeItem('f_val_min');
-    localStorage.removeItem('f_val_max');
-    localStorage.removeItem('f_anni');
-    localStorage.removeItem('f_ord_val');
-    localStorage.removeItem('f_ord_anno');
-    this.ricerca = '';
-    this.ordinamento = '';
-    this.ordinamentoAnno = '';
+    localStorage.clear();
     this.valutazioneMin = 0;
     this.valutazioneMax = 10;
     this.anniSelezionati = new Set();
-    this.applicaOrdinamento();
-    this.cdr.detectChanges();
+
+    // Naviga all'URL pulito
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {},
+      queryParamsHandling: '' // Rimuove tutto
+    });
   }
 
-  private salvaStatoBrowser() {
-    localStorage.setItem('f_ricerca', this.ricerca);
-    localStorage.setItem('f_val_min', this.valutazioneMin.toString());
-    localStorage.setItem('f_val_max', this.valutazioneMax.toString());
-    localStorage.setItem('f_anni', JSON.stringify(Array.from(this.anniSelezionati)));
-    localStorage.setItem('f_ord_val', this.ordinamento);
-    localStorage.setItem('f_ord_anno', this.ordinamentoAnno);
+  vaiAiDettagli(id: number) {
+    this.router.navigate(['/films', id]);
   }
 }

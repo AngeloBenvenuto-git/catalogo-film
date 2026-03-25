@@ -1,6 +1,6 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FilmService } from '../../services/film';
 import { AuthService } from '../../services/auth.service';
@@ -9,7 +9,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { FavoritesService } from '../../services/favorites.service';
 
-
 // Importa il modulo delle mappe se non lo hai già fatto nel modulo principale,
 // ma qui ci serve la dichiarazione globale per l'SDK JS
 declare var google: any;
@@ -17,11 +16,11 @@ declare var google: any;
 @Component({
   selector: 'app-film-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule,GoogleMapsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './film-detail.html',
   styleUrl: './film-detail.css'
 })
-export class FilmDetail implements OnInit {
+export class FilmDetail implements OnInit, AfterViewInit {
   film: any;
   trailerUrl: SafeResourceUrl | null = null;
   modalitaModifica: boolean = false;
@@ -29,16 +28,20 @@ export class FilmDetail implements OnInit {
   recensioni: any[] = [];
   nuovaRecensione: string = '';
   nuovoVoto: number = 5;
+
+  // Variabili cinema
   citta: string = '';
   cinema: any[] = [];
   caricamentoCinema: boolean = false;
   erroreCinema: string = '';
 
-
   // Variabili per Google Maps
   cinemas: any[] = [];
-  center: any = { lat: 41.9028, lng: 12.4964 }; // Default su Roma
+  center: { lat: number, lng: number } = { lat: 41.9028, lng: 12.4964 }; // Default su Roma
   zoom = 12;
+  private readonly MAPS_KEY = 'AIzaSyAGWTr9oVHvICUVMgWrmdTbDPDy9CYceBs';
+  private mappa: any = null;
+  private markers: any[] = [];
 
   //variabili per i preferiti
   favorites: number[] = [];
@@ -57,7 +60,7 @@ export class FilmDetail implements OnInit {
     private location: Location,
     private sanitizer: DomSanitizer,
     private favoriteService: FavoritesService,
-) {}
+  ) {}
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -86,61 +89,177 @@ export class FilmDetail implements OnInit {
       });
     }
 
-
-
     // Avvio ricerca cinema
     this.ottieniPosizioneEIniziaRicerca();
   }
 
+  ngAfterViewInit() {
+    setTimeout(() => {
+      const input = document.getElementById('inputCitta') as HTMLInputElement;
+      if (input && (window as any).google) {
+        const autocomplete = new (window as any).google.maps.places.Autocomplete(input, {
+          types: ['(cities)'],
+          componentRestrictions: { country: 'it' }
+        });
+        autocomplete.addListener('place_changed', () => {
+          const place = autocomplete.getPlace();
+          if (place.geometry?.location) {
+            const lat = place.geometry.location.lat();
+            const lng = place.geometry.location.lng();
+            this.citta = place.name || place.formatted_address || this.citta;
+            this.center = { lat, lng };
+            this.aggiornaMappa(lat, lng);
+            this.cercaCinemaPerCoordinate(lat, lng);
+            this.cdr.detectChanges();
+          }
+        });
+      }
+    }, 1000);
+  }
 
-  // --- LOGICA GOOGLE MAPS ---
+  // --- LOGICA GOOGLE MAPS & METODI MAPPA ---
+
+  inizializzaMappa(lat: number, lng: number) {
+    const container = document.getElementById('mappa-container');
+    if (!container || !(window as any).google) return;
+    this.mappa = new google.maps.Map(container, {
+      center: { lat, lng },
+      zoom: 11,
+      mapTypeControl: false,
+      streetViewControl: false,
+    });
+  }
+
+  aggiornaMappa(lat: number, lng: number) {
+    if (!this.mappa) {
+      this.inizializzaMappa(lat, lng);
+      return;
+    }
+    this.mappa.setCenter({ lat, lng });
+    this.mappa.setZoom(11);
+    // Rimuovi marker precedenti
+    this.markers.forEach(m => m.setMap(null));
+    this.markers = [];
+  }
+
+  aggiungiMarkers(cinemaList: any[]) {
+    if (!this.mappa) return;
+    // Rimuovi marker precedenti
+    this.markers.forEach(m => m.setMap(null));
+    this.markers = [];
+
+    cinemaList.forEach(c => {
+      const marker = new google.maps.Marker({
+        position: { lat: c.lat, lng: c.lng },
+        map: this.mappa,
+        title: c.nome,
+        icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+      });
+
+      const infoWindow = new google.maps.InfoWindow({
+        content: `<div style="color:#000"><strong>${c.nome}</strong><br>${c.indirizzo}</div>`
+      });
+
+      marker.addListener('click', () => {
+        infoWindow.open(this.mappa, marker);
+      });
+
+      this.markers.push(marker);
+    });
+  }
+
+  // --- METODI CINEMA ---
 
   ottieniPosizioneEIniziaRicerca() {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        this.center = { lat, lng };
-        this.caricaCinemaVicini(lat, lng);
-      }, (error) => {
-        console.warn("Geolocalizzazione non disponibile, uso posizione di default.");
-        this.caricaCinemaVicini(this.center.lat, this.center.lng);
-      });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          this.center = { lat, lng };
+          this.geocodingInverso(lat, lng);
+        },
+        () => {
+          console.warn('Geolocalizzazione non disponibile.');
+        }
+      );
     }
   }
 
-  caricaCinemaVicini(lat: number, lng: number) {
-    try {
-      const posizione = new google.maps.LatLng(lat, lng);
-      const service = new google.maps.places.PlacesService(document.createElement('div'));
+  trovaCinema() {
+    if (!this.citta.trim()) return;
+    const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(this.citta)}&key=${this.MAPS_KEY}&language=it&region=it&components=country:IT`;
 
-      const request = {
-        location: posizione,
-        radius: '5000',
-        type: ['movie_theater']
-      };
-
-      service.nearbySearch(request, (results: any, status: any) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-          this.cinemas = results.map((place: any) => ({
-            name: place.name,
-            address: place.vicinity,
-            rating: place.rating,
-            position: {
-              lat: place.geometry.location.lat(),
-              lng: place.geometry.location.lng()
-            },
-            url: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name + ' ' + place.vicinity)}`
-          }));
+    fetch(geocodeUrl)
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'OK' && data.results?.length) {
+          const loc = data.results[0].geometry.location;
+          this.center = { lat: loc.lat, lng: loc.lng };
+          this.aggiornaMappa(loc.lat, loc.lng);
+          this.cercaCinemaPerCoordinate(loc.lat, loc.lng);
+        } else {
+          this.erroreCinema = 'Città non trovata. Prova con un nome diverso.';
           this.cdr.detectChanges();
         }
+      })
+      .catch(() => {
+        this.erroreCinema = 'Errore nella ricerca.';
+        this.cdr.detectChanges();
       });
-    } catch (e) {
-      console.error("Errore SDK Google Maps:", e);
-    }
   }
 
-  // --- FINE LOGICA MAPS ---
+  cercaCinemaPerCoordinate(lat: number, lng: number) {
+    this.caricamentoCinema = true;
+    this.erroreCinema = '';
+    this.cinema = [];
+
+    fetch(`http://localhost:8080/api/film/${this.film.id}/cinema?lat=${lat}&lng=${lng}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.errore) {
+          this.erroreCinema = data.errore;
+        } else {
+          this.cinema = Array.isArray(data) ? data : [data];
+          this.aggiungiMarkers(this.cinema);
+        }
+        this.caricamentoCinema = false;
+        this.cdr.detectChanges();
+      })
+      .catch(() => {
+        this.erroreCinema = 'Errore nella ricerca cinema.';
+        this.caricamentoCinema = false;
+        this.cdr.detectChanges();
+      });
+  }
+
+  geocodingInverso(lat: number, lng: number) {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${this.MAPS_KEY}&language=it&result_type=locality`;
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'OK' && data.results?.length) {
+          const nomeLocalita = data.results[0].address_components
+            .find((c: any) => c.types.includes('locality'))?.long_name;
+          if (nomeLocalita) {
+            this.citta = nomeLocalita;
+            this.cdr.detectChanges();
+          }
+        }
+        setTimeout(() => {
+          this.aggiornaMappa(lat, lng);
+          this.cercaCinemaPerCoordinate(lat, lng);
+        }, 1200);
+      })
+      .catch(() => {
+        setTimeout(() => {
+          this.aggiornaMappa(lat, lng);
+          this.cercaCinemaPerCoordinate(lat, lng);
+        }, 1200);
+      });
+  }
+
+  // --- FINE METODI CINEMA ---
 
   caricaRecensioni(filmId: number) {
     this.recensioneService.getRecensioniFilm(filmId).subscribe({
@@ -215,7 +334,6 @@ export class FilmDetail implements OnInit {
       posterUrl: this.filmModifica.posterUrl,
       tmdbId: this.filmModifica.tmdbId
     };
-
     this.filmService.modificaFilm(this.film.id, filmDaModificare).subscribe({
       next: (res) => {
         this.film = res;
@@ -230,7 +348,6 @@ export class FilmDetail implements OnInit {
   caricaTrailer(tmdbId: number) {
     const apiKey = '9579a0d27a808bfbf8073387eefbddad';
     const url = `https://api.themoviedb.org/3/movie/${tmdbId}/videos?api_key=${apiKey}&language=it-IT`;
-
     fetch(url)
       .then(response => response.json())
       .then(data => {
@@ -253,34 +370,11 @@ export class FilmDetail implements OnInit {
         }
         this.cdr.detectChanges();
       })
-      .catch(err => {
+      .catch(() => {
         const queryRicerca = encodeURIComponent(`${this.film.titolo} trailer`);
         this.trailerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
           `https://www.youtube.com/embed?listType=search&list=${queryRicerca}`
         );
-        this.cdr.detectChanges();
-      });
-  }
-
-  trovaCinema() {
-    if (!this.citta.trim()) return;
-    this.caricamentoCinema = true;
-    this.erroreCinema = '';
-    this.cinema = [];
-
-    fetch(`http://localhost:8080/api/film/${this.film.id}/cinema?citta=${encodeURIComponent(this.citta)}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.errore) {
-          this.erroreCinema = 'Proiezione non disponibile in questa città. Ecco i cinema vicini:';
-        }
-        this.cinema = Array.isArray(data) ? data : [data];
-        this.caricamentoCinema = false;
-        this.cdr.detectChanges();
-      })
-      .catch(() => {
-        this.erroreCinema = 'Errore nella ricerca cinema.';
-        this.caricamentoCinema = false;
         this.cdr.detectChanges();
       });
   }
@@ -297,6 +391,7 @@ export class FilmDetail implements OnInit {
   isRecensioneUtente(usernameUtente: string): boolean {
     return this.authService.getUsername() === usernameUtente;
   }
+
   toggleFavorite(): void {
     const username = this.authService.getUsername();
 
@@ -337,6 +432,7 @@ export class FilmDetail implements OnInit {
       });
     }
   }
+
   isFavoriteFilm(filmId: number): boolean {
     return this.favorites.includes(filmId);
   }

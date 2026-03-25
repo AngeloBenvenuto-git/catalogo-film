@@ -103,3 +103,8 @@
   80% { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(-10px); }
 }
+
+#mappa-container {
+  height: 400px;
+  width: 100%;
+}

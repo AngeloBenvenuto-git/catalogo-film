@@ -81,6 +81,7 @@
         </a>
       </div>
 
+      <!-- TRAILER -->
       <div class="mt-4" *ngIf="trailerUrl">
         <h5>🎬 Guarda il Trailer</h5>
         <div class="ratio ratio-16x9">
@@ -95,9 +96,7 @@
         </div>
       </div>
 
-
-
-      <!-- SEZIONE RECENSIONI -->
+      <!-- RECENSIONI -->
       <div class="mt-5">
         <h4 class="text-white mb-3">💬 Recensioni</h4>
 
@@ -132,8 +131,7 @@
           <h5 class="text-white">Scrivi una recensione</h5>
           <div class="mb-2">
             <label class="text-white-50 small">Voto (1-10)</label>
-            <input type="number" min="1" max="10" class="form-control custom-input"
-                   [(ngModel)]="nuovoVoto">
+            <input type="number" min="1" max="10" class="form-control custom-input" [(ngModel)]="nuovoVoto">
           </div>
           <div class="mb-2">
             <label class="text-white-50 small">Testo</label>
@@ -151,24 +149,25 @@
         </div>
       </div>
 
-      <!-- SEZIONE GOOGLE MAPS -->
+      <!-- CINEMA -->
       <div class="mt-5">
         <h4 class="text-white mb-3">🎥 Cinema vicini</h4>
 
         <div class="d-flex gap-2 mb-3">
-          <input type="text" class="form-control custom-input"
+          <input
+            type="text"
+            class="form-control custom-input"
+            id="inputCitta"
             [(ngModel)]="citta"
-            placeholder="Inserisci la tua città..."
-            (keyup.enter)="trovaCinema()">
+            placeholder="Inserisci la tua città...">
           <button class="btn btn-netflix" (click)="trovaCinema()">Cerca</button>
         </div>
 
-        <div *ngIf="caricamentoCinema" class="text-white-50">
-          Ricerca in corso...
+        <div *ngIf="caricamentoCinema" class="text-white-50 mb-2">
+          🔍 Ricerca in corso...
         </div>
-
-        <div *ngIf="erroreCinema" class="text-warning mb-2">
-          {{ erroreCinema }}
+        <div *ngIf="erroreCinema" class="text-danger mb-2">
+          ⚠️ {{ erroreCinema }}
         </div>
 
         <div *ngFor="let c of cinema" class="card bg-dark border-secondary mb-2 p-3">
@@ -180,6 +179,8 @@
             📍 Apri in Google Maps
           </a>
         </div>
+
+        <div id="mappa-container" class="mt-3 rounded shadow"></div>
       </div>
 
     </div>

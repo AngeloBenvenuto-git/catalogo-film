@@ -1,100 +1,229 @@
-/* 1. Sfondo semi-trasparente (Glassmorphism) */
-.custom-nav {
-  background-color: rgba(20, 20, 20, 0.95);
-  backdrop-filter: blur(10px); /* Sfocatura stile iPhone */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 15px 40px;
-  transition: all 0.3s ease;
+/* =========================================================
+   1. STRUTTURA BARRA (TRASPARENZA IMMERSIVA)
+   ========================================================= */
+.pv-navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 70px;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4%;
+  /* Gradiente ultra-morbido per non coprire il film sotto */
+  background: linear-gradient(to bottom,
+  rgba(0, 0, 0, 0.8) 0%,
+  rgba(0, 0, 0, 0.3) 50%,
+  rgba(0, 0, 0, 0) 100%);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 2. Logo stile Cinema */
+/* Stato solido al caricamento o scroll */
+.pv-navbar.scrolled {
+  background: rgba(15, 23, 30, 0.98) !important;
+  height: 60px;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* =========================================================
+   2. LATO SINISTRO (LOGO E NAV)
+   ========================================================= */
+.pv-left-side {
+  display: flex;
+  align-items: center;
+  gap: 35px;
+}
+
 .brand-logo {
-  font-weight: 900;
-  font-size: 1.8rem;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 24px;
+  color: white !important;
   letter-spacing: -1px;
+}
+
+.red-text { color: #e50914; }
+
+.nav-links-container {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-link-item {
+  color: rgba(255, 255, 255, 0.7) !important;
+  text-decoration: none !important;
+  font-weight: 700;
+  font-size: 15px;
+  transition: 0.3s;
+}
+
+.nav-link-item:hover, .nav-link-item.active {
   color: white !important;
 }
 
-.red-text {
-  color: #e50914; /* Il rosso Netflix */
+/* =========================================================
+   3. LATO DESTRO (ICONE E ALLINEAMENTO)
+   ========================================================= */
+.pv-right-side {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 100%; /* Fondamentale per allineare i figli */
 }
 
-/* 3. Link con animazione sottolineatura */
-.nav-link {
-  color: #e5e5e5 !important;
-  font-weight: 500;
-  margin: 0 10px;
-  position: relative;
-}
-
-.nav-link::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 2px;
-  bottom: 0;
-  left: 0;
-  background-color: #e50914;
-  transition: width 0.3s ease;
-}
-
-.nav-link:hover::after, .nav-link.active::after {
-  width: 100%;
-}
-
-/* 4. Bottone Login "da paura" */
-.btn-login {
-  background-color: #e50914;
-  color: white;
-  font-weight: bold;
-  padding: 8px 25px;
+/* CONTAINER RICERCA */
+.search-container {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0);
+  border: 1px solid transparent;
+  padding: 4px 10px;
   border-radius: 4px;
-  transition: background 0.2s;
+  transition: all 0.4s ease;
 }
 
-.btn-login:hover {
-  background-color: #b20710;
+.search-container.active {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  width: 260px;
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  color: white;
+  width: 0;
+  outline: none;
+  font-size: 14px;
+  transition: width 0.4s ease;
+}
+
+.search-container.active .search-input {
+  width: 190px;
+  padding-left: 10px;
+}
+
+/* BOTTONI ICONA (Reset globale) */
+.nav-icon-btn {
+  background: transparent;
+  border: none;
+  color: white !important;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  transition: transform 0.2s ease;
+}
+
+.nav-icon-btn:hover { transform: scale(1.1); }
+
+/* =========================================================
+   4. LOGICA HOVER E PANNELLI (CATEGORIE E PROFILO)
+   ========================================================= */
+.pv-hover-container, .pv-profile-section {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%; /* Allinea l'icona al centro della navbar */
+  cursor: pointer;
+}
+
+/* PANNELLI DROPDOWN (Stile Unificato) */
+.pv-mega-menu, .profile-dropdown {
+  position: absolute;
+  top: 100%;
+  background-color: rgba(20, 26, 33, 0.98);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  z-index: 3000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 50px rgba(0,0,0,0.9);
+}
+
+.pv-mega-menu { width: 600px; right: -20px; }
+.profile-dropdown { width: 220px; right: 0; padding: 10px 0; }
+
+/* MOSTRA AL PASSAGGIO DEL MOUSE */
+.pv-hover-container:hover .pv-mega-menu,
+.pv-profile-section:hover .profile-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* PONTE INVISIBILE (Evita chiusure a tradimento) */
+.pv-mega-menu::before, .profile-dropdown::before {
+  content: "";
+  position: absolute;
+  top: -35px; /* Copre il gap tra icona e pannello */
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: transparent;
+}
+
+/* =========================================================
+   5. DETTAGLI INTERNI AI MENU
+   ========================================================= */
+.pv-menu-title {
+  color: #8197a4;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.pv-menu-item, .dropdown-item {
+  display: block;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.pv-menu-item:hover, .dropdown-item:hover {
+  color: #00a8e1 !important;
+  background: rgba(255, 255, 255, 0.05);
+  padding-left: 18px; /* Effetto slittamento fluido */
+}
+
+.profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
   color: white;
 }
 
-/* 5. Responsive: Navbar compatta su Mobile */
-/* MANTENIAMO TUTTO IL TUO CODICE ORIGINALE SOPRA... */
+.user-name-label {
+  font-size: 14px;
+  font-weight: 600;
+}
 
-/* Integrazione per il responsive senza cambiare stile */
+/* =========================================================
+   6. RESPONSIVE
+   ========================================================= */
 @media (max-width: 991px) {
-  .custom-nav {
-    padding: 10px 20px; /* Riduce il padding laterale eccessivo (40px) solo su mobile */
-  }
-
-  .navbar-collapse {
-    /* Assicura che il menu a tendina non sia trasparente sul testo della pagina */
-    background-color: rgba(20, 20, 20, 0.98);
-    margin: 15px -20px 0 -20px; /* Estende lo sfondo fino ai bordi dello schermo */
-    padding: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .nav-item {
-    width: 100%;
-    text-align: center;
-    padding: 8px 0;
-  }
-
-  /* Evita che l'animazione sottolineatura si attivi a caso su tutto lo schermo mobile */
-  .nav-link::after {
-    left: 25%;
-    right: 25%;
-    width: 0;
-  }
-
-  .nav-link.active::after {
-    width: 50%;
-  }
-
-  /* Il tuo bottone login rimane uguale, gli diamo solo respiro */
-  .btn-login {
-    display: block;
-    width: 100%;
-    margin-top: 5px;
-  }
+  .nav-links-container { display: none; }
+  .pv-mega-menu { width: 90vw; right: -40px; }
 }
