@@ -1,0 +1,30 @@
+<div class="container-fluid mt-5 px-5">
+  <h2 class="text-white mb-4">I miei Film Preferiti</h2>
+
+  <div class="row g-4" *ngIf="filmsCompleti.length > 0; else emptyList">
+    <div class="col-6 col-md-4 col-lg-2" *ngFor="let film of filmsCompleti">
+
+      <div class="movie-card" (click)="openFilm(film.id)">
+        <img [src]="film.posterUrl" class="img-fluid rounded shadow" [alt]="film.titolo">
+
+        <div class="movie-overlay">
+          <div class="overlay-content">
+            <h6 class="m-0">{{ film.titolo }}</h6>
+            <div class="small mt-1">
+              <span class="text-success">{{ film.valutazione }} ★</span>
+              <span class="ms-2">{{ film.anno }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <ng-template #emptyList>
+    <div class="text-center mt-5">
+      <p class="text-muted fs-4">La tua lista dei preferiti è vuota.</p>
+      <button class="btn btn-outline-light mt-2" (click)="goBack()">Torna al Catalogo</button>
+    </div>
+  </ng-template>
+</div>

@@ -19,6 +19,16 @@
           </a>
         </li>
 
+        <ng-container *ngIf="isLoggato">
+          <li class="nav-item">
+            <a class="nav-link px-lg-3"
+               routerLink="/favorites"
+               routerLinkActive="active">
+              Preferiti
+            </a>
+          </li>
+        </ng-container>
+
         <ng-container *ngIf="!isLoggato">
           <li class="nav-item">
             <a class="nav-link px-lg-3" routerLink="/registrazione" routerLinkActive="active">Registrati</a>

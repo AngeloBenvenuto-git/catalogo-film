@@ -7,6 +7,9 @@ import { AuthService } from '../../services/auth.service';
 import { RecensioneService } from '../../services/recensione.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { GoogleMapsModule } from '@angular/google-maps';
+import { FavoritesService } from '../../services/favorites.service';
+
+
 // Importa il modulo delle mappe se non lo hai già fatto nel modulo principale,
 // ma qui ci serve la dichiarazione globale per l'SDK JS
 declare var google: any;
@@ -31,10 +34,18 @@ export class FilmDetail implements OnInit {
   caricamentoCinema: boolean = false;
   erroreCinema: string = '';
 
+
   // Variabili per Google Maps
   cinemas: any[] = [];
   center: any = { lat: 41.9028, lng: 12.4964 }; // Default su Roma
   zoom = 12;
+
+  //variabili per i preferiti
+  favorites: number[] = [];
+  animatedFilmId: number | null = null;
+  message: string = "";
+
+  private messageTimeout: any
 
   constructor(
     private route: ActivatedRoute,
@@ -44,11 +55,14 @@ export class FilmDetail implements OnInit {
     private recensioneService: RecensioneService,
     private cdr: ChangeDetectorRef,
     private location: Location,
-    private sanitizer: DomSanitizer
-  ) {}
+    private sanitizer: DomSanitizer,
+    private favoriteService: FavoritesService,
+) {}
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+
+    // Carico il film
     this.filmService.getFilmById(id).subscribe({
       next: (res) => {
         this.film = res;
@@ -60,11 +74,24 @@ export class FilmDetail implements OnInit {
       },
       error: (err) => console.error("Errore nel recupero del film", err)
     });
+
+    // Carico recensioni
     this.caricaRecensioni(id);
 
-    // Avvia la ricerca dei cinema vicini
+    // Controllo preferiti SOLO se loggata
+    const username = this.authService.getUsername();
+    if (username) {
+      this.favoriteService.getFavorites(username).subscribe(favs => {
+        this.favorites = favs.map(f => f.filmId);
+      });
+    }
+
+
+
+    // Avvio ricerca cinema
     this.ottieniPosizioneEIniziaRicerca();
   }
+
 
   // --- LOGICA GOOGLE MAPS ---
 
@@ -270,5 +297,62 @@ export class FilmDetail implements OnInit {
   isRecensioneUtente(usernameUtente: string): boolean {
     return this.authService.getUsername() === usernameUtente;
   }
+  toggleFavorite(): void {
+    const username = this.authService.getUsername();
 
+    // 1. Caso: Non loggato
+    if (!username) {
+      this.message = "Accedi per aggiungere ai preferiti";
+      this.showAddedMessage();
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.animatedFilmId = this.film.id;
+    setTimeout(() => this.animatedFilmId = null, 300);
+
+    if (this.isFavoriteFilm(this.film.id)) {
+      // 2. Caso: Rimozione
+      this.favoriteService.removeFavorite(username, this.film.id).subscribe({
+        next: () => {
+          this.favorites = this.favorites.filter(f => f !== this.film.id);
+          this.message = "Rimosso dai preferiti"; // Messaggio specifico
+          this.showAddedMessage();
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error("Errore rimozione", err)
+      });
+    } else {
+      // 3. Caso: Aggiunta
+      this.favoriteService.addFavorite(username, this.film.id).subscribe({
+        next: (res) => {
+          if (res) {
+            this.favorites.push(this.film.id);
+            this.message = "Aggiunto ai preferiti"; // Messaggio specifico
+            this.showAddedMessage();
+            this.cdr.detectChanges();
+          }
+        },
+        error: (err) => console.error("Errore salvataggio", err)
+      });
+    }
+  }
+  isFavoriteFilm(filmId: number): boolean {
+    return this.favorites.includes(filmId);
+  }
+
+  showAddedMessage(): void {
+    // Se c'è già un timer attivo, lo cancelliamo per far partire quello nuovo
+    if (this.messageTimeout) {
+      clearTimeout(this.messageTimeout);
+    }
+
+    // Il messaggio sparirà dopo 3 secondi (3000ms)
+    this.messageTimeout = setTimeout(() => {
+      this.message = "";
+      this.cdr.detectChanges(); // Fondamentale per far sparire il box dall'HTML
+    }, 3000);
+  }
 }
+
+

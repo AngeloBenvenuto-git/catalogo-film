@@ -7,16 +7,38 @@
     <div class="col-md-8">
 
       <div class="d-flex justify-content-between align-items-start mb-2">
-        <h2>{{ film.titolo }}</h2>
-        <div *ngIf="isAdminOrRedattore()" class="d-flex gap-2">
-          <button class="btn btn-warning btn-sm" (click)="modalitaModifica = !modalitaModifica">
-            ✏️ {{ modalitaModifica ? 'Annulla' : 'Modifica' }}
-          </button>
-          <button class="btn btn-danger btn-sm" (click)="eliminaFilm()">
-            🗑️ Elimina
-          </button>
+
+        <div class="d-flex align-items-center gap-3">
+          <h2>{{ film.titolo }}</h2>
+
+          <!-- Segnalibro animato -->
+          <i
+            class="fa favorite-icon-detail"
+            [class.far]="!isFavoriteFilm(film.id)"
+            [class.fas]="isFavoriteFilm(film.id)"
+            [class.fa-bookmark]="true"
+            [class.active]="isFavoriteFilm(film.id)"
+            [class.animate]="animatedFilmId === film.id"
+            (click)="toggleFavorite()">
+          </i>
         </div>
+
+        <div *ngIf="message" class="added-message-detail">
+          {{ message }}
+        </div>
+
       </div>
+
+      <!-- BLOCCO ADMIN SPOSTATO FUORI (PRIMA ERA DENTRO E ROMPEVA TUTTO) -->
+      <div *ngIf="isAdminOrRedattore()" class="d-flex gap-2">
+        <button class="btn btn-warning btn-sm" (click)="modalitaModifica = !modalitaModifica">
+          ✏️ {{ modalitaModifica ? 'Annulla' : 'Modifica' }}
+        </button>
+        <button class="btn btn-danger btn-sm" (click)="eliminaFilm()">
+          🗑️ Elimina
+        </button>
+      </div>
+
 
       <hr>
 

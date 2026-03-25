@@ -5,11 +5,15 @@ import { Login } from './components/login/login';
 import { Registrazione } from './components/registrazione/registrazione';
 import { Admin } from './components/admin/admin';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import { FavoritesComponent } from './components/Favorite/favorites.component';
+
 
 export const routes: Routes = [
   { path: '', component: FilmList },
   { path: 'films/:id', component: FilmDetail },
   { path: 'login', component: Login },
   { path: 'registrazione', component: Registrazione},
-  { path: 'admin', component: Admin }
+  { path: 'admin', component: Admin },
+  { path: 'favorites', component: FavoritesComponent }
+
 ];

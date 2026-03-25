@@ -47,6 +47,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/generi/**").permitAll()
                         .requestMatchers("/api/chat/**").permitAll()
                         .requestMatchers("/api/recensioni/**").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/favorites/**").permitAll()    // Permette di vedere i preferiti
+                        .requestMatchers(HttpMethod.POST, "/api/favorites/**").permitAll()   // Permette di aggiungere (POST)
+                        .requestMatchers(HttpMethod.DELETE, "/api/favorites/**").permitAll() // Permette di rimuovere (DELETE)
+
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/redattore/**").hasAnyRole("REDATTORE", "ADMIN")
                         .anyRequest().authenticated())
@@ -78,4 +83,6 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
 }
