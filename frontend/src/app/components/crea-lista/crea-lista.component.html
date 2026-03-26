@@ -1,0 +1,30 @@
+<div class="crea-lista-container">
+  <div class="form-card shadow-lg">
+    <div class="text-center mb-4">
+      <i class="bi bi-collection-play-fill text-danger fs-1"></i>
+      <h2 class="text-white mt-2">Crea una Nuova Lista</h2>
+      <p class="text-muted">Dai un nome alla tua selezione di film</p>
+    </div>
+
+    <div *ngIf="errore" class="alert alert-danger small py-2">{{ errore }}</div>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label class="form-label text-white-50">Titolo della Lista</label>
+        <input type="text" class="form-control" [(ngModel)]="nuovaLista.titolo" name="titolo"
+               placeholder="Es: I migliori Thriller degli anni 90" required>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label text-white-50">Descrizione</label>
+        <textarea class="form-control" [(ngModel)]="nuovaLista.descrizione" name="descrizione"
+                  rows="4" placeholder="Descrivi brevemente questa collezione..." required></textarea>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-danger py-2 fw-bold">Crea Lista</button>
+        <a routerLink="/liste" class="btn btn-outline-secondary py-2">Annulla</a>
+      </div>
+    </form>
+  </div>
+</div>

@@ -40,6 +40,10 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/liste/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/liste/**").hasAnyRole("ADMIN", "REDATTORE")
+                        .requestMatchers(HttpMethod.PUT, "/api/liste/**").hasAnyRole("ADMIN", "REDATTORE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/liste/**").hasAnyRole("ADMIN", "REDATTORE")
                         .requestMatchers(HttpMethod.GET, "/api/film/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/film/**").hasAnyRole("ADMIN", "REDATTORE")
                         .requestMatchers(HttpMethod.PUT, "/api/film/**").hasAnyRole("ADMIN", "REDATTORE")

@@ -58,6 +58,8 @@ public class ListaCurataService {
 
     public ListaCurata aggiungiFilm(Long listaId, Long filmId, String email) {
         ListaCurata lista = getListaById(listaId);
+        // Nota: Se userDetails.getUsername() restituisce l'email usa findByEmail,
+        // altrimenti usa findByUsername. Assicurati di essere coerente con il Login.
         Utente utente = utenteRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
@@ -68,7 +70,8 @@ public class ListaCurataService {
         Film film = filmRepository.findById(filmId)
                 .orElseThrow(() -> new RuntimeException("Film non trovato"));
 
-        if (lista.getFilm().contains(film)) {
+        // Controllo basato sull'ID per evitare duplicati
+        if (lista.getFilm().stream().anyMatch(f -> f.getId().equals(filmId))) {
             throw new RuntimeException("Film già presente nella lista");
         }
 
@@ -85,10 +88,9 @@ public class ListaCurataService {
             throw new RuntimeException("Non puoi modificare questa lista");
         }
 
-        Film film = filmRepository.findById(filmId)
-                .orElseThrow(() -> new RuntimeException("Film non trovato"));
+        // FIX: Rimuoviamo filtrando per ID, così non sbagliamo mai oggetto
+        lista.getFilm().removeIf(f -> f.getId().equals(filmId));
 
-        lista.getFilm().remove(film);
         return listaCurataRepository.save(lista);
     }
 
@@ -103,5 +105,26 @@ public class ListaCurataService {
         }
 
         listaCurataRepository.deleteById(id);
+    }
+
+    public void aggiornaDatiLista(Long id, String nuovoTitolo, String nuovaDescrizione, String usernameRichiedente) {
+        ListaCurata lista = listaCurataRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Lista non trovata"));
+        Utente utenteRichiedente = utenteRepository.findByUsername(usernameRichiedente)
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+        boolean isAdmin = utenteRichiedente.getRuolo().name().contains("ADMIN");
+        boolean eIlProprietario = lista.getRedattore().getUsername().equals(usernameRichiedente);
+
+        if (!isAdmin && !eIlProprietario) {
+            throw new RuntimeException("Non hai i permessi per modificare questa lista");
+        }
+        if (nuovoTitolo != null && !nuovoTitolo.trim().isEmpty()) {
+            lista.setTitolo(nuovoTitolo);
+        }
+        if (nuovaDescrizione != null && !nuovaDescrizione.trim().isEmpty()) {
+            lista.setDescrizione(nuovaDescrizione);
+        }
+        listaCurataRepository.save(lista);
     }
 }

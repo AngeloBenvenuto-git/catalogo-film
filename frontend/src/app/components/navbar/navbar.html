@@ -1,13 +1,18 @@
 <nav class="pv-navbar" [class.scrolled]="isScrolled">
 
   <div class="pv-left-side">
-    <a class="brand-logo" href="/">
+    <a class="brand-logo" routerLink="/">
       <span class="red-text">NET</span>FILM
     </a>
     <ul class="nav-links-container">
       <li>
         <a class="nav-link-item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
       </li>
+
+      <li>
+        <a class="nav-link-item" routerLink="/liste" routerLinkActive="active">Liste Consigliate</a>
+      </li>
+
       <li *ngIf="isLoggato && getRuolo() === 'ADMIN'">
         <a class="nav-link-item" routerLink="/admin" routerLinkActive="active">Admin</a>
       </li>
@@ -95,7 +100,7 @@
 
       <div class="profile-dropdown shadow-lg">
         <ng-container *ngIf="isLoggato">
-          <div class="dropdown-header px-3 py-2 small text-white-50 border-bottom border-secondary border-opacity-25">
+          <div class="dropdown-header px-3 py-2 small text-white-50 border-bottom border-secondary border-opacity-25 text-truncate" style="max-width: 200px;">
             {{ getEmail() }}
           </div>
 
@@ -103,7 +108,9 @@
             <i class="bi bi-person-gear me-2"></i>Profilo
           </a>
 
-          <button (click)="logout()" class="dropdown-item">Esci</button>
+          <button (click)="logout()" class="dropdown-item">
+            <i class="bi bi-box-arrow-right me-2"></i>Esci
+          </button>
         </ng-container>
 
         <ng-container *ngIf="!isLoggato">

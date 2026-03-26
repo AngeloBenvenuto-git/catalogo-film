@@ -7,6 +7,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import com.progetto.catalogo_film.entity.ListaCurata;
+import com.progetto.catalogo_film.entity.Utente;
+import com.progetto.catalogo_film.repository.ListaCurataRepository;
+import com.progetto.catalogo_film.repository.UtenteRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+import java.util.Optional;
 
 import java.util.List;
 import java.util.Map;
@@ -17,9 +25,13 @@ import java.util.stream.Collectors;
 public class ListaCurataController {
 
     private final ListaCurataService listaCurataService;
+    private final ListaCurataRepository listaCurataRepository;
+    private final UtenteRepository utenteRepository;
 
-    public ListaCurataController(ListaCurataService listaCurataService) {
+    public ListaCurataController(ListaCurataService listaCurataService,ListaCurataRepository listaCurataRepository, UtenteRepository utenteRepository) {
         this.listaCurataService = listaCurataService;
+        this.listaCurataRepository = listaCurataRepository;
+        this.utenteRepository = utenteRepository;
     }
 
     @GetMapping
@@ -101,6 +113,26 @@ public class ListaCurataController {
         try {
             listaCurataService.cancellaLista(id, userDetails.getUsername());
             return ResponseEntity.ok(Map.of("messaggio", "Lista cancellata"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
+        }
+    }
+
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('REDATTORE', 'ADMIN')")
+    public ResponseEntity<?> aggiornaDatiLista(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            listaCurataService.aggiornaDatiLista(
+                    id,
+                    body.get("titolo"),
+                    body.get("descrizione"),
+                    userDetails.getUsername()
+            );
+            return ResponseEntity.ok(Map.of("messaggio", "Lista aggiornata con successo"));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
         }

@@ -35,7 +35,7 @@ public class Utente {
 
     // --- AGGIUNTO: Supporto per la foto profilo in Base64 ---
     @Lob
-    @Column(name = "foto_base64", columnDefinition = "LONGTEXT")
+    @Column(name = "foto_base64", columnDefinition = "TEXT")
     private String fotoBase64;
     // -------------------------------------------------------
 

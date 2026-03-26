@@ -7,6 +7,8 @@ import { Admin } from './components/admin/admin';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { FavoritesComponent } from './components/Favorite/favorites.component';
 import { ProfileComponent } from './components/profilo/profilo';
+import { ListaCurataComponent } from './components/lista-curata/lista-curata.component';
+import { CreaListaComponent } from './components/crea-lista/crea-lista.component';
 
 
 export const routes: Routes = [
@@ -16,5 +18,7 @@ export const routes: Routes = [
   { path: 'registrazione', component: Registrazione},
   { path: 'admin', component: Admin },
   { path: 'favorites', component: FavoritesComponent },
-  { path: 'profile', component: ProfileComponent }
+  { path: 'profile', component: ProfileComponent },
+  { path: 'liste', component: ListaCurataComponent },
+  { path: 'crea-lista', component: CreaListaComponent }
 ];

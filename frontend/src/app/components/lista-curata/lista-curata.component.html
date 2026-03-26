@@ -1,0 +1,114 @@
+<div class="page-container mt-5 pt-5 pb-5">
+  <div class="container">
+
+    <div class="d-flex justify-content-between align-items-center mb-5">
+      <div>
+        <h2 class="section-title">Collezioni <span class="text-accent">Curate</span></h2>
+        <p class="section-subtitle">Le scelte dei nostri migliori redattori</p>
+      </div>
+      <button *ngIf="authService.getRuolo() === 'ADMIN' || authService.getRuolo() === 'REDATTORE'"
+              class="btn-primary-custom shadow-sm" (click)="vaiACreaLista()">
+        <i class="bi bi-plus-lg me-1"></i> Nuova Lista
+      </button>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4" *ngFor="let lista of liste">
+        <div class="premium-card h-100">
+          <div class="card-content">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="list-title text-truncate">{{ lista.titolo }}</h5>
+              <span class="movie-count-badge">{{ lista.titoliFilm?.length || 0 }} film</span>
+            </div>
+
+            <div class="creator-info mb-3">
+              <div class="avatar-circle">{{ lista.usernameRedattore.charAt(0).toUpperCase() }}</div>
+              <span class="username-display">&#64;{{ lista.usernameRedattore }}</span>
+            </div>
+
+            <p class="list-description text-truncate-2">{{ lista.descrizione || 'Nessuna descrizione.' }}</p>
+
+            <div class="preview-list mt-3">
+              <div *ngFor="let t of lista.titoliFilm | slice:0:3" class="preview-item">
+                <i class="bi bi-play-circle-fill me-2"></i> {{ t }}
+              </div>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button class="action-btn" (click)="onLike(lista.id)">
+              <i class="bi bi-heart-fill me-1"></i> {{ lista.numeroLike }}
+            </button>
+            <div class="d-flex gap-2">
+              <button class="action-btn" (click)="selezionaListaPerModifica(lista)">
+                <i class="bi" [ngClass]="puoGestire(lista.usernameRedattore) ? 'bi-gear-fill' : 'bi-eye-fill'"></i>
+              </button>
+              <button *ngIf="puoGestire(lista.usernameRedattore)" class="action-btn delete-btn" (click)="eliminaLista(lista.id)">
+                <i class="bi bi-trash3-fill"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="listaInModifica" id="editPanel" class="edit-panel mt-5">
+      <div class="panel-header">
+        <h3 class="panel-title">Gestione: <span>{{ listaInModifica.titolo }}</span></h3>
+        <button class="close-btn" (click)="listaInModifica = null"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div class="panel-body">
+        <div class="row g-3 mb-5" *ngIf="puoGestire(listaInModifica.usernameRedattore)">
+          <div class="col-md-5">
+            <label class="custom-label">Titolo Collezione</label>
+            <input type="text" class="custom-input" [(ngModel)]="listaInModifica.titolo">
+          </div>
+          <div class="col-md-5">
+            <label class="custom-label">Descrizione Breve</label>
+            <textarea class="custom-input" [(ngModel)]="listaInModifica.descrizione" rows="1"></textarea>
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button class="btn-primary-custom w-100 py-2" (click)="salvaModificheDatiGenerali()">SALVA</button>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-md-5" *ngIf="puoGestire(listaInModifica.usernameRedattore)">
+            <label class="custom-label">Aggiungi Film</label>
+            <div class="search-wrapper">
+              <input type="text" class="custom-input" placeholder="Cerca titolo..."
+                     [(ngModel)]="queryRicerca" (input)="cercaFilm()">
+
+              <div class="search-dropdown shadow-lg" *ngIf="risultatiRicerca.length > 0">
+                <div *ngFor="let f of risultatiRicerca" class="dropdown-item-custom">
+                  <span class="film-title-search text-truncate">{{ f.titolo }}</span>
+                  <button class="add-small-btn" (click)="aggiungiFilm(f.id)">
+                    <i class="bi bi-plus-lg"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div [ngClass]="puoGestire(listaInModifica.usernameRedattore) ? 'col-md-7' : 'col-md-12'">
+            <label class="custom-label">Film Inclusi</label>
+            <div class="included-list">
+              <div *ngFor="let t of listaInModifica.titoliFilm; let i = index" class="included-item">
+                <span class="film-name text-truncate pe-2">{{ t }}</span>
+
+                <button *ngIf="puoGestire(listaInModifica.usernameRedattore)"
+                        class="remove-btn"
+                        (click)="rimuoviFilm(listaInModifica.filmIds[i])">
+                  <i class="bi bi-x-circle-fill"></i>
+                </button>
+
+              </div>
+              <p *ngIf="!listaInModifica.titoliFilm?.length" class="text-muted small py-3 text-center">Nessun film incluso.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
