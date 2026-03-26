@@ -4,9 +4,6 @@
       <h1 class="display-1 fw-bold">{{filmsFiltrati[0].titolo}}</h1>
       <p class="lead w-50 d-none d-md-block">{{filmsFiltrati[0].trama | slice:0:150}}...</p>
       <div class="mt-4">
-        <button class="btn btn-light btn-lg me-2 px-5 fw-bold shadow" (click)="vaiAiDettagli(filmsFiltrati[0].id)">
-          ▶ RIPRODUCI
-        </button>
         <button class="btn btn-outline-light btn-lg px-4 fw-bold" (click)="vaiAiDettagli(filmsFiltrati[0].id)">
           + DETTAGLI
         </button>

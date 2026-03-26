@@ -10,7 +10,7 @@ import {forkJoin} from 'rxjs';
 @Component({
   selector: 'app-favorites',
   standalone: true,
-  imports: [CommonModule, RouterLink],   // <--- AGGIUNGILO QUI
+  imports: [CommonModule],
   templateUrl: './favorites.component.html',
   styleUrls: ['./favorites.component.css']
 })

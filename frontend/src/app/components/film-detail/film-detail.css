@@ -1,76 +1,70 @@
-/* --- SOLO PER MOBILE E TABLET (Sotto i 991px) --- */
-@media screen and (max-width: 991px) {
+/* ==========================================================================
+   1. STRUTTURA PRINCIPALE (FIX NAVBAR)
+   ========================================================================== */
 
-  /* 1. Forza il poster e i testi a incolonnarsi invece di stare affiancati */
-  .row {
-    flex-direction: column !important;
-    align-items: center !important;
-    text-align: center !important;
-  }
-
-  /* 2. Evita che il poster diventi gigante e occupi tutto lo schermo */
-  .col-md-4 img {
-    max-width: 280px !important;
-    margin-bottom: 20px !important;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  /* 3. Sistema i titoli e i testi per schermi piccoli */
-  h2 {
-    font-size: 1.8rem !important;
-    margin-top: 10px;
-  }
-
-  .d-flex.justify-content-between {
-    flex-direction: column !important;
-    gap: 10px;
-  }
-
-  /* 4. Il Trailer: lo rendiamo a tutto schermo per non avere bordi neri ai lati */
-  .ratio-16x9 {
-    margin-left: -15px !important;
-    margin-right: -15px !important;
-    width: calc(100% + 30px) !important;
-  }
-
-  /* 5. Padding generale per non far toccare i testi ai bordi del telefono */
-  .container {
-    padding-left: 20px !important;
-    padding-right: 20px !important;
-  }
-
+.detail-container {
+  /* Spazio vitale per non finire sotto la Navbar fixed */
+  padding-top: 40px !important;
+  min-height: 100vh;
+  background-color: #141414; /* Sfondo scuro stile Netflix */
+  color: white;
+  position: relative;
+  padding-bottom: 50px;
 }
-  .suggestion-item:hover {
-    background-color: #333;
-  }
-/* Icona base - Rinominata e potenziata per il click */
+
+/* Container di Bootstrap per centrare i contenuti */
+.container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Overlay per lo sfondo (opzionale, se usi un backdrop) */
+.backdrop-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(20,20,20,0.7) 0%, rgba(20,20,20,1) 100%);
+  z-index: 1;
+}
+
+/* ==========================================================================
+   2. CONTROLLI ADMIN (Modifica/Elimina)
+   ========================================================================== */
+
+.admin-controls {
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+/* ==========================================================================
+   3. BOTTONE PREFERITI (Cuore Animato)
+   ========================================================================== */
+
 .pv-favorite-btn {
   cursor: pointer !important;
   color: gray;
   transition: transform 0.3s ease, color 0.3s ease, filter 0.3s ease;
-  font-size: 1.8rem; /* Un po' più grande per facilitare il click */
-  text-shadow: 0 0 0px rgba(255,0,0,0);
+  font-size: 2.2rem;
   position: relative !important;
-  z-index: 9999 !important; /* Sopra a tutto il lavoro del collega */
-  pointer-events: auto !important; /* Forza il click */
+  z-index: 99;
+  pointer-events: auto !important;
   display: inline-block;
 }
 
-/* Stato attivo (rosso) */
 .pv-favorite-btn.active {
   color: red !important;
 }
 
-/* Hover: effetto movimento + luminosità */
 .pv-favorite-btn:hover {
   transform: translateY(-5px) scale(1.3) rotate(-15deg) !important;
   filter: brightness(1.7) drop-shadow(0 0 12px rgba(255,0,0,0.8)) !important;
-  text-shadow: 0 0 12px rgba(255,0,0,0.7);
 }
 
-/* Animazione click / pulse */
+/* Animazione click */
 @keyframes pulse-fav {
   0% { transform: scale(1); }
   50% { transform: scale(1.4); }
@@ -81,16 +75,16 @@
   animation: pulse-fav 0.3s ease;
 }
 
-/* Messaggio a comparsa (quello nero 85% opacità) */
+/* Messaggio Toast (Aggiunto ai preferiti) */
 .pv-added-msg {
   position: fixed;
-  top: 80px; /* Abbassato un po' per non finire SOTTO la nuova navbar */
+  top: 90px;
   right: 20px;
   background: rgba(0, 0, 0, 0.85);
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
-  z-index: 10000; /* Ancora più su della navbar */
+  z-index: 10000;
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   font-weight: 500;
@@ -105,7 +99,68 @@
   100% { opacity: 0; transform: translateY(-10px); }
 }
 
+/* ==========================================================================
+   4. MAPPA E SUGGERIMENTI
+   ========================================================================== */
+
 #mappa-container {
   height: 400px;
   width: 100%;
+  border-radius: 12px;
+  margin-top: 20px;
+  border: 1px solid #333;
+}
+
+.suggestion-item:hover {
+  background-color: #333;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   5. RESPONSIVE (MOBILE & TABLET)
+   ========================================================================== */
+
+@media screen and (max-width: 991px) {
+
+  .detail-container {
+    padding-top: 100px !important; /* Leggermente meno su mobile */
+  }
+
+  /* Forza incolonnamento */
+  .row {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  /* Poster */
+  .col-md-4 img {
+    max-width: 250px !important;
+    margin-bottom: 25px !important;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+
+  h2 {
+    font-size: 1.8rem !important;
+  }
+
+  .d-flex.justify-content-between {
+    flex-direction: column !important;
+    gap: 15px;
+    align-items: center;
+  }
+
+  /* Trailer a tutta larghezza */
+  .ratio-16x9 {
+    margin-left: -15px !important;
+    margin-right: -15px !important;
+    width: calc(100% + 30px) !important;
+    margin-top: 20px;
+  }
+
+  .container {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
 }
