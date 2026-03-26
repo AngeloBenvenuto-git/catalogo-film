@@ -101,12 +101,18 @@ export class Navbar implements OnInit {
   // CORRETTO: Recupera l'username reale dal JWT tramite il servizio
   getUsername(): string | null { return this.authService.getUsername(); }
 
+  // AGGIUNTO: Recupera l'avatar salvato localmente per mostrarlo nella navbar
+  getAvatar(): string | null {
+    return localStorage.getItem('user_avatar');
+  }
+
   logout() {
     this.authService.logout();
     this.isLoggato = false;
     this.router.navigate(['/login']);
   }
+
   goToFavorites() {
-    this.router.navigate(['/favorites']); // Assicurati che il path sia corretto nelle tue rotte
+    this.router.navigate(['/favorites']);
   }
 }

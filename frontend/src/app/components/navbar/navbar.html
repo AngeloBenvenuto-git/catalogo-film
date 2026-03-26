@@ -78,8 +78,16 @@
     </div>
 
     <div class="pv-profile-section">
-      <div class="profile-trigger">
-        <i class="bi bi-person-circle text-white"></i>
+      <div class="profile-trigger d-flex align-items-center">
+
+        <ng-container *ngIf="getAvatar(); else defaultIcon">
+          <img [src]="getAvatar()" class="rounded-circle border border-1 border-white shadow-sm"
+               style="width: 32px; height: 32px; object-fit: cover;">
+        </ng-container>
+        <ng-template #defaultIcon>
+          <i class="bi bi-person-circle text-white fs-4"></i>
+        </ng-template>
+
         <span class="user-name-label ms-2 text-white" *ngIf="isLoggato">
           {{ getUsername() || 'Profilo' }}
         </span>
@@ -90,17 +98,12 @@
           <div class="dropdown-header px-3 py-2 small text-white-50 border-bottom border-secondary border-opacity-25">
             {{ getEmail() }}
           </div>
-          <button (click)="logout()" class="dropdown-item">Esci</button>
-        </ng-container>
 
-        <ng-container *ngIf="isLoggato">
-          <li class="nav-item">
-            <a class="nav-link px-lg-3"
-               routerLink="/favorites"
-               routerLinkActive="active">
-              Preferiti
-            </a>
-          </li>
+          <a routerLink="/profile" class="dropdown-item">
+            <i class="bi bi-person-gear me-2"></i>Profilo
+          </a>
+
+          <button (click)="logout()" class="dropdown-item">Esci</button>
         </ng-container>
 
         <ng-container *ngIf="!isLoggato">

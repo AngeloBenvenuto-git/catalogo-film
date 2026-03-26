@@ -8,7 +8,6 @@ import { Observable, BehaviorSubject } from 'rxjs';
 export class AuthService {
 
   private apiUrl = 'http://localhost:8080/api/auth';
-  // Controlliamo entrambi i "cassetti" all'avvio
   private loggedIn = new BehaviorSubject<boolean>(this.getToken() !== null);
   loggedIn$ = this.loggedIn.asObservable();
 
@@ -22,25 +21,23 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/registra`, { username, email, password });
   }
 
-  // AGGIUNTO: parametro ricordami per decidere dove salvare
   salvaToken(token: string, ricordami: boolean = false) {
     if (ricordami) {
-      localStorage.setItem('token', token); // Resta dopo chiusura browser
+      localStorage.setItem('token', token);
     } else {
-      sessionStorage.setItem('token', token); // Scompare alla chiusura browser
+      sessionStorage.setItem('token', token);
     }
     this.loggedIn.next(true);
   }
 
-  // MODIFICATO: cerca il token ovunque sia stato salvato
   getToken(): string | null {
     return localStorage.getItem('token') || sessionStorage.getItem('token');
   }
 
-  // MODIFICATO: pulisce tutto per sicurezza
   logout() {
     localStorage.removeItem('token');
     sessionStorage.removeItem('token');
+    localStorage.removeItem('custom_username'); // Pulisce anche il nome personalizzato
     this.loggedIn.next(false);
   }
 
@@ -48,25 +45,49 @@ export class AuthService {
     return this.getToken() !== null;
   }
 
-  // Funzioni di utility per estrarre dati dal JWT (rimaste uguali ma usano il nuovo getToken)
-  getRuolo(): string | null {
+  // MODIFICATO: Priorità allo username salvato localmente per aggiornamento immediato Navbar
+  getUsername(): string | null {
+    const custom = localStorage.getItem('custom_username');
+    if (custom) return custom;
+
     const token = this.getToken();
     if (!token) return null;
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.ruolo;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.username || null;
+    } catch (e) { return null; }
   }
 
   getEmail(): string | null {
     const token = this.getToken();
     if (!token) return null;
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.sub;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.sub;
+    } catch (e) { return null; }
   }
 
-  getUsername(): string | null {
+  getRuolo(): string | null {
     const token = this.getToken();
     if (!token) return null;
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.username || null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.ruolo;
+    } catch (e) { return null; }
+  }
+
+  // Salvataggio sul Backend
+  updateProfile(username: string, password?: string): Observable<any> {
+    const body: any = { username };
+    if (password) body.password = password;
+
+    return this.http.put(`${this.apiUrl}/user/update`, body, {
+      headers: { 'Authorization': `Bearer ${this.getToken()}` }
+    });
+  }
+
+  // Aggiornamento locale per sincronizzare i componenti
+  updateLocalUsername(username: string) {
+    localStorage.setItem('custom_username', username);
   }
 }
