@@ -1,7 +1,7 @@
 <nav class="pv-navbar" [class.scrolled]="isScrolled">
 
   <div class="pv-left-side">
-    <a class="brand-logo" routerLink="/">
+    <a class="brand-logo" href="/">
       <span class="red-text">NET</span>FILM
     </a>
     <ul class="nav-links-container">
@@ -75,13 +75,15 @@
       <button class="nav-icon-btn" title="I miei film" routerLink="/favorites" routerLinkActive="active">
         <i class="bi bi-bookmark-fill"></i>
       </button>
-  </div> <div class="pv-profile-section">
-    <div class="profile-trigger">
-      <i class="bi bi-person-circle text-white"></i>
-      <span class="user-name-label ms-2 text-white" *ngIf="isLoggato">
+    </div>
+
+    <div class="pv-profile-section">
+      <div class="profile-trigger">
+        <i class="bi bi-person-circle text-white"></i>
+        <span class="user-name-label ms-2 text-white" *ngIf="isLoggato">
           {{ getUsername() || 'Profilo' }}
         </span>
-    </div>
+      </div>
 
       <div class="profile-dropdown shadow-lg">
         <ng-container *ngIf="isLoggato">
