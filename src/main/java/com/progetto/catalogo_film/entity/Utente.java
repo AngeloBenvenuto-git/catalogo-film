@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
-import jakarta.persistence.CascadeType;
 
 @Entity
 @Table(name = "utenti")
@@ -33,6 +32,12 @@ public class Utente {
 
     @Column(name = "data_registrazione")
     private LocalDateTime dataRegistrazione = LocalDateTime.now();
+
+    // --- AGGIUNTO: Supporto per la foto profilo in Base64 ---
+    @Lob
+    @Column(name = "foto_base64", columnDefinition = "LONGTEXT")
+    private String fotoBase64;
+    // -------------------------------------------------------
 
     @OneToMany(mappedBy = "utente", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Recensione> recensioni;

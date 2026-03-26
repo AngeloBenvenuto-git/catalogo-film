@@ -102,7 +102,9 @@ export class Navbar implements OnInit {
   getUsername(): string | null { return this.authService.getUsername(); }
 
   // AGGIUNTO: Recupera l'avatar salvato localmente per mostrarlo nella navbar
+// Sostituisci il tuo metodo attuale con questo
   getAvatar(): string | null {
+    if (!this.isLoggato) return null; // Se non sono loggato, non mostrare nulla
     return localStorage.getItem('user_avatar');
   }
 
