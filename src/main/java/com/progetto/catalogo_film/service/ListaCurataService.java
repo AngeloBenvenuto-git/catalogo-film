@@ -58,19 +58,20 @@ public class ListaCurataService {
 
     public ListaCurata aggiungiFilm(Long listaId, Long filmId, String email) {
         ListaCurata lista = getListaById(listaId);
-        // Nota: Se userDetails.getUsername() restituisce l'email usa findByEmail,
-        // altrimenti usa findByUsername. Assicurati di essere coerente con il Login.
         Utente utente = utenteRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-        if (!lista.getRedattore().getId().equals(utente.getId())) {
-            throw new RuntimeException("Non puoi modificare questa lista");
+        // Diamo i superpoteri all'Admin
+        boolean isAdmin = utente.getRuolo().name().contains("ADMIN");
+        boolean isOwner = lista.getRedattore().getId().equals(utente.getId());
+
+        if (!isAdmin && !isOwner) {
+            throw new RuntimeException("Non hai i permessi per modificare questa lista");
         }
 
         Film film = filmRepository.findById(filmId)
                 .orElseThrow(() -> new RuntimeException("Film non trovato"));
 
-        // Controllo basato sull'ID per evitare duplicati
         if (lista.getFilm().stream().anyMatch(f -> f.getId().equals(filmId))) {
             throw new RuntimeException("Film già presente nella lista");
         }
@@ -84,13 +85,15 @@ public class ListaCurataService {
         Utente utente = utenteRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-        if (!lista.getRedattore().getId().equals(utente.getId())) {
-            throw new RuntimeException("Non puoi modificare questa lista");
+        // Diamo i superpoteri all'Admin
+        boolean isAdmin = utente.getRuolo().name().contains("ADMIN");
+        boolean isOwner = lista.getRedattore().getId().equals(utente.getId());
+
+        if (!isAdmin && !isOwner) {
+            throw new RuntimeException("Non hai i permessi per modificare questa lista");
         }
 
-        // FIX: Rimuoviamo filtrando per ID, così non sbagliamo mai oggetto
         lista.getFilm().removeIf(f -> f.getId().equals(filmId));
-
         return listaCurataRepository.save(lista);
     }
 

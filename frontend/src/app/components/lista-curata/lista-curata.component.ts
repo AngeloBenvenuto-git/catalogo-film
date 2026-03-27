@@ -62,8 +62,8 @@ export class ListaCurataComponent implements OnInit {
 
   puoGestire(usernameRedattore: string): boolean {
     const userLoggato = this.authService.getUsername();
-    const ruolo = this.authService.getRuolo();
-    return ruolo === 'ADMIN' || ruolo === 'ROLE_ADMIN' || userLoggato === usernameRedattore;
+    const ruolo = (this.authService.getRuolo() || '').toUpperCase();
+    return ruolo.includes('ADMIN') || userLoggato === usernameRedattore;
   }
 
   salvaModificheDatiGenerali(): void {
@@ -88,7 +88,11 @@ export class ListaCurataComponent implements OnInit {
     if (this.queryRicerca.trim().length > 2) {
       this.filmService.cercaFilm(this.queryRicerca).subscribe({
         next: (res: any[]) => {
-          this.risultatiRicerca = res.slice(0, 5);
+          const filmGiaInLista = this.listaInModifica?.filmIds || [];
+          this.risultatiRicerca = res
+            .filter(f => !filmGiaInLista.includes(f.id))
+            .slice(0, 5);
+
           this.cd.detectChanges();
         }
       });
