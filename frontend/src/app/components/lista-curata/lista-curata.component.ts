@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ListaCurataService } from '../../services/lista-curata.service';
 import { AuthService } from '../../services/auth.service';
@@ -25,7 +25,13 @@ export class ListaCurataComponent implements OnInit {
     public authService: AuthService,
     private router: Router,
     private cd: ChangeDetectorRef
-  ) {}
+  ) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.caricaListe();
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.caricaListe();

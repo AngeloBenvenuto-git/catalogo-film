@@ -43,5 +43,4 @@ public class ListaCurataDTO {
     public List<String> getTitoliFilm() { return titoliFilm; }
     public int getNumeroLike() { return numeroLike; }
     public List<String> getUsernameCheLike() { return usernameCheLike; }
-
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
+import jakarta.persistence.Basic;
 
 @Entity
 @Table(name = "utenti")
@@ -34,7 +35,7 @@ public class Utente {
     private LocalDateTime dataRegistrazione = LocalDateTime.now();
 
     // --- AGGIUNTO: Supporto per la foto profilo in Base64 ---
-    @Lob
+    @Basic(fetch = FetchType.LAZY)
     @Column(name = "foto_base64", columnDefinition = "TEXT")
     private String fotoBase64;
     // -------------------------------------------------------

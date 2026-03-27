@@ -73,4 +73,27 @@ export class FavoritesComponent implements OnInit {
   goBack(): void {
     this.location.back();
   }
+  rimuoviFilm(filmId: number) {
+    if (confirm('Rimuovere questo film dai preferiti?')) {
+      this.favoriteService.removeFavorite(this.username, filmId).subscribe({
+        next: () => {
+          this.filmsCompleti = this.filmsCompleti.filter(f => f.id !== filmId);
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error('Errore rimozione film', err)
+      });
+    }
+  }
+
+  rimuoviLike(listaId: number) {
+    if (confirm('Togliere il like a questa lista?')) {
+      this.listaService.toggleLike(listaId).subscribe({
+        next: () => {
+          this.listeLiked = this.listeLiked.filter(l => l.id !== listaId);
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error('Errore rimozione like', err)
+      });
+    }
+  }
 }

@@ -1,4 +1,4 @@
-<div class="container-fluid mt-5 px-5">
+<div class="container-fluid mt-5 pt-4 px-5">
   <h2 class="text-white mb-4">🎬 Film Preferiti</h2>
 
   <div class="row g-4" *ngIf="filmsCompleti.length > 0; else emptyFilms">
@@ -15,11 +15,15 @@
           </div>
         </div>
       </div>
+      <button class="btn btn-sm btn-outline-danger w-100 mt-1"
+              (click)="$event.stopPropagation(); rimuoviFilm(film.id)">
+        🗑️ Rimuovi
+      </button>
     </div>
   </div>
 
   <ng-template #emptyFilms>
-    <p class="text-muted fs-5">Nessun film salvato.</p>
+    <p class="text-white-50 fs-5">Nessun film salvato.</p>
   </ng-template>
 
   <!-- LISTE LIKED -->
@@ -37,12 +41,16 @@
           </div>
         </div>
         <span class="text-danger mt-2 small">❤️ {{ lista.numeroLike }} like</span>
+        <button class="btn btn-sm btn-outline-danger mt-3"
+                (click)="$event.stopPropagation(); rimuoviLike(lista.id)">
+          💔 Rimuovi like
+        </button>
       </div>
     </div>
   </div>
 
   <ng-template #emptyListe>
-    <p class="text-muted fs-5">Nessuna lista salvata.</p>
+    <p class="text-white-50 fs-5">Nessuna lista salvata.</p>
   </ng-template>
 
   <div class="text-center mt-5">
