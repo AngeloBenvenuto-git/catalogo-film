@@ -40,7 +40,9 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/liste/liked").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/liste/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/liste/*/like").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/liste/**").hasAnyRole("ADMIN", "REDATTORE")
                         .requestMatchers(HttpMethod.PUT, "/api/liste/**").hasAnyRole("ADMIN", "REDATTORE")
                         .requestMatchers(HttpMethod.DELETE, "/api/liste/**").hasAnyRole("ADMIN", "REDATTORE")
@@ -51,11 +53,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/generi/**").permitAll()
                         .requestMatchers("/api/chat/**").permitAll()
                         .requestMatchers("/api/recensioni/**").permitAll()
-
-                        .requestMatchers(HttpMethod.GET, "/api/favorites/**").permitAll()    // Permette di vedere i preferiti
-                        .requestMatchers(HttpMethod.POST, "/api/favorites/**").permitAll()   // Permette di aggiungere (POST)
-                        .requestMatchers(HttpMethod.DELETE, "/api/favorites/**").permitAll() // Permette di rimuovere (DELETE)
-
+                        .requestMatchers(HttpMethod.GET, "/api/favorites/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/favorites/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/favorites/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/redattore/**").hasAnyRole("REDATTORE", "ADMIN")
                         .anyRequest().authenticated())

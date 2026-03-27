@@ -137,4 +137,25 @@ public class ListaCurataController {
             return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
         }
     }
+    @PostMapping("/{id}/like")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> toggleLike(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            return ResponseEntity.ok(new ListaCurataDTO(
+                    listaCurataService.toggleLike(id, userDetails.getUsername())));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
+        }
+    }
+    @GetMapping("/liked")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<ListaCurataDTO>> getListeLiked(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(
+                listaCurataService.getListeLikedDaUtente(userDetails.getUsername())
+                        .stream().map(ListaCurataDTO::new).collect(Collectors.toList())
+        );
+    }
 }

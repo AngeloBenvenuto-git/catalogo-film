@@ -187,3 +187,10 @@
 
 .film-name { font-size: 0.9rem; color: #ddd; }
 .remove-btn { background: none; border: none; color: var(--accent); font-size: 1.2rem; cursor: pointer; }
+
+.liked {
+  color: red !important;
+}
+.liked i {
+  color: red !important;
+}

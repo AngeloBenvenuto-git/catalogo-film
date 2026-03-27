@@ -84,6 +84,11 @@ export class ListaCurataComponent implements OnInit {
     });
   }
 
+  haLiked(lista: any): boolean {
+    const mioUsername = this.authService.getUsername();
+    return lista.usernameCheLike?.includes(mioUsername);
+  }
+
   cercaFilm(): void {
     if (this.queryRicerca.trim().length > 2) {
       this.filmService.cercaFilm(this.queryRicerca).subscribe({

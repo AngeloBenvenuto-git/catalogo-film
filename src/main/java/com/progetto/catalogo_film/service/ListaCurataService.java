@@ -140,4 +140,28 @@ public class ListaCurataService {
         // 5. Salviamo
         listaCurataRepository.save(lista);
     }
+    public ListaCurata toggleLike(Long listaId, String email) {
+        ListaCurata lista = getListaById(listaId);
+        Utente utente = utenteRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+        boolean haGiaLiked = lista.getUtentiCheLike().stream()
+                .anyMatch(u -> u.getId().equals(utente.getId()));
+
+        if (haGiaLiked) {
+            lista.getUtentiCheLike().removeIf(u -> u.getId().equals(utente.getId()));
+        } else {
+            lista.getUtentiCheLike().add(utente);
+        }
+
+        return listaCurataRepository.save(lista);
+    }
+    public List<ListaCurata> getListeLikedDaUtente(String email) {
+        Utente utente = utenteRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+        return listaCurataRepository.findAll().stream()
+                .filter(l -> l.getUtentiCheLike().stream()
+                        .anyMatch(u -> u.getId().equals(utente.getId())))
+                .collect(java.util.stream.Collectors.toList());
+    }
 }

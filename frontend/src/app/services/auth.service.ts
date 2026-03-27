@@ -85,8 +85,6 @@ export class AuthService {
       headers: { 'Authorization': `Bearer ${this.getToken()}` }
     });
   }
-
-  // Aggiornamento locale per sincronizzare i componenti
   updateLocalUsername(username: string) {
     localStorage.setItem('custom_username', username);
   }

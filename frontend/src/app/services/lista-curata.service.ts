@@ -52,4 +52,8 @@ export class ListaCurataService {
     const headers = this.getHeaders().set('Content-Type', 'application/json');
     return this.http.put(`${this.apiUrl}/${id}`, dati, { headers: headers });
   }
+
+  getListeLiked(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/liked`, { headers: this.getHeaders() });
+  }
 }

@@ -13,6 +13,8 @@ public class ListaCurataDTO {
     private String usernameRedattore;
     private List<Long> filmIds;
     private List<String> titoliFilm;
+    private int numeroLike;
+    private List<String> usernameCheLike;
 
     public ListaCurataDTO(ListaCurata l) {
         this.id = l.getId();
@@ -26,6 +28,10 @@ public class ListaCurataDTO {
         this.titoliFilm = l.getFilm() != null
                 ? l.getFilm().stream().map(f -> f.getTitolo()).collect(Collectors.toList())
                 : List.of();
+        this.numeroLike = l.getUtentiCheLike() != null ? l.getUtentiCheLike().size() : 0;
+        this.usernameCheLike = l.getUtentiCheLike() != null
+                ? l.getUtentiCheLike().stream().map(u -> u.getUsername()).collect(Collectors.toList())
+                : List.of();
     }
 
     public Long getId() { return id; }
@@ -35,4 +41,7 @@ public class ListaCurataDTO {
     public String getUsernameRedattore() { return usernameRedattore; }
     public List<Long> getFilmIds() { return filmIds; }
     public List<String> getTitoliFilm() { return titoliFilm; }
+    public int getNumeroLike() { return numeroLike; }
+    public List<String> getUsernameCheLike() { return usernameCheLike; }
+
 }

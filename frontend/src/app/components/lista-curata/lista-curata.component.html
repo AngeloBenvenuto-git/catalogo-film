@@ -36,7 +36,8 @@
           </div>
 
           <div class="card-actions">
-            <button class="action-btn" (click)="onLike(lista.id)">
+            <button class="action-btn" (click)="onLike(lista.id)"
+                    [class.liked]="haLiked(lista)">
               <i class="bi bi-heart-fill me-1"></i> {{ lista.numeroLike }}
             </button>
             <div class="d-flex gap-2">

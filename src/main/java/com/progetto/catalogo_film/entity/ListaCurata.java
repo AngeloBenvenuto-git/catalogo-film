@@ -3,6 +3,7 @@ package com.progetto.catalogo_film.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,4 +33,10 @@ public class ListaCurata {
             joinColumns = @JoinColumn(name = "lista_id"),
             inverseJoinColumns = @JoinColumn(name = "film_id"))
     private List<Film> film;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "lista_like",
+            joinColumns = @JoinColumn(name = "lista_id"),
+            inverseJoinColumns = @JoinColumn(name = "utente_id"))
+    private List<Utente> utentiCheLike = new ArrayList<>();
 }
