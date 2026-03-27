@@ -59,12 +59,24 @@ export class FilmList implements OnInit {
 
     // --- A. FILTRAGGIO ---
 
-    // 1. Filtro per Genere (se selezionato)
+    // 1. Filtro per Genere (LA PARTE CORRETTA)
     if (this.genereSelezionato) {
       const gCercato = this.genereSelezionato.toLowerCase().trim();
-      risultato = risultato.filter(f =>
-        f.genere && f.genere.toLowerCase().includes(gCercato)
-      );
+
+      risultato = risultato.filter(f => {
+        // Caso 1: Se il backend manda 'generi' come Array (es. ["Azione", "Horror"] o [{nome: "Azione"}])
+        if (f.generi && Array.isArray(f.generi)) {
+          return f.generi.some((g: any) => {
+            // Controlla sia se 'g' è una semplice stringa, sia se è un oggetto con dentro 'nome'
+            const nomeGenere = typeof g === 'string' ? g : (g.nome || '');
+            return nomeGenere.toLowerCase().includes(gCercato);
+          });
+        }
+
+        // Caso 2: Fallback se il DTO manda tutto in una singola stringa 'genere' o usa 'tipologia'
+        const campoSingolo = (f.genere || f.tipologia || '').toString().toLowerCase();
+        return campoSingolo.includes(gCercato);
+      });
     }
 
     // 2. Filtro per Ricerca Testuale (se presente)

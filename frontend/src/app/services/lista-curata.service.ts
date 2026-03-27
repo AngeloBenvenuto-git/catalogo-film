@@ -12,9 +12,16 @@ export class ListaCurataService {
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   private getHeaders() {
-    return new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
-    });
+    const token = this.authService.getToken();
+
+    // Se c'tè il token, lo allega. Se non c'è, manda un'intestazione vuota.
+    if (token) {
+      return new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+    } else {
+      return new HttpHeaders();
+    }
   }
 
   getTutteLeListe(): Observable<any[]> {

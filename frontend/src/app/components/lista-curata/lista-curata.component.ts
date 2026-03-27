@@ -74,10 +74,13 @@ export class ListaCurataComponent implements OnInit {
     };
     this.listaService.updateLista(this.listaInModifica.id, payload).subscribe({
       next: () => {
-        alert("Informazioni aggiornate!");
+        alert("Informazioni aggiornate con successo!");
         this.caricaListe();
       },
-      error: (err) => alert("Errore nel salvataggio dei dati generali.")
+      error: (err) => {
+        const messaggio = err.error?.errore || "Errore sconosciuto nel salvataggio";
+        alert("Errore: " + messaggio);
+      }
     });
   }
 

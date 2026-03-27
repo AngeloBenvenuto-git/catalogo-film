@@ -107,24 +107,34 @@ public class ListaCurataService {
         listaCurataRepository.deleteById(id);
     }
 
-    public void aggiornaDatiLista(Long id, String nuovoTitolo, String nuovaDescrizione, String usernameRichiedente) {
+    public void aggiornaDatiLista(Long id, String nuovoTitolo, String nuovaDescrizione, String emailRichiedente) {
+        // 1. Troviamo la lista
         ListaCurata lista = listaCurataRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Lista non trovata"));
-        Utente utenteRichiedente = utenteRepository.findByUsername(usernameRichiedente)
-                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
+        // 2. Troviamo l'utente tramite EMAIL (questo causava l'errore 400!)
+        Utente utenteRichiedente = utenteRepository.findByEmail(emailRichiedente)
+                .orElseThrow(() -> new RuntimeException("Utente non trovato nel database"));
+
+        // 3. Controllo permessi
         boolean isAdmin = utenteRichiedente.getRuolo().name().contains("ADMIN");
-        boolean eIlProprietario = lista.getRedattore().getUsername().equals(usernameRichiedente);
+
+        // Confrontiamo gli ID, è il modo più sicuro
+        boolean eIlProprietario = lista.getRedattore().getId().equals(utenteRichiedente.getId());
 
         if (!isAdmin && !eIlProprietario) {
             throw new RuntimeException("Non hai i permessi per modificare questa lista");
         }
+
+        // 4. Aggiorniamo i dati
         if (nuovoTitolo != null && !nuovoTitolo.trim().isEmpty()) {
             lista.setTitolo(nuovoTitolo);
         }
         if (nuovaDescrizione != null && !nuovaDescrizione.trim().isEmpty()) {
             lista.setDescrizione(nuovaDescrizione);
         }
+
+        // 5. Salviamo
         listaCurataRepository.save(lista);
     }
 }
