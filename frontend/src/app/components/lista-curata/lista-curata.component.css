@@ -1,5 +1,6 @@
 /* --- CONFIGURAZIONE VARIABILI --- */
 :host {
+  display: block;
   --bg-dark: #0f0f0f;
   --bg-card: #181818;
   --bg-input: #2a2a2a;
@@ -7,6 +8,11 @@
   --text-primary: #ffffff;
   --text-secondary: #adb5bd; /* Grigio argento chiaro */
   --border: rgba(255, 255, 255, 0.1);
+}
+
+.profile-page-container,
+.lists-container {
+  padding-top: 60px !important;
 }
 
 /* --- TITOLI E TESTI --- */
@@ -193,4 +199,84 @@
 }
 .liked i {
   color: red !important;
+}
+
+/* ==========================================================================
+   AGGIUNTA RESPONSIVE PER LISTE E PROFILO
+   ========================================================================== */
+@media (max-width: 768px) {
+
+  /* 1. Riduzione spazi alti e titoli */
+  .profile-page-container,
+  .lists-container {
+    padding-top: 30px !important; /* Più vicino alla navbar su mobile */
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .section-title {
+    font-size: 1.6rem;
+    text-align: center;
+  }
+
+  .section-subtitle {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  /* 2. Pannello Gestione (Edit Panel) */
+  /* Lo rendiamo a tutto schermo o quasi per facilitare l'inserimento film */
+  .edit-panel {
+    border-radius: 0;
+    margin: -15px; /* Elimina i margini per usare tutto lo spazio */
+  }
+
+  .panel-header {
+    padding: 1rem;
+  }
+
+  /* 3. Card delle Liste */
+  .premium-card {
+    margin-bottom: 20px;
+  }
+
+  .premium-card:hover {
+    transform: none; /* Evitiamo l'hover su mobile che fa "ballare" la pagina */
+  }
+
+  /* 4. Lista Film Inclusi */
+  /* Rendiamo i nomi dei film più leggibili e i bottoni più grandi */
+  .included-item {
+    padding: 10px;
+  }
+
+  .film-name {
+    font-size: 0.8rem;
+    max-width: 70%;
+  }
+
+  /* 5. Dropdown Ricerca Film */
+  /* Fondamentale: deve coprire bene la larghezza per poter cliccare i titoli */
+  .search-dropdown {
+    position: fixed; /* Lo blocchiamo rispetto allo schermo */
+    left: 10px;
+    right: 10px;
+    width: auto;
+    z-index: 9999;
+  }
+
+  /* 6. Bottoni */
+  .btn-primary-custom {
+    width: 100%; /* Bottone "Salva" o "Crea" a tutta larghezza */
+    margin-top: 15px;
+  }
+}
+
+/* Ottimizzazione per schermi molto piccoli */
+@media (max-width: 480px) {
+  .card-actions {
+    padding: 0.8rem;
+    flex-wrap: wrap; /* Se ci sono troppe icone le manda a capo */
+    gap: 10px;
+  }
 }

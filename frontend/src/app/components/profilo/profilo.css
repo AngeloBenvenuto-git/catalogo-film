@@ -176,3 +176,73 @@
   font-weight: 500;
   letter-spacing: 0.5px;
 }
+
+/* ==========================================================================
+   AGGIUNTA RESPONSIVE PER PROFILO UTENTE
+   ========================================================================== */
+@media (max-width: 576px) {
+  .profile-page-container {
+    padding-top: 20px !important; /* Avviciniamo il profilo alla navbar */
+    padding-left: 10px;
+    padding-right: 10px;
+    align-items: flex-start; /* Evita problemi se la tastiera copre il form */
+  }
+
+  .profile-card {
+    padding: 30px 20px; /* Riduciamo il padding interno (da 50px a 20px) */
+    border-radius: 15px;
+    background: rgba(15, 15, 15, 0.95); /* Leggermente più opaco per leggibilità */
+    box-shadow: none; /* Rimuoviamo ombre pesanti su mobile */
+  }
+
+  .profile-header h2 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  /* Avatar: lo rimpiccioliamo leggermente */
+  .profile-img {
+    width: 110px;
+    height: 110px;
+  }
+
+  .edit-btn {
+    width: 36px;
+    height: 36px;
+    bottom: 10px;
+    right: 10px;
+  }
+
+  /* Toast Notification: su mobile deve stare al centro in alto */
+  .nf-toast {
+    width: calc(100% - 30px);
+    right: 15px !important;
+    left: 15px !important;
+    top: -100px; /* Parte da fuori schermo in alto */
+    padding: 15px;
+    text-align: center;
+    border-left: none;
+    border-bottom: 4px solid #E50914; /* Spostiamo la linea rossa sotto */
+    transition: top 0.5s ease;
+  }
+
+  .nf-toast.show {
+    top: 75px; /* Scende sotto la navbar */
+  }
+
+  /* Bottoni: uno sotto l'altro e larghi */
+  .d-flex.justify-content-between {
+    flex-direction: column !important;
+    gap: 12px;
+  }
+
+  .btn-danger, .btn-outline-secondary {
+    width: 100%;
+    padding: 12px !important;
+  }
+
+  /* Input: fix per evitare lo zoom su iPhone */
+  .profile-input, .email-locked {
+    font-size: 16px !important;
+  }
+}

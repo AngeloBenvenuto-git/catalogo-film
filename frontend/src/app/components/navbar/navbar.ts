@@ -31,6 +31,14 @@ export class Navbar implements OnInit {
     this.authService.loggedIn$.subscribe(stato => this.isLoggato = stato);
   }
 
+  /**
+   * AZIONE PROFESSIONALE: Ricarica completamente l'applicazione.
+   * Pulisce lo stato di Angular e ricarica i dati dal server.
+   */
+  refreshHome() {
+    window.location.href = window.location.origin;
+  }
+
   @HostListener('window:scroll', [])
   onWindowScroll() {
     this.isScrolled = window.scrollY > 50;
@@ -97,17 +105,11 @@ export class Navbar implements OnInit {
   // UTILITY PER IL TEMPLATE
   getEmail(): string | null { return this.authService.getEmail(); }
   getRuolo(): string | null { return this.authService.getRuolo(); }
-
-  // CORRETTO: Recupera l'username reale dal JWT tramite il servizio
   getUsername(): string | null { return this.authService.getUsername(); }
 
   getAvatar(): string | null {
     if (!this.isLoggato) return null;
-
-    const email = this.authService.getEmail();
-    if (!email) return null;
-
-    return localStorage.getItem('user_avatar_' + email);
+    return localStorage.getItem('user_avatar');
   }
 
   logout() {

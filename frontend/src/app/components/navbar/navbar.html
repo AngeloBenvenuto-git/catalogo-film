@@ -1,7 +1,7 @@
 <nav class="pv-navbar" [class.scrolled]="isScrolled">
 
   <div class="pv-left-side">
-    <a class="brand-logo" routerLink="/">
+    <a class="brand-logo" (click)="refreshHome()" style="cursor: pointer;">
       <span class="red-text">NET</span>FILM
     </a>
     <ul class="nav-links-container">
@@ -114,8 +114,12 @@
         </ng-container>
 
         <ng-container *ngIf="!isLoggato">
-          <a routerLink="/login" class="dropdown-item">Accedi</a>
-          <a routerLink="/registrazione" class="dropdown-item">Registrati</a>
+          <a routerLink="/login" class="dropdown-item">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Accedi
+          </a>
+          <a routerLink="/registrazione" class="dropdown-item">
+            <i class="bi bi-person-plus me-2"></i>Registrati
+          </a>
         </ng-container>
       </div>
     </div>

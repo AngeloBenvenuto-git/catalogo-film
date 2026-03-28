@@ -1,0 +1,123 @@
+/* ==========================================================================
+   1. STRUTTURA (STILE LOGIN)
+   ========================================================================== */
+.register-container {
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+  url('https://assets.nflxext.com/ffe/siteui/vlv3/f841d4c7-10e1-40af-9a10-87d3f7717690/web/IT-it-20220502-popsignuptwoweeks-perspective_alpha_website_large.jpg');
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.register-box {
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 40px 50px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px; /* Leggermente più largo del login per i campi extra */
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+}
+
+.register-title {
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+/* ==========================================================================
+   2. INPUT E FORM (TESTO NERO COME RICHIESTO)
+   ========================================================================== */
+.custom-input {
+  background-color: #333 !important;
+  border: 1px solid transparent !important;
+  color: white !important; /* Testo che scrivi è bianco per leggibilità */
+  height: 55px;
+  padding: 10px 20px;
+  border-radius: 4px;
+}
+
+.custom-input:focus {
+  background-color: #454545 !important;
+  border-bottom: 3px solid #e50914 !important;
+  box-shadow: none !important;
+}
+
+.form-label {
+  color: #8c8c8c;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   3. BOTTONE E LINK
+   ========================================================================== */
+.btn-netflix {
+  background-color: #e50914;
+  color: white;
+  font-weight: bold;
+  height: 55px;
+  font-size: 1.1rem;
+  border: none;
+  transition: all 0.2s;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.btn-netflix:hover {
+  background-color: #b20710;
+  transform: translateY(-1px);
+}
+
+.register-footer {
+  color: #737373;
+  font-size: 0.9rem;
+  margin-top: 25px;
+  text-align: center;
+}
+
+.register-footer a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.register-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   4. AGGIUNTA RESPONSIVE (SOLO PER CELLULARE)
+   ========================================================================== */
+@media (max-width: 576px) {
+  .register-container {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85));
+    align-items: flex-start;
+    padding-top: 30px;
+  }
+
+  .register-box {
+    background-color: transparent;
+    padding: 20px;
+    box-shadow: none;
+  }
+
+  .register-title {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+
+  .custom-input {
+    font-size: 16px !important; /* Fix zoom iPhone */
+    height: 50px;
+  }
+
+  .btn-netflix {
+    height: 50px;
+  }
+}

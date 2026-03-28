@@ -165,3 +165,68 @@
     padding-top: 80px;
   }
 }
+
+
+/* --- OTTIMIZZAZIONE EXTRA PER MOBILE (Sotto i 768px) --- */
+@media screen and (max-width: 767px) {
+
+  .detail-container {
+    padding-top: 20px !important; /* Riduciamo lo spazio per farlo salire */
+  }
+
+  /* Gestione Testi */
+  h2 {
+    font-size: 1.6rem !important;
+    line-height: 1.2;
+    margin-bottom: 15px;
+  }
+
+  .lead {
+    font-size: 1rem !important;
+    text-align: justify;
+  }
+
+  /* Cuore Preferiti: lo riduciamo leggermente per non coprire il testo */
+  .pv-favorite-btn {
+    font-size: 1.8rem;
+    margin-top: 10px;
+  }
+
+  /* Mappa: riduciamo l'altezza su mobile per non obbligare a scroll infiniti */
+  #mappa-container {
+    height: 250px !important;
+    margin-top: 30px;
+  }
+
+  /* Bottoni Admin: li mettiamo uno sopra l'altro se lo schermo è strettissimo */
+  .admin-controls {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .admin-controls button {
+    width: 100%;
+  }
+
+  /* Toast Messaggio: lo centriamo in alto per visibilità */
+  .pv-added-msg {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: 90%;
+    text-align: center;
+    top: 80px;
+  }
+
+  /* Badge e Info (Anno, Regista, ecc) */
+  .badge {
+    font-size: 0.75rem;
+  }
+}
+
+/* Fix per schermi orizzontali (Landscape) */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .detail-container { padding-top: 10px !important; }
+  .col-md-4 img { max-width: 150px !important; }
+}

@@ -16,7 +16,7 @@ export class ChatBot {
   chatOpen: boolean = false;
   staScrivendo: boolean = false;
   interrompiScrittura: boolean = false;
-  private streamFinito: boolean = false; // <--- Nuova variabile di controllo
+  private streamFinito: boolean = false;
 
   messaggi: { testo: string, daUtente: boolean, ora: Date }[] = [
     { testo: "Ciao! Sono l'assistente NetGPT. Come posso aiutarti?", daUtente: false, ora: new Date() }
@@ -32,11 +32,11 @@ export class ChatBot {
     if (!this.messaggio.trim() || this.staScrivendo) return;
 
     this.interrompiScrittura = false;
-    this.streamFinito = false; // Reset dello stato stream
+    this.streamFinito = false;
     const testoInviato = this.messaggio;
     this.messaggi.push({ testo: testoInviato, daUtente: true, ora: new Date() });
     this.messaggio = '';
-    this.staScrivendo = true; // Blocca l'input subito
+    this.staScrivendo = true;
 
     this.cdr.detectChanges();
     this.scrollaInBasso();
@@ -90,7 +90,7 @@ export class ChatBot {
         this.messaggi[indiceRisposta].testo = "Errore di connessione.";
       }
     } finally {
-      this.streamFinito = true; // Lo stream è finito, ma il bot potrebbe stare ancora scrivendo
+      this.streamFinito = true;
       this.cdr.detectChanges();
     }
   }
@@ -112,8 +112,6 @@ export class ChatBot {
   private async elaboraCoda(indice: number) {
     this.staElaborandoCoda = true;
 
-    // Il bot continua a scrivere se ci sono caratteri nella coda
-    // OPPURE se il server sta ancora inviando (streamFinito è false)
     while (this.codaCaratteri.length > 0 || (!this.streamFinito && !this.interrompiScrittura)) {
       if (this.codaCaratteri.length > 0) {
         const char = this.codaCaratteri.shift();
@@ -124,11 +122,9 @@ export class ChatBot {
           await new Promise(resolve => setTimeout(resolve, this.velocitaBattitura));
         }
       } else {
-        // Se la coda è vuota ma lo stream non è ancora finito, aspetta un attimo
         await new Promise(resolve => setTimeout(resolve, 30));
       }
     }
-    // SOLO QUI, quando tutto è apparso a video, sblocchiamo l'input
     this.concludiScrittura();
   }
 
@@ -140,7 +136,6 @@ export class ChatBot {
     this.scrollaInBasso();
   }
 
-  // ... restanti funzioni toggleChat e scrollaInBasso uguali
   toggleChat() {
     this.chatOpen = !this.chatOpen;
     if (this.chatOpen) {

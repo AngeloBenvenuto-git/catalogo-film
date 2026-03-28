@@ -61,3 +61,47 @@ body {
 .btn-netflix:hover {
   background-color: #b20710 !important;
 }
+
+
+/* ==========================================================================
+   AGGIUNTE GLOBALI RESPONSIVE (STRETTAMENTE NECESSARIE)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* Evita che il sito balli a destra e sinistra su cellulare */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
+
+  /* Rende i testi Bootstrap leggermente più piccoli ovunque */
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.5rem; }
+
+  /* Rimpicciolisce i padding di Bootstrap (.container) per non sprecare spazio */
+  .container {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+
+  /* Forza gli input a non zoomare su iPhone (minimo 16px) */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Scrollbar scura e sottile per tutto il sito (stile Netflix) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #141414;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #e50914;
+}

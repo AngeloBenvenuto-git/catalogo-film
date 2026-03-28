@@ -118,3 +118,58 @@
   aspect-ratio: 2/3;
   object-fit: cover;
 }
+
+
+/* --- AGGIUNTA RESPONSIVE PER PREFERITI --- */
+@media (max-width: 768px) {
+  .favorites-page {
+    padding: 20px 15px; /* Riduciamo il padding laterale */
+  }
+
+  .title {
+    font-size: 28px; /* Titolo più proporzionato */
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  /* Griglia: 2 colonne fisse su mobile per non farle diventare troppo piccole */
+  .film-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px; /* Spazio ridotto tra le locandine */
+  }
+
+  /* Disattiviamo l'ingrandimento eccessivo su mobile (fastidioso al tocco) */
+  .movie-card:hover, .film-card:hover {
+    transform: scale(1.02);
+  }
+
+  /* Rendiamo l'overlay sempre visibile o più facile da leggere su mobile */
+  .movie-overlay {
+    opacity: 1; /* Su mobile meglio vedere subito i titoli */
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%);
+    padding: 8px;
+  }
+
+  .overlay-content h6 {
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Taglia i titoli troppo lunghi con i puntini */
+  }
+
+  .empty-text {
+    font-size: 18px;
+  }
+
+  .back-btn {
+    width: 100%; /* Bottone "Torna alla Home" bello grande per il pollice */
+    font-size: 16px;
+  }
+}
+
+/* Ottimizzazione per schermi piccolissimi (es. iPhone SE) */
+@media (max-width: 380px) {
+  .film-grid {
+    gap: 10px;
+  }
+}

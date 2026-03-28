@@ -247,3 +247,77 @@
   width: 22px;
   height: 22px;
 }
+
+/* --- HAMBURGER MENU (Nascosto su PC) --- */
+.hamburger-menu {
+  display: none; /* Inizialmente nascosto */
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  z-index: 3005;
+}
+
+.mobile-dropdown-menu {
+  display: none; /* Inizialmente nascosto */
+}
+
+/* ===========================================
+   AGGIUNTA RESPONSIVE PER CELLULARE
+   =========================================== */
+@media (max-width: 991px) {
+
+  /* Nascondiamo le icone singole del PC */
+  .desktop-only-icons {
+    display: none;
+  }
+
+  /* Mostriamo l'hamburger */
+  .hamburger-menu {
+    display: block;
+  }
+
+  /* Il menu che scende dall'alto */
+  .mobile-dropdown-menu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 60px; /* Sotto la navbar */
+    right: -100%; /* Nascosto a destra */
+    width: 250px;
+    height: auto;
+    background: rgba(15, 15, 15, 0.98);
+    backdrop-filter: blur(20px);
+    padding: 20px;
+    transition: right 0.4s ease;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 3000;
+  }
+
+  /* Classe per aprire il menu (gestita da Angular) */
+  .mobile-dropdown-menu.open {
+    right: 0;
+  }
+
+  .mobile-dropdown-menu a,
+  .mobile-dropdown-menu button {
+    color: white;
+    text-decoration: none;
+    padding: 15px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: transparent;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    text-align: left;
+  }
+
+  .mobile-dropdown-menu hr {
+    border-color: rgba(255, 255, 255, 0.1);
+    margin: 10px 0;
+  }
+}
