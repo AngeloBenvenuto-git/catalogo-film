@@ -105,6 +105,38 @@
   color: #E50914;
   transform: scale(1.2) rotate(10deg);
 }
+/* Posizionamento del cestino */
+.remove-btn {
+  position: absolute;
+  top: 8px;    /* Distanza dall'alto */
+  left: 8px;   /* Distanza da sinistra */
+  background: rgba(15, 15, 15, 0.9);
+  color: #ff4d4d; /* Rosso segnale */
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid rgba(255, 77, 77, 0.3);
+  transition: all 0.2s ease-in-out;
+  z-index: 5;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.remove-btn:hover {
+  background: #ff4d4d;
+  color: white;
+  transform: scale(1.1);
+  border-color: transparent;
+}
+
+/* Assicurati che l'avatar-wrapper sia il riferimento per le icone */
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
 
 /* INPUT E TESTI */
 .profile-header h2 {

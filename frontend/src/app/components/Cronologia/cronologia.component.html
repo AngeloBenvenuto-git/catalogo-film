@@ -1,0 +1,37 @@
+<div class="container mt-5 pt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="display-title mb-0">
+      <span class="emoji-icon">🕒</span> Visti di recente
+    </h2>
+    <button *ngIf="filmVisti.length > 0" class="btn btn-outline-danger btn-sm" (click)="svuotaTutto()">
+      Svuota tutto
+    </button>
+  </div>
+
+  <div class="row g-3 g-md-4" *ngIf="filmVisti.length > 0; else vuoto">
+    <div class="col-6 col-md-4 col-lg-3 col-xl-2" *ngFor="let film of filmVisti">
+
+      <div class="movie-card-h card bg-dark border-0 shadow-lg position-relative">
+        <button class="btn-remove" (click)="rimuoviSingolo(film.id)">&times;</button>
+
+        <a [routerLink]="['/films', film.id]">
+          <img [src]="film.poster" class="card-img-top rounded shadow" alt="{{ film.titolo }}">
+        </a>
+
+        <div class="card-body p-2">
+          <p class="text-white small text-truncate m-0">{{ film.titolo }}</p>
+          <small class="text-white-50">{{ film.anno }}</small>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <ng-template #vuoto>
+    <div class="text-center text-white-50 mt-5">
+      <i class="bi bi-clock-history display-1"></i>
+      <p class="fs-4 mt-3">La tua cronologia è vuota.</p>
+      <a routerLink="/" class="btn btn-danger mt-2">Esplora i film</a>
+    </div>
+  </ng-template>
+</div>

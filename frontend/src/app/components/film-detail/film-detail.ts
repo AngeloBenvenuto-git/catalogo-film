@@ -67,6 +67,9 @@ export class FilmDetail implements OnInit, AfterViewInit {
     this.filmService.getFilmById(id).subscribe({
       next: (res) => {
         this.film = res;
+
+        this.salvaInCronologia(res);
+
         this.filmModifica = { ...res };
         if (this.film.tmdbId) {
           this.caricaTrailer(this.film.tmdbId);
@@ -90,6 +93,35 @@ export class FilmDetail implements OnInit, AfterViewInit {
 
     // Avvio ricerca cinema
     this.ottieniPosizioneEIniziaRicerca();
+  }
+
+  // Aggiungi questa funzione dentro la classe FilmDetail
+  salvaInCronologia(film: any) {
+    if (!film) return;
+
+    // 1. Recupera la cronologia attuale dal localStorage
+    let history = JSON.parse(localStorage.getItem('netfilm_history') || '[]');
+
+    // 2. Crea l'oggetto semplificato del film da salvare
+    const movieData = {
+      id: film.id,
+      titolo: film.titolo,
+      poster: film.posterUrl, // Usiamo posterUrl perché nel tuo codice si chiama così
+      anno: film.anno,
+      data: new Date().getTime()
+    };
+
+    // 3. Rimuovi il film se era già presente (per rimetterlo in cima)
+    history = history.filter((f: any) => f.id !== movieData.id);
+
+    // 4. Aggiungilo all'inizio della lista
+    history.unshift(movieData);
+
+    // 5. Mantieni solo gli ultimi 20 film
+    if (history.length > 20) history.pop();
+
+    // 6. Salva tutto nel browser
+    localStorage.setItem('netfilm_history', JSON.stringify(history));
   }
 
   ngAfterViewInit() {

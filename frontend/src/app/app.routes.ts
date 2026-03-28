@@ -9,6 +9,7 @@ import { FavoritesComponent } from './components/Favorite/favorites.component';
 import { ProfileComponent } from './components/profilo/profilo';
 import { ListaCurataComponent } from './components/lista-curata/lista-curata.component';
 import { CreaListaComponent } from './components/crea-lista/crea-lista.component';
+import {CronologiaComponent} from './components/Cronologia/cronologia.component';
 
 
 export const routes: Routes = [
@@ -20,5 +21,6 @@ export const routes: Routes = [
   { path: 'favorites', component: FavoritesComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'liste', component: ListaCurataComponent },
-  { path: 'crea-lista', component: CreaListaComponent }
+  { path: 'crea-lista', component: CreaListaComponent },
+  { path: 'cronologia', component: CronologiaComponent }
 ];

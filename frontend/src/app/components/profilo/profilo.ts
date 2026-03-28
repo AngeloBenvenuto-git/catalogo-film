@@ -91,4 +91,13 @@ export class ProfileComponent implements OnInit {
       }
     });
   }
+  removeAvatar(): void {
+    const confirmDelete = confirm("Sei sicuro di voler rimuovere la foto profilo?");
+
+    if (confirmDelete) {
+      this.avatarPreview = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
+      console.log('Foto rimossa correttamente.');
+    }
+  }
 }

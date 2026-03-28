@@ -14,6 +14,14 @@
       <div class="avatar-wrapper">
         <img [src]="avatarPreview || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'"
              alt="Avatar" class="profile-img shadow">
+
+        <div *ngIf="avatarPreview && avatarPreview !== 'https://cdn-icons-png.flaticon.com/512/149/149071.png'"
+             class="remove-btn"
+             (click)="removeAvatar()"
+             title="Rimuovi foto">
+          <i class="bi bi-trash-fill"></i>
+        </div>
+
         <label for="avatarUpload" class="edit-btn">
           <i class="bi bi-camera-fill"></i>
         </label>
