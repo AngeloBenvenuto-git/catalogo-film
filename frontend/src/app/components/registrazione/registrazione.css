@@ -1,96 +1,135 @@
 /* ==========================================================================
-   1. STRUTTURA (STILE LOGIN)
+   1. SFONDO MOSAICO (Mantenuto luminoso come richiesto)
    ========================================================================== */
-.register-container {
-  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-  url('https://assets.nflxext.com/ffe/siteui/vlv3/f841d4c7-10e1-40af-9a10-87d3f7717690/web/IT-it-20220502-popsignuptwoweeks-perspective_alpha_website_large.jpg');
-  background-size: cover;
-  background-position: center;
+.nf-mosaico-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0;
+  filter: blur(10px) brightness(0.6); /* Luminosità alzata per vedere le locandine */
+  z-index: -1;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.nf-mosaico-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* 1. IL CONTENITORE (Assicurati che il mosaico sia nell'HTML come ti ho mostrato prima) */
+.login-container {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  position: relative;
+  z-index: 1;
+  padding: 40px 20px;
 }
 
-.register-box {
-  background-color: rgba(0, 0, 0, 0.8);
-  padding: 40px 50px;
-  border-radius: 8px;
+/* 2. IL BOX CON IL LED CHE CAMMINA */
+.login-box {
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 50px;
+  border-radius: 12px;
   width: 100%;
-  max-width: 500px; /* Leggermente più largo del login per i campi extra */
-  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+  max-width: 500px; /* Più largo per la registrazione */
+  position: relative;
+  overflow: hidden; /* FONDAMENTALE: senza questo i LED non si vedono correttamente */
+  z-index: 1;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.8);
 }
 
-.register-title {
-  color: white;
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 25px;
+/* EFFETTO LED ROTANTE */
+.login-box::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(transparent, transparent, transparent, #e50914);
+  top: -50%;
+  left: -50%;
+  animation: ledRotate 4s linear infinite;
+  z-index: -2;
 }
 
-/* ==========================================================================
-   2. INPUT E FORM (TESTO NERO COME RICHIESTO)
-   ========================================================================== */
+/* SFONDO NERO INTERNO (Copre il centro del gradiente) */
+.login-box::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: #0a0a0a;
+  border-radius: 10px;
+  z-index: -1;
+}
+
+@keyframes ledRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 3. GLI INPUT CON IL BAGLIORE (Niente riga piatta) */
 .custom-input {
   background-color: #333 !important;
   border: 1px solid transparent !important;
-  color: white !important; /* Testo che scrivi è bianco per leggibilità */
+  color: white !important;
   height: 55px;
-  padding: 10px 20px;
-  border-radius: 4px;
+  transition: all 0.3s ease-in-out !important;
+  position: relative;
+  z-index: 2;
 }
 
 .custom-input:focus {
-  background-color: #454545 !important;
-  border-bottom: 3px solid #e50914 !important;
-  box-shadow: none !important;
+  background-color: #404040 !important;
+  border-color: #e50914 !important;
+  /* Bagliore LED intorno a tutto l'input */
+  box-shadow: 0 0 18px rgba(229, 9, 20, 0.7) !important;
+  outline: none !important;
 }
-
-.form-label {
-  color: #8c8c8c;
-  font-size: 0.85rem;
-  margin-bottom: 8px;
-  font-weight: 600;
-}
-
 /* ==========================================================================
-   3. BOTTONE E LINK
+   4. BOTTONE NETFLIX CON RIFLESSO "SHINE"
    ========================================================================== */
 .btn-netflix {
   background-color: #e50914;
   color: white;
   font-weight: bold;
-  height: 55px;
+  height: 50px;
   font-size: 1.1rem;
+  margin-top: 10px;
   border: none;
-  transition: all 0.2s;
-  margin-top: 15px;
-  width: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.btn-netflix::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -150%;
+  width: 80%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: shineEffect 3s infinite ease-in-out;
+}
+
+@keyframes shineEffect {
+  0% { left: -150%; }
+  30% { left: 150%; }
+  100% { left: 150%; }
 }
 
 .btn-netflix:hover {
   background-color: #b20710;
-  transform: translateY(-1px);
+  transform: scale(1.02);
 }
-
-.register-footer {
-  color: #737373;
-  font-size: 0.9rem;
-  margin-top: 25px;
-  text-align: center;
-}
-
-.register-footer a {
-  color: white;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.register-footer a:hover {
-  text-decoration: underline;
-}
-
 /* ==========================================================================
    4. AGGIUNTA RESPONSIVE (SOLO PER CELLULARE)
    ========================================================================== */
