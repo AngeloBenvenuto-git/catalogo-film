@@ -77,37 +77,42 @@
   overflow: hidden;
 }
 
+/* --- FIX TABELLA BOOTSTRAP --- */
 .nf-table {
   margin-bottom: 0;
+  --bs-table-bg: transparent !important;
   background-color: transparent !important;
 }
 
 .nf-table thead th {
-  background-color: rgba(0, 0, 0, 0.3) !important;
-  color: #E50914 !important;
-  border-bottom: 2px solid rgba(229, 9, 20, 0.3) !important;
+  background-color: #000000 !important;
+  color: #a3a3a3 !important; /* Grigio fumo elegante al posto del rosso neon */
+  border-bottom: 2px solid #E50914 !important; /* Manteniamo l'accento rosso sul bordo */
   text-transform: uppercase;
   font-size: 0.8rem;
-  font-weight: 800;
+  font-weight: 600; /* Snellito da 800 a 600 */
   letter-spacing: 1.2px;
   padding: 18px 15px;
 }
 
 .nf-table tbody tr {
-  background-color: rgba(255, 255, 255, 0.01) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
-  transition: background 0.2s ease;
+  background-color: transparent !important;
 }
 
 .nf-table tbody td {
-  color: black !important;
-  padding: 15px;
+  background-color: #141414 !important;
+  color: #f5f5f5 !important;
+  padding: 16px 15px;
+  vertical-align: middle;
+  border-bottom: 1px solid #333 !important;
+  transition: background-color 0.2s ease;
 }
 
-.nf-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.04) !important;
+.nf-table tbody tr:hover td {
+  background-color: #2b2b2b !important;
 }
 
+/* --- STILI TESTI COLONNE --- */
 .userid-cell {
   color: #888 !important;
   font-family: monospace;
@@ -115,19 +120,21 @@
 }
 
 .username-cell {
-  color: white !important;
-  font-weight: 700;
+  color: #ffffff !important;
+  font-weight: 600; /* Snellito da 800 a 600 */
+  font-size: 1.05rem; /* Reso leggermente meno ingombrante */
 }
 
 .email-cell {
   color: #adb5bd !important;
 }
 
+/* --- BADGE RUOLI --- */
 .badge-premium {
   padding: 6px 14px;
   border-radius: 6px;
   font-size: 0.75rem;
-  font-weight: 800;
+  font-weight: 600; /* Snellito da 800 a 600 */
   text-transform: uppercase;
   letter-spacing: 0.5px;
   display: inline-block;
@@ -135,23 +142,24 @@
 }
 
 .role-spettatore {
-  background: rgba(40, 167, 69, 0.2) !important;
+  background: rgba(40, 167, 69, 0.15) !important;
   color: #28a745 !important;
   border-color: #28a745;
 }
 
 .role-redattore {
-  background: rgba(255, 193, 7, 0.2) !important;
+  background: rgba(255, 193, 7, 0.15) !important;
   color: #ffc107 !important;
   border-color: #ffc107;
 }
 
 .role-admin {
-  background: rgba(229, 9, 20, 0.2) !important;
+  background: rgba(229, 9, 20, 0.15) !important;
   color: #E50914 !important;
   border-color: #E50914;
 }
 
+/* --- INDICATORE STATO --- */
 .status-indicator {
   display: flex;
   align-items: center;
@@ -172,6 +180,7 @@
   display: inline-block;
 }
 
+/* --- NUOVI BOTTONI AZIONI SOLIDI E VISIBILI --- */
 .btn-group-premium {
   display: flex;
   gap: 8px;
@@ -179,37 +188,36 @@
 }
 
 .btn-action-premium {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 8px 14px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
-  color: #aaa;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 600; /* Snellito da 800 a 600 */
   text-transform: uppercase;
-  transition: all 0.2s ease;
+  border: none;
   cursor: pointer;
-  white-space: nowrap;
-}
-
-.btn-action-premium:hover {
-  transform: translateY(-2px);
+  transition: all 0.2s ease;
   color: white;
 }
 
-.btn-action-premium.promuovi:hover { border-color: #ffc107; color: #ffc107; }
-.btn-action-premium.banna:hover { border-color: #E50914; color: #E50914; }
-.btn-action-premium.sbanna:hover { border-color: #28a745; color: #28a745; }
-.btn-action-premium.elimina:hover { background-color: #E50914; border-color: #E50914; color: white; }
+.btn-action-premium.promuovi { background: #333333; }
+.btn-action-premium.promuovi:hover { background: #ffc107; color: black; transform: translateY(-2px); }
+
+.btn-action-premium.banna { background: #333333; }
+.btn-action-premium.banna:hover { background: #E50914; transform: translateY(-2px); }
+
+.btn-action-premium.sbanna { background: #333333; }
+.btn-action-premium.sbanna:hover { background: #28a745; transform: translateY(-2px); }
+
+.btn-action-premium.elimina { background: #E50914; }
+.btn-action-premium.elimina:hover { background: #b20710; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(229, 9, 20, 0.4); }
 
 ::placeholder { color: #888888 !important; opacity: 1; }
 
-
-/* responsive cellulare */
-
+/* --- RESPONSIVE CELLULARE --- */
 @media (max-width: 768px) {
   .admin-page-container {
     padding-top: 20px !important;
@@ -239,7 +247,8 @@
     margin-bottom: 20px;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     border-radius: 10px;
-    background: rgba(0, 0, 0, 0.2) !important;
+    background: #141414 !important;
+    overflow: hidden;
   }
 
   .nf-table tbody td {
@@ -248,13 +257,13 @@
     align-items: center;
     text-align: right;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-    padding: 10px 15px;
+    padding: 12px 15px;
   }
 
   .nf-table tbody td::before {
     content: attr(data-label);
-    font-weight: 800;
-    color: #E50914;
+    font-weight: 600; /* Snellito da 800 a 600 */
+    color: #a3a3a3; /* Allineato al grigio dell'intestazione desktop */
     text-transform: uppercase;
     font-size: 0.7rem;
     margin-right: 10px;
