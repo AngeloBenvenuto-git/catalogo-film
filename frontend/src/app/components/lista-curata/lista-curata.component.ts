@@ -118,8 +118,8 @@ export class ListaCurataComponent implements OnInit {
       next: () => {
         this.queryRicerca = '';
         this.risultatiRicerca = [];
-        this.filmService.resetCache(); // Fondamentale per la Home
-        this.caricaListe(); // Aggiorna tutto istantaneamente
+        this.filmService.resetCache();
+        this.caricaListe();
       },
       error: (err) => console.error("Errore aggiunta film", err)
     });
@@ -132,7 +132,7 @@ export class ListaCurataComponent implements OnInit {
       this.listaService.rimuoviFilmDaLista(this.listaInModifica.id, filmId).subscribe({
         next: () => {
           this.filmService.resetCache();
-          this.caricaListe(); // Sincronizza il pannello e la card
+          this.caricaListe();
         },
         error: (err) => console.error("Errore rimozione film", err)
       });

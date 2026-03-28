@@ -183,7 +183,7 @@
   background: #e50914;
 }
 
-/*responsive cellulare*/
+
 
 @media (max-width: 480px) {
   .chatbot-container { bottom: 15px; right: 15px; }

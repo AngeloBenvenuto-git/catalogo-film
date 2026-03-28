@@ -1,4 +1,3 @@
-/* Sfondo e distanziamento */
 .container {
   min-height: 90vh;
 }
@@ -11,31 +10,28 @@ h2 {
 }
 .display-title {
   color: #ffffff;
-  font-size: 1.2rem; /* Regola questa grandezza per farla uguale alle altre */
+  font-size: 1.2rem;
   font-weight: 700;
   display: flex;
   align-items: center;
   text-transform: none;
-  gap: 12px; /* Spazio perfetto tra orologio e scritta */
+  gap: 12px;
   margin: 0;
 }
 
 .emoji-icon {
   font-size: 2rem;
-  /* Se vuoi l'effetto "piatto" delle tue icone, non serve altro */
 }
 
-/* Stile per il testo quando non ci sono film */
 .text-empty-history {
   color: #a3a3a3;
   font-size: 1.1rem;
   font-weight: 400;
 }
-/* Card del film */
 .movie-card-h {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  background-color: #141414 !important; /* Grigio scurissimo Netflix */
+  background-color: #141414 !important;
   border-radius: 8px;
 }
 
@@ -45,15 +41,14 @@ h2 {
   z-index: 2;
 }
 
-/* Immagine Poster */
+
 .movie-card-h img {
   width: 100%;
-  aspect-ratio: 2/3; /* Formato verticale classico */
+  aspect-ratio: 2/3;
   object-fit: cover;
-  border-bottom: 2px solid #e50914; /* Linea rossa sottile sotto il poster */
+  border-bottom: 2px solid #e50914;
 }
 
-/* Pulsante X per rimuovere singolo film */
 .btn-remove {
   position: absolute;
   top: -10px;
@@ -85,26 +80,25 @@ h2 {
   transform: scale(1.2);
 }
 
-/* Info del film */
 .card-body p {
   font-weight: 600;
   font-size: 0.9rem;
 }
 
-/* Animazione per la cronologia vuota */
+
 .bi-clock-history {
   color: #e50914;
   opacity: 0.5;
 }
 
-/* Personalizzazione scrollbar se necessaria */
+
 .row {
   padding-top: 20px;
 }
-/* --- RESPONSIVE TITOLO --- */
+
 @media (max-width: 768px) {
   .display-title {
-    font-size: 1.8rem !important; /* Titolo più piccolo su mobile */
+    font-size: 1.8rem !important;
     gap: 8px;
   }
 
@@ -118,14 +112,14 @@ h2 {
   }
 }
 
-/* --- RESPONSIVE CARD --- */
+
 @media (max-width: 576px) {
   .movie-card-h:hover {
-    transform: scale(1.02); /* Su mobile l'hover deve essere meno aggressivo */
+    transform: scale(1.02);
   }
 
   .btn-remove {
-    opacity: 1; /* Su mobile rendi la X sempre visibile perché non c'è il mouse hover */
+    opacity: 1;
     width: 24px;
     height: 24px;
     font-size: 16px;

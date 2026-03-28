@@ -11,13 +11,11 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relazione con l'Utente
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "utente_id", nullable = false)
-    @JsonIgnore // Evita il loop infinito quando trasforma i dati in JSON per Angular
+    @JsonIgnore
     private Utente utente;
 
-    // Relazione con il Film
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "film_id", nullable = false)
     private Film film;

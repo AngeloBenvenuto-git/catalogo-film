@@ -187,7 +187,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* Rimuove eventuali righe orizzontali fantasma */
+
   border-top: 1px solid #333 !important;
 }
 
@@ -201,15 +201,14 @@
   color: red !important;
 }
 
-/* ==========================================================================
-   AGGIUNTA RESPONSIVE PER LISTE E PROFILO
-   ========================================================================== */
+ /*AGGIUNTA RESPONSIVE PER LISTE E PROFILO*/
+
 @media (max-width: 768px) {
 
-  /* 1. Riduzione spazi alti e titoli */
+
   .profile-page-container,
   .lists-container {
-    padding-top: 30px !important; /* Più vicino alla navbar su mobile */
+    padding-top: 30px !important;
     padding-left: 10px;
     padding-right: 10px;
   }
@@ -224,28 +223,25 @@
     margin-bottom: 25px;
   }
 
-  /* 2. Pannello Gestione (Edit Panel) */
-  /* Lo rendiamo a tutto schermo o quasi per facilitare l'inserimento film */
+
   .edit-panel {
     border-radius: 0;
-    margin: -15px; /* Elimina i margini per usare tutto lo spazio */
+    margin: -15px;
   }
 
   .panel-header {
     padding: 1rem;
   }
 
-  /* 3. Card delle Liste */
+
   .premium-card {
     margin-bottom: 20px;
   }
 
   .premium-card:hover {
-    transform: none; /* Evitiamo l'hover su mobile che fa "ballare" la pagina */
+    transform: none;
   }
 
-  /* 4. Lista Film Inclusi */
-  /* Rendiamo i nomi dei film più leggibili e i bottoni più grandi */
   .included-item {
     padding: 10px;
   }
@@ -255,28 +251,26 @@
     max-width: 70%;
   }
 
-  /* 5. Dropdown Ricerca Film */
-  /* Fondamentale: deve coprire bene la larghezza per poter cliccare i titoli */
   .search-dropdown {
-    position: fixed; /* Lo blocchiamo rispetto allo schermo */
+    position: fixed;
     left: 10px;
     right: 10px;
     width: auto;
     z-index: 9999;
   }
 
-  /* 6. Bottoni */
+
   .btn-primary-custom {
-    width: 100%; /* Bottone "Salva" o "Crea" a tutta larghezza */
+    width: 100%;
     margin-top: 15px;
   }
 }
 
-/* Ottimizzazione per schermi molto piccoli */
+
 @media (max-width: 480px) {
   .card-actions {
     padding: 0.8rem;
-    flex-wrap: wrap; /* Se ci sono troppe icone le manda a capo */
+    flex-wrap: wrap;
     gap: 10px;
   }
 }

@@ -77,7 +77,7 @@
   overflow: hidden;
 }
 
-/* --- FIX TABELLA BOOTSTRAP --- */
+
 .nf-table {
   margin-bottom: 0;
   --bs-table-bg: transparent !important;
@@ -86,11 +86,11 @@
 
 .nf-table thead th {
   background-color: #000000 !important;
-  color: #a3a3a3 !important; /* Grigio fumo elegante al posto del rosso neon */
-  border-bottom: 2px solid #E50914 !important; /* Manteniamo l'accento rosso sul bordo */
+  color: #a3a3a3 !important;
+  border-bottom: 2px solid #E50914 !important;
   text-transform: uppercase;
   font-size: 0.8rem;
-  font-weight: 600; /* Snellito da 800 a 600 */
+  font-weight: 600;
   letter-spacing: 1.2px;
   padding: 18px 15px;
 }
@@ -112,7 +112,7 @@
   background-color: #2b2b2b !important;
 }
 
-/* --- STILI TESTI COLONNE --- */
+
 .userid-cell {
   color: #888 !important;
   font-family: monospace;
@@ -121,20 +121,20 @@
 
 .username-cell {
   color: #ffffff !important;
-  font-weight: 600; /* Snellito da 800 a 600 */
-  font-size: 1.05rem; /* Reso leggermente meno ingombrante */
+  font-weight: 600;
+  font-size: 1.05rem;
 }
 
 .email-cell {
   color: #adb5bd !important;
 }
 
-/* --- BADGE RUOLI --- */
+
 .badge-premium {
   padding: 6px 14px;
   border-radius: 6px;
   font-size: 0.75rem;
-  font-weight: 600; /* Snellito da 800 a 600 */
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   display: inline-block;
@@ -159,7 +159,7 @@
   border-color: #E50914;
 }
 
-/* --- INDICATORE STATO --- */
+
 .status-indicator {
   display: flex;
   align-items: center;
@@ -180,7 +180,7 @@
   display: inline-block;
 }
 
-/* --- NUOVI BOTTONI AZIONI SOLIDI E VISIBILI --- */
+
 .btn-group-premium {
   display: flex;
   gap: 8px;
@@ -195,7 +195,7 @@
   padding: 8px 14px;
   border-radius: 6px;
   font-size: 0.75rem;
-  font-weight: 600; /* Snellito da 800 a 600 */
+  font-weight: 600;
   text-transform: uppercase;
   border: none;
   cursor: pointer;
@@ -217,7 +217,7 @@
 
 ::placeholder { color: #888888 !important; opacity: 1; }
 
-/* --- RESPONSIVE CELLULARE --- */
+
 @media (max-width: 768px) {
   .admin-page-container {
     padding-top: 20px !important;
@@ -262,8 +262,8 @@
 
   .nf-table tbody td::before {
     content: attr(data-label);
-    font-weight: 600; /* Snellito da 800 a 600 */
-    color: #a3a3a3; /* Allineato al grigio dell'intestazione desktop */
+    font-weight: 600;
+    color: #a3a3a3;
     text-transform: uppercase;
     font-size: 0.7rem;
     margin-right: 10px;

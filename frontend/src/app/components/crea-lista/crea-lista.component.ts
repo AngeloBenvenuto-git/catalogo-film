@@ -33,7 +33,6 @@ export class CreaListaComponent {
 
     this.listaService.creaLista(this.nuovaLista).subscribe({
       next: (res) => {
-        // Navighiamo verso la rotta delle liste
         this.router.navigate(['/liste']);
       },
       error: (err) => {
