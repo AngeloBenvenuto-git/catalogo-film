@@ -11,6 +11,7 @@ public class UtenteDTO {
     private Utente.Ruolo ruolo;
     private Boolean bannato;
     private LocalDateTime dataRegistrazione;
+    private String fotoBase64;
 
     // Costruttore che converte da Entity a DTO
     public UtenteDTO(Utente utente) {
@@ -20,6 +21,7 @@ public class UtenteDTO {
         this.ruolo = utente.getRuolo();
         this.bannato = utente.getBannato();
         this.dataRegistrazione = utente.getDataRegistrazione();
+        this.fotoBase64 = utente.getFotoBase64();
     }
 
     // Getter
@@ -29,4 +31,5 @@ public class UtenteDTO {
     public Utente.Ruolo getRuolo() { return ruolo; }
     public Boolean getBannato() { return bannato; }
     public LocalDateTime getDataRegistrazione() { return dataRegistrazione; }
+    public String getFotoBase64() { return fotoBase64; }
 }

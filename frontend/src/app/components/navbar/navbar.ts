@@ -101,11 +101,13 @@ export class Navbar implements OnInit {
   // CORRETTO: Recupera l'username reale dal JWT tramite il servizio
   getUsername(): string | null { return this.authService.getUsername(); }
 
-  // AGGIUNTO: Recupera l'avatar salvato localmente per mostrarlo nella navbar
-// Sostituisci il tuo metodo attuale con questo
   getAvatar(): string | null {
-    if (!this.isLoggato) return null; // Se non sono loggato, non mostrare nulla
-    return localStorage.getItem('user_avatar');
+    if (!this.isLoggato) return null;
+
+    const email = this.authService.getEmail();
+    if (!email) return null;
+
+    return localStorage.getItem('user_avatar_' + email);
   }
 
   logout() {

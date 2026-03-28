@@ -27,12 +27,9 @@ export class ProfileComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    // Recuperiamo i dati iniziali dal service
     this.username = this.authService.getUsername() || '';
     this.email = this.authService.getEmail() || '';
-
-    // Recupera l'immagine profilo salvata nel browser per l'anteprima
-    const savedAvatar = localStorage.getItem('user_avatar');
+    const savedAvatar = localStorage.getItem('user_avatar_' + this.email);
     if (savedAvatar) {
       this.avatarPreview = savedAvatar;
     }
@@ -45,14 +42,12 @@ export class ProfileComponent implements OnInit {
       reader.onload = (e: any) => {
         const base64Image = e.target.result;
         this.avatarPreview = base64Image;
-        // Salviamo l'immagine localmente così la Navbar la vede subito al refresh
-        localStorage.setItem('user_avatar', base64Image);
+        localStorage.setItem('user_avatar_' + this.email, base64Image);
       };
       reader.readAsDataURL(file);
     }
   }
 
-  // Funzione per attivare il Toast Netflix style
   triggerToast(message: string) {
     this.toastMessage = message;
     this.showToast = true;
@@ -63,7 +58,6 @@ export class ProfileComponent implements OnInit {
   }
 
   salvaProfilo(): void {
-    // 1. Controllo validità Password
     if (this.nuovaPassword !== '' || this.confermaPassword !== '') {
       if (this.nuovaPassword !== this.confermaPassword) {
         this.triggerToast('Le password non coincidono!');
@@ -75,22 +69,21 @@ export class ProfileComponent implements OnInit {
       }
     }
 
-    // 2. Aggiornamento locale immediato (per sincronizzare la Navbar subito)
     localStorage.setItem('custom_username', this.username);
-
-    // 3. Chiamata al Backend Java per rendere le modifiche persistenti sul Database
-    this.authService.updateProfile(this.username, this.nuovaPassword || undefined).subscribe({
+    this.authService.updateProfile(
+      this.username,
+      this.nuovaPassword || undefined,
+      this.avatarPreview || undefined
+    ).subscribe({
       next: (response) => {
         this.triggerToast('Profilo aggiornato con successo!');
-        // Attendiamo che il toast sia visibile prima di ricaricare
         setTimeout(() => {
           window.location.href = '/';
         }, 1500);
       },
       error: (err) => {
-        // Fallback se il server non è ancora configurato
-        console.warn('Backend non raggiungibile, modifiche salvate solo nel browser.', err);
-        this.triggerToast('Modifiche salvate localmente!');
+        console.warn('Backend non raggiungibile o errore nel salvataggio.', err);
+        this.triggerToast('Errore nel salvataggio definitivo (salvato localmente).');
         setTimeout(() => {
           window.location.href = '/';
         }, 1500);

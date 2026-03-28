@@ -1,5 +1,6 @@
 package com.progetto.catalogo_film.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -10,9 +11,16 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    // Relazione con l'Utente
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "utente_id", nullable = false)
+    @JsonIgnore // Evita il loop infinito quando trasforma i dati in JSON per Angular
+    private Utente utente;
 
-    private Long filmId;
+    // Relazione con il Film
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "film_id", nullable = false)
+    private Film film;
 
     public Long getId() {
         return id;
@@ -22,19 +30,19 @@ public class Favorite {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public Utente getUtente() {
+        return utente;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUtente(Utente utente) {
+        this.utente = utente;
     }
 
-    public Long getFilmId() {
-        return filmId;
+    public Film getFilm() {
+        return film;
     }
 
-    public void setFilmId(Long filmId) {
-        this.filmId = filmId;
+    public void setFilm(Film film) {
+        this.film = film;
     }
 }

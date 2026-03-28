@@ -34,11 +34,9 @@ public class Utente {
     @Column(name = "data_registrazione")
     private LocalDateTime dataRegistrazione = LocalDateTime.now();
 
-    // --- AGGIUNTO: Supporto per la foto profilo in Base64 ---
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "foto_base64", columnDefinition = "TEXT")
     private String fotoBase64;
-    // -------------------------------------------------------
 
     @OneToMany(mappedBy = "utente", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Recensione> recensioni;

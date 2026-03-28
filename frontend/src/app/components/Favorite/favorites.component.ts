@@ -39,19 +39,14 @@ export class FavoritesComponent implements OnInit {
       this.favoriteService.getFavorites(this.username).subscribe({
         next: (favs: any[]) => {
           this.favoritesRaw = favs;
-          this.filmsCompleti = [];
 
-          favs.forEach(f => {
-            this.filmService.getFilmById(f.filmId).subscribe({
-              next: (filmDettaglio) => {
-                if (!this.filmsCompleti.some(movie => movie.id === filmDettaglio.id)) {
-                  this.filmsCompleti.push(filmDettaglio);
-                  this.cdr.detectChanges();
-                }
-              },
-              error: (err) => console.error('Errore recupero film ID: ' + f.filmId, err)
-            });
-          });
+          // BOOM! Estraiamo direttamente i film completi dai preferiti,
+          // senza fare nessuna chiamata aggiuntiva a getFilmById!
+          this.filmsCompleti = favs
+            .map(f => f.film)
+            .filter(film => film !== null && film !== undefined);
+
+          this.cdr.detectChanges();
         },
         error: (err) => console.error('Errore recupero preferiti', err)
       });
@@ -73,6 +68,7 @@ export class FavoritesComponent implements OnInit {
   goBack(): void {
     this.location.back();
   }
+
   rimuoviFilm(filmId: number) {
     if (confirm('Rimuovere questo film dai preferiti?')) {
       this.favoriteService.removeFavorite(this.username, filmId).subscribe({

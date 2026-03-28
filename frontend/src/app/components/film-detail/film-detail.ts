@@ -9,8 +9,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { FavoritesService } from '../../services/favorites.service';
 
-// Importa il modulo delle mappe se non lo hai già fatto nel modulo principale,
-// ma qui ci serve la dichiarazione globale per l'SDK JS
 declare var google: any;
 
 @Component({
@@ -37,13 +35,13 @@ export class FilmDetail implements OnInit, AfterViewInit {
 
   // Variabili per Google Maps
   cinemas: any[] = [];
-  center: { lat: number, lng: number } = { lat: 41.9028, lng: 12.4964 }; // Default su Roma
+  center: { lat: number, lng: number } = { lat: 41.9028, lng: 12.4964 };
   zoom = 12;
   private readonly MAPS_KEY = 'AIzaSyAGWTr9oVHvICUVMgWrmdTbDPDy9CYceBs';
   private mappa: any = null;
   private markers: any[] = [];
 
-  //variabili per i preferiti
+  // Variabili per i preferiti
   favorites: number[] = [];
   animatedFilmId: number | null = null;
   message: string = "";
@@ -81,11 +79,12 @@ export class FilmDetail implements OnInit, AfterViewInit {
     // Carico recensioni
     this.caricaRecensioni(id);
 
-    // Controllo preferiti SOLO se loggata
+    // Controllo preferiti SOLO se loggato
     const username = this.authService.getUsername();
     if (username) {
-      this.favoriteService.getFavorites(username).subscribe(favs => {
-        this.favorites = favs.map(f => f.filmId);
+      this.favoriteService.getFavorites(username).subscribe((favs: any[]) => {
+        // LA MAGIA È QUI: Estraiamo l'ID dal nuovo oggetto film arrivato dal backend
+        this.favorites = favs.map(f => f.film ? f.film.id : f.filmId);
       });
     }
 
@@ -137,14 +136,12 @@ export class FilmDetail implements OnInit, AfterViewInit {
     }
     this.mappa.setCenter({ lat, lng });
     this.mappa.setZoom(11);
-    // Rimuovi marker precedenti
     this.markers.forEach(m => m.setMap(null));
     this.markers = [];
   }
 
   aggiungiMarkers(cinemaList: any[]) {
     if (!this.mappa) return;
-    // Rimuovi marker precedenti
     this.markers.forEach(m => m.setMap(null));
     this.markers = [];
 
@@ -411,7 +408,7 @@ export class FilmDetail implements OnInit, AfterViewInit {
       this.favoriteService.removeFavorite(username, this.film.id).subscribe({
         next: () => {
           this.favorites = this.favorites.filter(f => f !== this.film.id);
-          this.message = "Rimosso dai preferiti"; // Messaggio specifico
+          this.message = "Rimosso dai preferiti";
           this.showAddedMessage();
           this.cdr.detectChanges();
         },
@@ -423,7 +420,7 @@ export class FilmDetail implements OnInit, AfterViewInit {
         next: (res) => {
           if (res) {
             this.favorites.push(this.film.id);
-            this.message = "Aggiunto ai preferiti"; // Messaggio specifico
+            this.message = "Aggiunto ai preferiti";
             this.showAddedMessage();
             this.cdr.detectChanges();
           }
@@ -438,17 +435,13 @@ export class FilmDetail implements OnInit, AfterViewInit {
   }
 
   showAddedMessage(): void {
-    // Se c'è già un timer attivo, lo cancelliamo per far partire quello nuovo
     if (this.messageTimeout) {
       clearTimeout(this.messageTimeout);
     }
 
-    // Il messaggio sparirà dopo 3 secondi (3000ms)
     this.messageTimeout = setTimeout(() => {
       this.message = "";
-      this.cdr.detectChanges(); // Fondamentale per far sparire il box dall'HTML
+      this.cdr.detectChanges();
     }, 3000);
   }
 }
-
-

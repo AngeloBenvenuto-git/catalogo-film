@@ -96,4 +96,26 @@ public class UtenteService {
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
         utenteRepository.delete(utente);
     }
+
+    public Utente aggiornaProfilo(String emailCorrente, String nuovoUsername, String nuovaPassword, String fotoBase64) {
+        Utente utente = utenteRepository.findByEmail(emailCorrente)
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+        if (nuovoUsername != null && !nuovoUsername.isBlank()) {
+            if (!utente.getUsername().equals(nuovoUsername) && utenteRepository.existsByUsername(nuovoUsername)) {
+                throw new RuntimeException("Username già in uso da un altro utente");
+            }
+            utente.setUsername(nuovoUsername);
+        }
+
+        if (nuovaPassword != null && !nuovaPassword.isBlank()) {
+            utente.setPassword(passwordEncoder.encode(nuovaPassword));
+        }
+
+        if (fotoBase64 != null && !fotoBase64.isBlank()) {
+            utente.setFotoBase64(fotoBase64);
+        }
+
+        return utenteRepository.save(utente);
+    }
 }

@@ -37,7 +37,9 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     sessionStorage.removeItem('token');
-    localStorage.removeItem('custom_username'); // Pulisce anche il nome personalizzato
+    localStorage.removeItem('custom_username');
+    localStorage.removeItem('user_avatar');
+
     this.loggedIn.next(false);
   }
 
@@ -45,7 +47,6 @@ export class AuthService {
     return this.getToken() !== null;
   }
 
-  // MODIFICATO: Priorità allo username salvato localmente per aggiornamento immediato Navbar
   getUsername(): string | null {
     const custom = localStorage.getItem('custom_username');
     if (custom) return custom;
@@ -76,10 +77,12 @@ export class AuthService {
     } catch (e) { return null; }
   }
 
-  // Salvataggio sul Backend
-  updateProfile(username: string, password?: string): Observable<any> {
+  updateProfile(username: string, password?: string, fotoBase64?: string): Observable<any> {
     const body: any = { username };
+
     if (password) body.password = password;
+
+    if (fotoBase64) body.fotoBase64 = fotoBase64;
 
     return this.http.put(`${this.apiUrl}/user/update`, body, {
       headers: { 'Authorization': `Bearer ${this.getToken()}` }

@@ -46,4 +46,21 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
         }
     }
+
+    @PutMapping("/user/update")
+    public ResponseEntity<?> updateProfile(
+            @RequestBody Map<String, String> body,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails userDetails) {
+        try {
+            utenteService.aggiornaProfilo(
+                    userDetails.getUsername(),
+                    body.get("username"),
+                    body.get("password"),
+                    body.get("fotoBase64")
+            );
+            return ResponseEntity.ok(Map.of("messaggio", "Profilo aggiornato con successo"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
+        }
+    }
 }

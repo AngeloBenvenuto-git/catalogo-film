@@ -1,29 +1,33 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class FavoritesService {
   private apiUrl = 'http://localhost:8080/api/favorites';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
-  addFavorite(username: string, filmId: number) {
-    return this.http.post('http://localhost:8080/api/favorites', {
-      username,
-      filmId
-    });
-  }
-
-
-  removeFavorite(username: string, filmId: number) {
-    return this.http.delete(`${this.apiUrl}/${username}/${filmId}`);
+  private getHeaders() {
+    return {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${this.authService.getToken()}`
+      })
+    };
   }
 
   getFavorites(username: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/${username}`);
+    return this.http.get<any[]>(`${this.apiUrl}/${username}`, this.getHeaders());
+  }
+
+  addFavorite(username: string, filmId: number): Observable<any> {
+    return this.http.post<any>(this.apiUrl, { username, filmId }, this.getHeaders());
+  }
+
+  removeFavorite(username: string, filmId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${username}/${filmId}`, this.getHeaders());
   }
 }
-
