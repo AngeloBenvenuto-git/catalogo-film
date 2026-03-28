@@ -21,6 +21,9 @@ export class Navbar implements OnInit {
   ordinamento: string = '';
   ordinamentoAnno: string = '';
 
+  avatarUrl: string | null = null;
+  usernameCorrente: string | null = null;
+
   constructor(
     public authService: AuthService,
     private router: Router,
@@ -28,15 +31,48 @@ export class Navbar implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.authService.loggedIn$.subscribe(stato => this.isLoggato = stato);
-  }
+    // 1. ASCOLTA I CAMBIAMENTI DELLA FOTO IN TEMPO REALE!
+    this.authService.avatar$.subscribe(avatar => {
+      this.avatarUrl = avatar;
+    });
 
-  /**
-   * AZIONE PROFESSIONALE: Ricarica completamente l'applicazione.
-   * Pulisce lo stato di Angular e ricarica i dati dal server.
-   */
-  refreshHome() {
-    window.location.href = window.location.origin;
+    // 2. GESTISCI IL LOGIN E LA SINCRONIZZAZIONE
+    this.authService.loggedIn$.subscribe(stato => {
+      this.isLoggato = stato;
+
+      if (stato) {
+        const email = this.authService.getEmail();
+
+        if (email) {
+          // Carica prima dalla cache per immediatezza
+          const localAvatar = localStorage.getItem('user_avatar_' + email);
+          if (localAvatar) {
+            this.authService.setAvatar(localAvatar);
+          }
+          this.usernameCorrente = localStorage.getItem('custom_username_' + email) || this.authService.getUsername();
+        }
+
+        // Recupera i dati freschi dal Server
+        if (typeof this.authService.getMe === 'function') {
+          this.authService.getMe().subscribe({
+            next: (user) => {
+              if (user.fotoBase64) {
+                localStorage.setItem('user_avatar_' + user.email, user.fotoBase64);
+                this.authService.setAvatar(user.fotoBase64); // Aggiorna via radio!
+              }
+              if (user.username) {
+                localStorage.setItem('custom_username_' + user.email, user.username);
+                this.usernameCorrente = user.username;
+              }
+            },
+            error: (err) => console.log('Sync profilo saltata:', err)
+          });
+        }
+      } else {
+        this.authService.setAvatar(null);
+        this.usernameCorrente = null;
+      }
+    });
   }
 
   @HostListener('window:scroll', [])
@@ -102,23 +138,28 @@ export class Navbar implements OnInit {
     this.router.navigate(['/'], { queryParams: {}, queryParamsHandling: '' });
   }
 
-  // UTILITY PER IL TEMPLATE
   getEmail(): string | null { return this.authService.getEmail(); }
   getRuolo(): string | null { return this.authService.getRuolo(); }
-  getUsername(): string | null { return this.authService.getUsername(); }
+
+  getUsername(): string | null {
+    return this.usernameCorrente;
+  }
 
   getAvatar(): string | null {
-    if (!this.isLoggato) return null;
-    return localStorage.getItem('user_avatar');
+    return this.avatarUrl;
   }
 
   logout() {
     this.authService.logout();
-    this.isLoggato = false;
     this.router.navigate(['/login']);
   }
 
   goToFavorites() {
     this.router.navigate(['/favorites']);
+  }
+
+  refreshHome() {
+    this.resetFiltri();
+    this.router.navigate(['/']);
   }
 }

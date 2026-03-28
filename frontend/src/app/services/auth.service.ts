@@ -8,10 +8,20 @@ import { Observable, BehaviorSubject } from 'rxjs';
 export class AuthService {
 
   private apiUrl = 'http://localhost:8080/api/auth';
+
   private loggedIn = new BehaviorSubject<boolean>(this.getToken() !== null);
   loggedIn$ = this.loggedIn.asObservable();
 
+  // IL NOSTRO NUOVO "WALKIE-TALKIE" PER LA FOTO
+  private avatarSubject = new BehaviorSubject<string | null>(null);
+  avatar$ = this.avatarSubject.asObservable();
+
   constructor(private http: HttpClient) {}
+
+  // Metodo per aggiornare l'avatar ovunque nell'app istantaneamente
+  setAvatar(base64: string | null) {
+    this.avatarSubject.next(base64);
+  }
 
   login(email: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, { email, password });
@@ -39,7 +49,7 @@ export class AuthService {
     sessionStorage.removeItem('token');
     localStorage.removeItem('custom_username');
     localStorage.removeItem('user_avatar');
-
+    this.setAvatar(null); // Svuota la foto
     this.loggedIn.next(false);
   }
 
@@ -48,9 +58,11 @@ export class AuthService {
   }
 
   getUsername(): string | null {
-    const custom = localStorage.getItem('custom_username');
-    if (custom) return custom;
-
+    const email = this.getEmail();
+    if (email) {
+      const custom = localStorage.getItem('custom_username_' + email);
+      if (custom) return custom;
+    }
     const token = this.getToken();
     if (!token) return null;
     try {
@@ -79,16 +91,17 @@ export class AuthService {
 
   updateProfile(username: string, password?: string, fotoBase64?: string): Observable<any> {
     const body: any = { username };
-
     if (password) body.password = password;
-
     if (fotoBase64) body.fotoBase64 = fotoBase64;
 
     return this.http.put(`${this.apiUrl}/user/update`, body, {
       headers: { 'Authorization': `Bearer ${this.getToken()}` }
     });
   }
-  updateLocalUsername(username: string) {
-    localStorage.setItem('custom_username', username);
+
+  getMe(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/me`, {
+      headers: { 'Authorization': `Bearer ${this.getToken()}` }
+    });
   }
 }

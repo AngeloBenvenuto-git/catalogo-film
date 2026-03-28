@@ -63,4 +63,14 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
         }
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(@org.springframework.security.core.annotation.AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails userDetails) {
+        try {
+            Utente utente = utenteService.getUtenteByEmail(userDetails.getUsername());
+            return ResponseEntity.ok(new com.progetto.catalogo_film.dto.UtenteDTO(utente));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
+        }
+    }
 }

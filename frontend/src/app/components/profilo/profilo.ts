@@ -16,11 +16,9 @@ export class ProfileComponent implements OnInit {
   email: string = '';
   avatarPreview: string | null = null;
 
-  // Campi per la modifica password
   nuovaPassword: string = '';
   confermaPassword: string = '';
 
-  // Variabili per il Toast personalizzato
   showToast: boolean = false;
   toastMessage: string = '';
 
@@ -43,6 +41,9 @@ export class ProfileComponent implements OnInit {
         const base64Image = e.target.result;
         this.avatarPreview = base64Image;
         localStorage.setItem('user_avatar_' + this.email, base64Image);
+
+        // BOOM! Invia la foto alla Navbar all'istante
+        this.authService.setAvatar(base64Image);
       };
       reader.readAsDataURL(file);
     }
@@ -51,7 +52,6 @@ export class ProfileComponent implements OnInit {
   triggerToast(message: string) {
     this.toastMessage = message;
     this.showToast = true;
-    // Scompare dopo 2.5 secondi
     setTimeout(() => {
       this.showToast = false;
     }, 2500);
@@ -69,7 +69,8 @@ export class ProfileComponent implements OnInit {
       }
     }
 
-    localStorage.setItem('custom_username', this.username);
+    localStorage.setItem('custom_username_' + this.email, this.username);
+
     this.authService.updateProfile(
       this.username,
       this.nuovaPassword || undefined,

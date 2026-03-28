@@ -35,7 +35,7 @@ public class Utente {
     private LocalDateTime dataRegistrazione = LocalDateTime.now();
 
     @Basic(fetch = FetchType.LAZY)
-    @Column(name = "foto_base64", columnDefinition = "TEXT")
+    @Column(name = "foto_base64", columnDefinition = "LONGTEXT")
     private String fotoBase64;
 
     @OneToMany(mappedBy = "utente", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
