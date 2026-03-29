@@ -11,14 +11,10 @@ export class AuthService {
 
   private loggedIn = new BehaviorSubject<boolean>(this.getToken() !== null);
   loggedIn$ = this.loggedIn.asObservable();
-
-  // IL NOSTRO NUOVO "WALKIE-TALKIE" PER LA FOTO
   private avatarSubject = new BehaviorSubject<string | null>(null);
   avatar$ = this.avatarSubject.asObservable();
 
   constructor(private http: HttpClient) {}
-
-  // Metodo per aggiornare l'avatar ovunque nell'app istantaneamente
   setAvatar(base64: string | null) {
     this.avatarSubject.next(base64);
   }
@@ -49,7 +45,7 @@ export class AuthService {
     sessionStorage.removeItem('token');
     localStorage.removeItem('custom_username');
     localStorage.removeItem('user_avatar');
-    this.setAvatar(null); // Svuota la foto
+    this.setAvatar(null);
     this.loggedIn.next(false);
   }
 

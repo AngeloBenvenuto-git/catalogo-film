@@ -42,7 +42,6 @@ public class ChatBotService {
     private String extractContentFromChunk(String chunk) {
         if (chunk == null || chunk.contains("[DONE]")) return "";
 
-        // Pulizia del formato SSE "data: {...}"
         String jsonPart = chunk.startsWith("data: ") ? chunk.substring(6).trim() : chunk.trim();
 
         try {

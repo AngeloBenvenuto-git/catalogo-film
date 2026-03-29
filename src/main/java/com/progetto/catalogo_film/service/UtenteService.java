@@ -100,7 +100,6 @@ public class UtenteService {
     public Utente aggiornaProfilo(String emailCorrente, String nuovoUsername, String nuovaPassword, String fotoBase64) {
         Utente utente = utenteRepository.findByEmail(emailCorrente)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
-
         if (nuovoUsername != null && !nuovoUsername.isBlank()) {
             if (!utente.getUsername().equals(nuovoUsername) && utenteRepository.existsByUsername(nuovoUsername)) {
                 throw new RuntimeException("Username già in uso da un altro utente");

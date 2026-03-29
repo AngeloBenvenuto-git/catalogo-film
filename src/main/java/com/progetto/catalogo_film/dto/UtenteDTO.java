@@ -13,7 +13,6 @@ public class UtenteDTO {
     private LocalDateTime dataRegistrazione;
     private String fotoBase64;
 
-    // Costruttore che converte da Entity a DTO
     public UtenteDTO(Utente utente) {
         this.id = utente.getId();
         this.username = utente.getUsername();
@@ -24,7 +23,6 @@ public class UtenteDTO {
         this.fotoBase64 = utente.getFotoBase64();
     }
 
-    // Getter
     public Long getId() { return id; }
     public String getUsername() { return username; }
     public String getEmail() { return email; }

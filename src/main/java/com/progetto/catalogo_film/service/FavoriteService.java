@@ -40,14 +40,12 @@ public class FavoriteService {
                 .orElseGet(() -> {
                     System.out.println("Service: Nuovo preferito, procedo al salvataggio.");
 
-                    // 1. Peschiamo i veri oggetti dal DB
                     Utente utente = utenteRepository.findByUsername(username)
                             .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
                     Film film = filmRepository.findById(filmId)
                             .orElseThrow(() -> new RuntimeException("Film non trovato"));
 
-                    // 2. Li leghiamo insieme
                     Favorite fav = new Favorite();
                     fav.setUtente(utente);
                     fav.setFilm(film);

@@ -171,7 +171,6 @@ public class TmdbService {
     }
 
     public String getTopMoviesByGenre(String genreName, int count) {
-        // Cerchiamo nel nostro database i film che hanno quel genere
         List<Film> films = filmRepository.findAll().stream()
                 .filter(f -> f.getGeneri().stream()
                         .anyMatch(g -> g.getNome().toLowerCase().contains(genreName.toLowerCase())))

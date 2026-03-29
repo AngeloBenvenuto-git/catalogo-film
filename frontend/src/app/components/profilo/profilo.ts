@@ -41,8 +41,6 @@ export class ProfileComponent implements OnInit {
         const base64Image = e.target.result;
         this.avatarPreview = base64Image;
         localStorage.setItem('user_avatar_' + this.email, base64Image);
-
-        // BOOM! Invia la foto alla Navbar all'istante
         this.authService.setAvatar(base64Image);
       };
       reader.readAsDataURL(file);

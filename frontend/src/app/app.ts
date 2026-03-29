@@ -1,12 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Navbar } from './components/navbar/navbar';
-import { ChatBot } from './components/chatBot/chatBot'; // L'importazione c'è, bene!
+import { ChatBot } from './components/chatBot/chatBot';
 
 @Component({
   selector: 'app-root',
-  standalone: true, // Assicurati che ci sia standalone se usi gli imports così
-  imports: [RouterOutlet, Navbar, ChatBot], // <--- AGGIUNTO CHATBOT QUI!
+  standalone: true,
+  imports: [RouterOutlet, Navbar, ChatBot],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

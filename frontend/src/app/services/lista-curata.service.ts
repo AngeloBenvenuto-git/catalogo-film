@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from './auth.service'; // Controlla che il percorso sia giusto
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +13,6 @@ export class ListaCurataService {
 
   private getHeaders() {
     const token = this.authService.getToken();
-
-    // Se c'tè il token, lo allega. Se non c'è, manda un'intestazione vuota.
     if (token) {
       return new HttpHeaders({
         'Authorization': `Bearer ${token}`

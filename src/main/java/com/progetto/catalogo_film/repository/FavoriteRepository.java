@@ -11,13 +11,10 @@ import java.util.Optional;
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
-    // Cerca tutti i preferiti di un utente specifico
     List<Favorite> findByUtente_Username(String username);
 
-    // Controlla se un utente ha già salvato quel film specifico
     Optional<Favorite> findByUtente_UsernameAndFilm_Id(String username, Long filmId);
 
-    // Cancella il preferito
     @Modifying
     void deleteByUtente_UsernameAndFilm_Id(String username, Long filmId);
 }

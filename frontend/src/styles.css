@@ -1,13 +1,11 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
 
-/* TEMA DARK GLOBALE */
 body {
   background-color: #141414 !important;
   color: white;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-/* SFONDO LOGIN CON IMMAGINE */
 .login-container {
   background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
   url('https://assets.nflxext.com/ffe/siteui/vlv3/f841d4c7-10e1-40af-9a10-87d3f7717690/web/IT-it-20220502-popsignuptwoweeks-perspective_alpha_website_large.jpg');
@@ -34,7 +32,6 @@ body {
   margin-bottom: 25px;
 }
 
-/* INPUT NERI STILE NETFLIX */
 .custom-input {
   background-color: #333 !important;
   border: none !important;
@@ -48,7 +45,6 @@ body {
   border-bottom: 2px solid #e50914 !important;
 }
 
-/* BOTTONE ROSSO */
 .btn-netflix {
   background-color: #e50914 !important;
   color: white !important;
@@ -62,36 +58,26 @@ body {
   background-color: #b20710 !important;
 }
 
-
-/* ==========================================================================
-   AGGIUNTE GLOBALI RESPONSIVE (STRETTAMENTE NECESSARIE)
-   ========================================================================== */
-
 @media (max-width: 768px) {
-  /* Evita che il sito balli a destra e sinistra su cellulare */
   html, body {
     overflow-x: hidden;
     width: 100%;
     position: relative;
   }
 
-  /* Rende i testi Bootstrap leggermente più piccoli ovunque */
   h1 { font-size: 1.8rem; }
   h2 { font-size: 1.5rem; }
 
-  /* Rimpicciolisce i padding di Bootstrap (.container) per non sprecare spazio */
   .container {
     padding-left: 15px !important;
     padding-right: 15px !important;
   }
 
-  /* Forza gli input a non zoomare su iPhone (minimo 16px) */
   input, select, textarea {
     font-size: 16px !important;
   }
 }
 
-/* Scrollbar scura e sottile per tutto il sito (stile Netflix) */
 ::-webkit-scrollbar {
   width: 8px;
 }
