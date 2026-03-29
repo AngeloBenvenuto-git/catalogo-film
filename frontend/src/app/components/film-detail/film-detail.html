@@ -1,0 +1,191 @@
+<div class="detail-container">
+  <div class="container mt-4" *ngIf="film">
+    <div class="row">
+      <div class="col-md-4">
+        <img *ngIf="film.posterUrl" [src]="film.posterUrl" class="img-fluid rounded shadow" alt="{{ film.titolo }}">
+      </div>
+
+      <div class="col-md-8">
+
+        <div class="d-flex justify-content-between align-items-start mb-2">
+
+          <div class="d-flex align-items-center gap-3">
+            <h2>{{ film?.titolo }}</h2>
+
+            <i
+              class="fa pv-favorite-btn"
+              [class.far]="!isFavoriteFilm(film?.id)"
+              [class.fas]="isFavoriteFilm(film?.id)"
+              [class.fa-bookmark]="true"
+              [class.active]="isFavoriteFilm(film?.id)"
+              [class.animate]="animatedFilmId === film?.id"
+              (click)="toggleFavorite(); $event.stopPropagation()">
+            </i>
+          </div>
+
+          <div *ngIf="message" class="pv-added-msg">
+            {{ message }}
+          </div>
+
+        </div>
+
+        <div *ngIf="isAdminOrRedattore()" class="d-flex gap-2">
+          <button class="btn btn-warning btn-sm" (click)="modalitaModifica = !modalitaModifica">
+            ✏️ {{ modalitaModifica ? 'Annulla' : 'Modifica' }}
+          </button>
+          <button class="btn btn-danger btn-sm" (click)="eliminaFilm()">
+            🗑️ Elimina
+          </button>
+        </div>
+
+
+        <hr>
+
+        <div *ngIf="modalitaModifica" class="card bg-dark border-secondary p-3 mb-3">
+          <h5 class="text-white mb-3">Modifica Film</h5>
+          <div class="mb-2">
+            <label class="text-white-50 small">Titolo</label>
+            <input type="text" class="form-control custom-input" [(ngModel)]="filmModifica.titolo">
+          </div>
+          <div class="mb-2">
+            <label class="text-white-50 small">Trama</label>
+            <textarea class="form-control custom-input" rows="3" [(ngModel)]="filmModifica.trama"></textarea>
+          </div>
+          <div class="mb-2">
+            <label class="text-white-50 small">Anno</label>
+            <input type="number" class="form-control custom-input" [(ngModel)]="filmModifica.anno">
+          </div>
+          <div class="mb-2">
+            <label class="text-white-50 small">Durata (min)</label>
+            <input type="number" class="form-control custom-input" [(ngModel)]="filmModifica.durata">
+          </div>
+          <div class="mb-2">
+            <label class="text-white-50 small">Valutazione</label>
+            <input type="number" step="0.1" min="0" max="10" class="form-control custom-input" [(ngModel)]="filmModifica.valutazione">
+          </div>
+          <button class="btn btn-success mt-2 w-100" (click)="salvaModifica()">💾 Salva modifiche</button>
+        </div>
+
+        <p><strong>Anno:</strong> {{ film.anno }}</p>
+        <p><strong>Durata:</strong> {{ film.durata }} min</p>
+        <p><strong>Tipologia:</strong> {{ film.tipologia }}</p>
+        <p><strong>Generi:</strong> {{ film.generi?.join(', ') }}</p>
+        <p><strong>Attori:</strong> {{ film.attori?.join(', ') }}</p>
+        <p><strong>Valutazione:</strong> ⭐ {{ film.valutazione ? (film.valutazione | number:'1.0-1') : 'N/D' }}</p>
+        <p><strong>Trama:</strong> {{ film.trama }}</p>
+
+        <div class="mt-3 mb-4">
+          <a (click)="tornaIndietro()" class="btn btn-secondary" style="cursor: pointer;">
+            ← Torna alla lista
+          </a>
+        </div>
+
+        <div class="mt-4" *ngIf="trailerUrl">
+          <h5>🎬 Guarda il Trailer</h5>
+          <div class="ratio ratio-16x9">
+            <iframe
+              [src]="trailerUrl"
+              title="YouTube video player"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+              class="rounded shadow bg-dark">
+            </iframe>
+          </div>
+        </div>
+
+        <div class="mt-5">
+          <h4 class="text-white mb-3">💬 Recensioni</h4>
+
+          <p class="text-warning" *ngIf="recensioni.length > 0">
+            ⭐ Valutazione media utenti:
+            <strong>{{ calcolaMediaVoti() | number:'1.0-1' }}</strong>/10
+            ({{ recensioni.length }} recensioni)
+          </p>
+
+          <div *ngIf="recensioni.length === 0" class="text-white-50 mb-3">
+            Nessuna recensione ancora. Sii il primo!
+          </div>
+
+          <div *ngFor="let r of recensioni" class="card bg-dark border-secondary mb-2 p-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <span class="text-warning fw-bold">⭐ {{r.voto}}/10</span>
+                <span class="ms-2 small fw-bold"
+                      [class.text-info]="isRecensioneUtente(r.usernameUtente)"
+                      [class.text-white-50]="!isRecensioneUtente(r.usernameUtente)">
+                  — {{ isRecensioneUtente(r.usernameUtente) ? 'Tu' : r.usernameUtente }}
+                </span>
+                <span class="text-white-50 small ms-2">{{r.dataRecensione | date:'dd/MM/yyyy'}}</span>
+              </div>
+              <button *ngIf="isAdmin()" class="btn btn-sm btn-outline-danger"
+                      (click)="cancellaRecensione(r.id)">🗑️</button>
+            </div>
+            <p class="text-white mt-2 mb-0">{{r.testo}}</p>
+          </div>
+
+          <div *ngIf="isLoggedIn() && !haGiaRecensito()" class="mt-4">
+            <h5 class="text-white">Scrivi una recensione</h5>
+            <div class="mb-2">
+              <label class="text-white-50 small">Voto (1-10)</label>
+              <input type="number" min="1" max="10" class="form-control custom-input" [(ngModel)]="nuovoVoto">
+            </div>
+            <div class="mb-2">
+              <label class="text-white-50 small">Testo</label>
+              <textarea class="form-control custom-input" rows="3"
+                        placeholder="Scrivi la tua recensione..."
+                        [(ngModel)]="nuovaRecensione"></textarea>
+            </div>
+            <button class="btn btn-netflix" (click)="inviaRecensione()">Invia recensione</button>
+          </div>
+
+          <div *ngIf="!isLoggedIn()" class="mt-3">
+            <p class="text-white-50">
+              <a routerLink="/login" class="text-white">Accedi</a> per lasciare una recensione.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-5">
+          <h4 class="text-white mb-3">🎥 Cinema vicini</h4>
+
+          <div class="d-flex gap-2 mb-3">
+            <input
+              type="text"
+              class="form-control custom-input"
+              id="inputCitta"
+              [(ngModel)]="citta"
+              placeholder="Inserisci la tua città...">
+            <button class="btn btn-netflix" (click)="trovaCinema()">Cerca</button>
+          </div>
+
+          <div *ngIf="caricamentoCinema" class="text-white-50 mb-2">
+            🔍 Ricerca in corso...
+          </div>
+          <div *ngIf="erroreCinema" class="text-danger mb-2">
+            ⚠️ {{ erroreCinema }}
+          </div>
+
+          <div *ngFor="let c of cinema" class="card bg-dark border-secondary mb-2 p-3">
+            <h6 class="text-white mb-1">{{ c.nome }}</h6>
+            <p class="text-white-50 small mb-1">{{ c.indirizzo }}</p>
+            <a [href]="'https://www.google.com/maps?q=' + c.lat + ',' + c.lng"
+               target="_blank"
+               class="btn btn-sm btn-outline-light mt-1">
+              📍 Apri in Google Maps
+            </a>
+          </div>
+
+          <div id="mappa-container" class="mt-3 rounded shadow"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-4" *ngIf="!film">
+    <div class="alert alert-warning">
+      Film non trovato o in caricamento...
+    </div>
+  </div>
+</div>

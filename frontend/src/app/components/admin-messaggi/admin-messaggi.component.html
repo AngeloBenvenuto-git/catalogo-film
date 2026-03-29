@@ -1,0 +1,87 @@
+<div class="admin-page-container">
+  <div class="container">
+    <div class="header-section mb-4">
+      <h1 class="admin-title">Centro <span class="subtitle">Messaggi</span></h1>
+    </div>
+
+    <div class="admin-card">
+      <div class="table-responsive">
+        <table class="table nf-table">
+          <thead>
+          <tr>
+            <th>Data</th>
+            <th>Mittente</th>
+            <th>Oggetto</th>
+            <th>Stato</th>
+            <th class="text-end">Azioni</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let msg of messaggi" [class.row-unread]="!msg.letto">
+            <td data-label="Data" class="date-cell">{{ msg.dataInvio | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td data-label="Mittente" class="username-cell">{{ msg.mittenteUsername }}</td>
+            <td data-label="Oggetto" class="subject-cell"><span class="subject-text">{{ msg.oggetto }}</span></td>
+            <td data-label="Stato">
+                <span class="status-indicator" [class.status-active]="!msg.letto" [class.status-read]="msg.letto">
+                  <span class="status-dot"></span>
+                  {{ msg.letto ? 'Letto' : 'Da leggere' }}
+                </span>
+              <span *ngIf="msg.risposta" class="badge-risposto ms-2">Risposto</span>
+            </td>
+            <td data-label="Azioni">
+              <div class="btn-group-premium">
+                <button class="btn-action-premium leggi" (click)="apriMessaggio(msg)">
+                  Leggi
+                </button>
+                <button class="btn-action-premium elimina" (click)="eliminaMessaggio(msg.id)">
+                  Elimina
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="messaggi.length === 0">
+            <td colspan="5" class="text-center py-5" style="color: #a3a3a3;">Nessun messaggio presente.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="messaggioSelezionato" (click)="chiudiModale()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="chiudiModale()">&times;</button>
+
+      <div class="modal-header">
+        <h2>{{ messaggioSelezionato.oggetto }}</h2>
+        <div class="modal-meta-box">
+          <p>Da: <span class="highlight">{{ messaggioSelezionato.mittenteUsername }}</span> ({{ messaggioSelezionato.mittenteEmail }})</p>
+          <p>Il: <span class="highlight">{{ messaggioSelezionato.dataInvio | date:'dd/MM/yyyy HH:mm' }}</span></p>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <p class="testo-originale">{{ messaggioSelezionato.testo }}</p>
+
+        <div class="risposta-section">
+          <div *ngIf="messaggioSelezionato.risposta" class="risposta-inviata">
+            <h4 class="risposta-titolo">La tua risposta:</h4>
+            <p>{{ messaggioSelezionato.risposta }}</p>
+            <span class="data-risposta">Inviata il: {{ messaggioSelezionato.dataRisposta | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+
+          <div *ngIf="!messaggioSelezionato.risposta" class="risposta-form">
+            <textarea
+              [(ngModel)]="rispostaTesto"
+              rows="4"
+              placeholder="Scrivi una risposta allo spettatore..."></textarea>
+            <button class="btn-action-premium promuovi mt-3" (click)="inviaRisposta(messaggioSelezionato.id)">
+              Invia Risposta
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

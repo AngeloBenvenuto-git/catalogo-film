@@ -1,0 +1,147 @@
+<nav class="pv-navbar" [class.scrolled]="isScrolled">
+
+  <div class="pv-left-side">
+    <a class="brand-logo" (click)="refreshHome()" style="cursor: pointer;">
+      <span class="red-text">NET</span>FILM
+    </a>
+    <ul class="nav-links-container">
+      <li>
+        <a class="nav-link-item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      </li>
+      <li>
+        <a class="nav-link-item" routerLink="/liste" routerLinkActive="active">Liste Consigliate</a>
+      </li>
+      <li>
+        <a routerLink="/contattaci" routerLinkActive="active" class="nav-link" *ngIf="isLoggato && getRuolo() === 'SPETTATORE'">Contattaci</a>
+        <a routerLink="/admin-messaggi" routerLinkActive="active" class="nav-link" *ngIf="isLoggato && (getRuolo() === 'ADMIN' || getRuolo() === 'REDATTORE')">Messaggi</a>
+      </li>
+      <li *ngIf="isLoggato && getRuolo() === 'ADMIN'">
+        <a class="nav-link-item" routerLink="/admin" routerLinkActive="active">Admin</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="pv-right-side">
+
+    <div class="search-container" [class.active]="showSearch">
+      <button class="nav-icon-btn" (click)="toggleSearch(); $event.stopPropagation()" title="Cerca">
+        <i class="bi bi-search"></i>
+      </button>
+      <input type="text" class="search-input" placeholder="Cerca un titolo..." [(ngModel)]="searchQuery" (input)="eseguiRicerca()">
+    </div>
+
+    <div class="nav-icon-group pv-hover-container">
+      <button class="nav-icon-btn" title="Filtri e Categorie">
+        <i class="bi bi-grid-3x3-gap-fill"></i>
+      </button>
+
+      <div class="pv-mega-menu shadow-lg">
+        <div class="container-fluid p-4">
+          <div class="row">
+            <div class="col-md-6 border-end border-secondary border-opacity-25">
+              <h6 class="pv-menu-title">Esplora Generi</h6>
+              <div class="row">
+                <div class="col-6">
+                  <a class="pv-menu-item" (click)="setGenere('Azione')">Azione</a>
+                  <a class="pv-menu-item" (click)="setGenere('Commedia')">Commedia</a>
+                  <a class="pv-menu-item" (click)="setGenere('Dramma')">Dramma</a>
+                  <a class="pv-menu-item" (click)="setGenere('Horror')">Horror</a>
+                </div>
+                <div class="col-6">
+                  <a class="pv-menu-item" (click)="setGenere('Fantascienza')">Fantascienza</a>
+                  <a class="pv-menu-item" (click)="setGenere('Thriller')">Thriller</a>
+                  <a class="pv-menu-item" (click)="setGenere('Crime')">Crime</a>
+                  <a class="pv-menu-item" (click)="setGenere('Animazione')">Animazione</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 ps-4">
+              <div class="row">
+                <div class="col-6">
+                  <h6 class="pv-menu-title">Ordina Voto</h6>
+                  <a class="pv-menu-item" (click)="setOrdinamento('val-desc')"><i class="bi bi-star-fill me-2 text-warning small"></i>Più votati</a>
+                  <a class="pv-menu-item" (click)="setOrdinamento('val-asc')"><i class="bi bi-star me-2 small"></i>Meno votati</a>
+                </div>
+                <div class="col-6">
+                  <h6 class="pv-menu-title">Ordina Anno</h6>
+                  <a class="pv-menu-item" (click)="setOrdinamentoAnno('anno-desc')">Più recenti</a>
+                  <a class="pv-menu-item" (click)="setOrdinamentoAnno('anno-asc')">Meno recenti</a>
+                </div>
+              </div>
+              <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+                <button class="btn btn-sm btn-outline-danger w-100" (click)="resetFiltri()" style="white-space:normal; word-break:break-word;">Rimuovi tutti i filtri</button>              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-icon-group" *ngIf="isLoggato">
+      <button class="nav-icon-btn" title="I miei film" routerLink="/favorites">
+        <i class="bi bi-bookmark-fill"></i>
+      </button>
+    </div>
+
+    <div class="pv-profile-section">
+      <div class="profile-trigger d-flex align-items-center">
+        <ng-container *ngIf="getAvatar(); else defaultIcon">
+          <img [src]="getAvatar()" class="rounded-circle border border-1 border-white shadow-sm"
+               style="width: 32px; height: 32px; object-fit: cover;">
+        </ng-container>
+        <ng-template #defaultIcon>
+          <i class="bi bi-person-circle text-white fs-4"></i>
+        </ng-template>
+        <span class="user-name-label ms-2 text-white" *ngIf="isLoggato">
+          {{ getUsername() || 'Profilo' }}
+        </span>
+      </div>
+
+      <div class="profile-dropdown shadow-lg">
+        <ng-container *ngIf="isLoggato">
+          <div class="dropdown-header px-3 py-2 small text-white-50 border-bottom border-secondary border-opacity-25 text-truncate" style="max-width: 200px;">
+            {{ getEmail() }}
+          </div>
+          <a routerLink="/profile" class="dropdown-item">
+            <i class="bi bi-person-gear me-2"></i>Profilo
+          </a>
+          <a routerLink="/miei-messaggi" class="dropdown-item" *ngIf="getRuolo() === 'SPETTATORE'">
+            <i class="bi bi-envelope me-2"></i>Le mie richieste
+          </a>
+          <a routerLink="/cronologia" class="dropdown-item">
+            <i class="bi bi-clock-history me-2"></i>Cronologia
+          </a>
+          <div class="dropdown-divider border-secondary border-opacity-25"></div>
+          <button (click)="logout()" class="dropdown-item">
+            <i class="bi bi-box-arrow-right me-2"></i>Esci
+          </button>
+        </ng-container>
+        <ng-container *ngIf="!isLoggato">
+          <a routerLink="/login" class="dropdown-item">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Accedi
+          </a>
+          <a routerLink="/registrazione" class="dropdown-item">
+            <i class="bi bi-person-plus me-2"></i>Registrati
+          </a>
+        </ng-container>
+      </div>
+    </div>
+
+    <button class="hamburger-menu" (click)="toggleMobileMenu()">
+      <i class="bi bi-list"></i>
+    </button>
+
+  </div>
+
+</nav>
+
+<div class="mobile-dropdown-menu" [class.open]="mobileMenuOpen">
+  <a routerLink="/" (click)="closeMobileMenu()">Home</a>
+  <a routerLink="/liste" (click)="closeMobileMenu()">Liste Consigliate</a>
+  <a *ngIf="isLoggato && (getRuolo() === 'ADMIN' || getRuolo() === 'REDATTORE')"
+     routerLink="/admin-messaggi" (click)="closeMobileMenu()">Messaggi</a>
+  <a *ngIf="isLoggato && getRuolo() === 'SPETTATORE'"
+     routerLink="/contattaci" (click)="closeMobileMenu()">Contattaci</a>
+  <a *ngIf="isLoggato && getRuolo() === 'ADMIN'"
+     routerLink="/admin" (click)="closeMobileMenu()">Admin</a>
+</div>

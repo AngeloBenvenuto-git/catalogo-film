@@ -1,0 +1,93 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+body {
+  background-color: #141414 !important;
+  color: white;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.login-container {
+  background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+  url('https://assets.nflxext.com/ffe/siteui/vlv3/f841d4c7-10e1-40af-9a10-87d3f7717690/web/IT-it-20220502-popsignuptwoweeks-perspective_alpha_website_large.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  background-color: rgba(0, 0, 0, 0.75);
+  padding: 40px 60px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 450px;
+}
+
+.login-title {
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+.custom-input {
+  background-color: #333 !important;
+  border: none !important;
+  color: white !important;
+  height: 50px;
+}
+
+.custom-input:focus {
+  background-color: #454545 !important;
+  box-shadow: none !important;
+  border-bottom: 2px solid #e50914 !important;
+}
+
+.btn-netflix {
+  background-color: #e50914 !important;
+  color: white !important;
+  font-weight: bold !important;
+  height: 50px;
+  font-size: 1.1rem;
+  border: none !important;
+}
+
+.btn-netflix:hover {
+  background-color: #b20710 !important;
+}
+
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
+
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.5rem; }
+
+  .container {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #141414;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #e50914;
+}

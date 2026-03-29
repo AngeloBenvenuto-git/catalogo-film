@@ -1,0 +1,276 @@
+/* --- CONFIGURAZIONE VARIABILI --- */
+:host {
+  display: block;
+  --bg-dark: #0f0f0f;
+  --bg-card: #181818;
+  --bg-input: #2a2a2a;
+  --accent: #e50914;
+  --text-primary: #ffffff;
+  --text-secondary: #adb5bd; /* Grigio argento chiaro */
+  --border: rgba(255, 255, 255, 0.1);
+}
+
+.profile-page-container,
+.lists-container {
+  padding-top: 60px !important;
+}
+
+/* --- TITOLI E TESTI --- */
+.section-title { font-weight: 800; font-size: 2.2rem; color: white; }
+.text-accent { color: var(--accent); }
+.section-subtitle { color: var(--text-secondary); font-size: 0.9rem; }
+
+/* --- PREMIUM CARD --- */
+.premium-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s;
+}
+
+.premium-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(229, 9, 20, 0.5);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.card-content { padding: 1.5rem; flex-grow: 1; }
+.list-title { font-weight: 700; font-size: 1.25rem; color: white; margin: 0; }
+
+.movie-count-badge {
+  background: rgba(229, 9, 20, 0.2);
+  color: var(--accent);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  border: 1px solid rgba(229, 9, 20, 0.3);
+}
+
+.creator-info { display: flex; align-items: center; gap: 10px; }
+.avatar-circle {
+  width: 32px; height: 32px;
+  background: linear-gradient(45deg, #e50914, #b20710);
+  color: white; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: bold; font-size: 0.8rem;
+}
+
+.username-display {
+  color: #eeeeee !important; /* Bianco sporco visibile */
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.list-description {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-top: 10px;
+}
+
+.preview-item { color: #cccccc; font-size: 0.85rem; margin-bottom: 5px; display: flex; align-items: center; }
+.preview-item i { color: var(--accent); }
+
+/* Card Actions */
+.card-actions {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  background: rgba(0,0,0,0.15);
+}
+
+.action-btn { background: transparent; border: none; color: #777; transition: 0.2s; cursor: pointer; }
+.action-btn:hover { color: white; }
+.delete-btn:hover { color: var(--accent); }
+
+/* --- PANNELLO GESTIONE (Fix riga e dropdown) --- */
+.edit-panel {
+  background-color: #121212;
+  border: 1px solid #333;
+  border-radius: 12px;
+  overflow: visible; /* Necessario per il dropdown */
+}
+
+.panel-header { padding: 1.5rem; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+.panel-title { font-weight: 700; font-size: 1.2rem; color: white; margin: 0; }
+.panel-title span { color: var(--accent); }
+
+.close-btn { background: #222; border: none; color: white; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; }
+.panel-body { padding: 1.5rem; }
+
+/* Custom Inputs & Labels */
+.custom-label {
+  display: block;
+  color: var(--text-secondary) !important;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.custom-input {
+  width: 100%;
+  background-color: var(--bg-input);
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: white;
+  padding: 12px;
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+}
+
+.custom-input:focus { outline: none; border-color: var(--accent); }
+
+.btn-primary-custom {
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 25px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* --- FIX DROP-DOWN RICERCA --- */
+.search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.search-dropdown {
+  background: #1f1f1f;
+  border: 1px solid #444;
+  border-radius: 8px;
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.dropdown-item-custom {
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #333;
+  transition: background 0.2s;
+}
+
+.dropdown-item-custom:hover { background-color: #2a2a2a; }
+
+.film-title-search { font-size: 0.85rem; color: #efefef; max-width: 80%; }
+
+.add-small-btn {
+  background: rgba(229, 9, 20, 0.1);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+
+/* --- LISTA FILM INCLUSI --- */
+.included-list { display: flex; flex-direction: column; gap: 8px; }
+
+.included-item {
+  background: #1d1d1d;
+  border: 1px solid #333;
+  padding: 12px 15px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  border-top: 1px solid #333 !important;
+}
+
+.film-name { font-size: 0.9rem; color: #ddd; }
+.remove-btn { background: none; border: none; color: var(--accent); font-size: 1.2rem; cursor: pointer; }
+
+.liked {
+  color: red !important;
+}
+.liked i {
+  color: red !important;
+}
+
+ /*AGGIUNTA RESPONSIVE PER LISTE E PROFILO*/
+
+@media (max-width: 768px) {
+
+
+  .profile-page-container,
+  .lists-container {
+    padding-top: 30px !important;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .section-title {
+    font-size: 1.6rem;
+    text-align: center;
+  }
+
+  .section-subtitle {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+
+  .edit-panel {
+    border-radius: 0;
+    margin: -15px;
+  }
+
+  .panel-header {
+    padding: 1rem;
+  }
+
+
+  .premium-card {
+    margin-bottom: 20px;
+  }
+
+  .premium-card:hover {
+    transform: none;
+  }
+
+  .included-item {
+    padding: 10px;
+  }
+
+  .film-name {
+    font-size: 0.8rem;
+    max-width: 70%;
+  }
+
+  .search-dropdown {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    width: auto;
+    z-index: 9999;
+  }
+
+
+  .btn-primary-custom {
+    width: 100%;
+    margin-top: 15px;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .card-actions {
+    padding: 0.8rem;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}

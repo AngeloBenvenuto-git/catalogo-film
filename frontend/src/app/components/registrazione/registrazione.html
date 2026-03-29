@@ -1,0 +1,52 @@
+<div class="nf-mosaico-background">
+  <img src="https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg" class="nf-mosaico-cover">
+  <img src="https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg" class="nf-mosaico-cover">
+  <img src="https://upload.wikimedia.org/wikipedia/en/1/1c/The_Dark_Knight_%282008_poster%29.jpg" class="nf-mosaico-cover">
+  <img src="https://upload.wikimedia.org/wikipedia/en/3/3b/Pulp_Fiction_%281994%29_poster.jpg" class="nf-mosaico-cover">
+  <img src="https://upload.wikimedia.org/wikipedia/en/f/fb/Gladiator_%282000_film_poster%29.png" class="nf-mosaico-cover">
+  <img src="https://upload.wikimedia.org/wikipedia/en/d/d6/Avatar_%282009_film%29_poster.jpg" class="nf-mosaico-cover">
+  <img src="https://upload.wikimedia.org/wikipedia/en/e/e1/Joker_%282019_film%29_poster.jpg" class="nf-mosaico-cover">
+  <img src="https://upload.wikimedia.org/wikipedia/en/f/fc/Fight_Club_poster.jpg" class="nf-mosaico-cover">
+  <img src="https://upload.wikimedia.org/wikipedia/en/c/c1/The_Matrix_Poster.jpg" class="nf-mosaico-cover">
+  <img src="https://upload.wikimedia.org/wikipedia/en/d/d8/The_Wolf_of_Wall_Street_%282013%29_poster.jpg" class="nf-mosaico-cover">
+  <img src="https://upload.wikimedia.org/wikipedia/en/d/de/Parasite_%282019_film%29_poster.gif" class="nf-mosaico-cover">
+  <img src="https://upload.wikimedia.org/wikipedia/en/b/bb/Titanic_poster.jpg" class="nf-mosaico-cover">
+</div>
+<div class="login-container">
+  <div class="login-box">
+    <h2 class="login-title text-center">Registrati</h2>
+
+    <form (ngSubmit)="onRegistrati()">
+      <div class="mb-3">
+        <label class="form-label text-white-50 small">Username</label>
+        <input type="text" class="form-control custom-input"
+               [(ngModel)]="username" name="username"
+               placeholder="Scegli un username">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label text-white-50 small">Email</label>
+        <input type="email" class="form-control custom-input"
+               [(ngModel)]="email" name="email"
+               placeholder="email@esempio.it">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label text-white-50 small">Password</label>
+        <input type="password" class="form-control custom-input"
+               [(ngModel)]="password" name="password"
+               placeholder="Minimo 8 caratteri">
+      </div>
+
+      <div *ngIf="errore" class="alert alert-danger py-2 small">{{errore}}</div>
+
+      <button type="submit" class="btn btn-netflix w-100 mt-3">Crea Account</button>
+
+      <div class="login-footer mt-4 text-center">
+        <p>Hai già un account?
+          <a routerLink="/login" class="text-white fw-bold text-decoration-none">Accedi ora</a>.
+        </p>
+      </div>
+    </form>
+  </div>
+</div>
