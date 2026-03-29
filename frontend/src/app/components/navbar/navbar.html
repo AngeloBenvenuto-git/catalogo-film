@@ -11,6 +11,10 @@
       <li>
         <a class="nav-link-item" routerLink="/liste" routerLinkActive="active">Liste Consigliate</a>
       </li>
+      <li>
+        <a routerLink="/contattaci" routerLinkActive="active" class="nav-link" *ngIf="isLoggato && getRuolo() === 'SPETTATORE'">Contattaci</a>
+        <a routerLink="/admin-messaggi" routerLinkActive="active" class="nav-link" *ngIf="isLoggato && (getRuolo() === 'ADMIN' || getRuolo() === 'REDATTORE')">Messaggi</a>
+      </li>
       <li *ngIf="isLoggato && getRuolo() === 'ADMIN'">
         <a class="nav-link-item" routerLink="/admin" routerLinkActive="active">Admin</a>
       </li>
@@ -101,6 +105,9 @@
           </div>
           <a routerLink="/profile" class="dropdown-item">
             <i class="bi bi-person-gear me-2"></i>Profilo
+          </a>
+          <a routerLink="/miei-messaggi" class="dropdown-item" *ngIf="getRuolo() === 'SPETTATORE'">
+            <i class="bi bi-envelope me-2"></i>Le mie richieste
           </a>
           <a routerLink="/cronologia" class="dropdown-item">
             <i class="bi bi-clock-history me-2"></i>Cronologia

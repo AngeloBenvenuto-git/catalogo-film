@@ -56,6 +56,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/favorites/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/favorites/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/favorites/**").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/messaggi/miei").authenticated() // <--- AGGIUNGI QUESTA!
+                        .requestMatchers(HttpMethod.POST, "/api/messaggi/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/messaggi/**").hasAnyRole("ADMIN", "REDATTORE")
+                        .requestMatchers(HttpMethod.PUT, "/api/messaggi/**").hasAnyRole("ADMIN", "REDATTORE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/messaggi/**").hasAnyRole("ADMIN", "REDATTORE")
+
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/redattore/**").hasAnyRole("REDATTORE", "ADMIN")
                         .anyRequest().authenticated())
@@ -87,6 +94,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 }

@@ -10,6 +10,9 @@ import { ProfileComponent } from './components/profilo/profilo';
 import { ListaCurataComponent } from './components/lista-curata/lista-curata.component';
 import { CreaListaComponent } from './components/crea-lista/crea-lista.component';
 import {CronologiaComponent} from './components/Cronologia/cronologia.component';
+import { ContattaciComponent } from './components/contattaci/contattaci.component';
+import {AdminMessaggiComponent} from './components/admin-messaggi/admin-messaggi.component';
+import {MieiMessaggiComponent} from './components/miei-messaggi/miei-messaggi.component';
 
 
 export const routes: Routes = [
@@ -22,5 +25,8 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'liste', component: ListaCurataComponent },
   { path: 'crea-lista', component: CreaListaComponent },
+  { path: 'contattaci', component: ContattaciComponent },
+  { path: 'admin-messaggi', component: AdminMessaggiComponent },
+  { path: 'miei-messaggi', component: MieiMessaggiComponent },
   { path: 'cronologia', component: CronologiaComponent }
 ];

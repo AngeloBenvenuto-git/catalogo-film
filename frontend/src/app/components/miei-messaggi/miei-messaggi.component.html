@@ -1,0 +1,44 @@
+<div class="user-messages-container">
+  <div class="container custom-container">
+    <div class="header-section">
+      <h1 class="page-title">Le mie <span class="subtitle">Richieste</span></h1>
+      <p class="page-desc">Lo storico dei messaggi inviati all'assistenza e le relative risposte dello staff.</p>
+    </div>
+
+    <div class="messages-list">
+
+      <div *ngIf="messaggi.length === 0" class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="empty-icon" viewBox="0 0 16 16">
+          <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+        </svg>
+        <p>Non hai ancora inviato nessun messaggio.</p>
+      </div>
+
+      <div class="message-card" *ngFor="let msg of messaggi">
+
+        <div class="message-header">
+          <div class="message-info">
+            <h3 class="subject">{{ msg.oggetto }}</h3>
+            <span class="date">Inviato il: {{ msg.dataInvio | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div class="status-badge" [class.answered]="msg.risposta" [class.pending]="!msg.risposta">
+            {{ msg.risposta ? 'Risposto' : 'In attesa' }}
+          </div>
+        </div>
+
+        <div class="message-body">
+          <p class="user-text">{{ msg.testo }}</p>
+        </div>
+
+        <div class="reply-section" *ngIf="msg.risposta">
+          <div class="reply-header">
+            <span class="reply-label">Risposta dello Staff</span>
+            <span class="reply-date">{{ msg.dataRisposta | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <p class="reply-text">{{ msg.risposta }}</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
