@@ -1,5 +1,5 @@
 <div class="container-fluid mt-5 pt-4 px-5">
-  <h2 class="display-title mb-0 mt-5">🎬 Film Preferiti</h2>
+  <h2 class="display-title mb-3 mt-5">🎬 Film Preferiti</h2>
 
   <div class="row g-4" *ngIf="filmsCompleti.length > 0; else emptyFilms">
     <div class="col-6 col-md-4 col-lg-2" *ngFor="let film of filmsCompleti">
@@ -26,8 +26,7 @@
     <p class="display-subtitle mb-0">Nessun film salvato.</p>
   </ng-template>
 
-  <!-- LISTE LIKED -->
-  <h2 class="display-title mb-0 mt-5">❤️ Liste che mi piacciono</h2>
+  <h2 class="display-title mb-3 mt-5">❤️ Liste che mi piacciono</h2>
 
   <div class="row g-4" *ngIf="listeLiked.length > 0; else emptyListe">
     <div class="col-md-4" *ngFor="let lista of listeLiked">

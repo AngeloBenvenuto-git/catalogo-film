@@ -70,8 +70,7 @@
                 </div>
               </div>
               <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
-                <button class="btn btn-sm btn-outline-danger w-100" (click)="resetFiltri()">Rimuovi tutti i filtri</button>
-              </div>
+                <button class="btn btn-sm btn-outline-danger w-100" (click)="resetFiltri()" style="white-space:normal; word-break:break-word;">Rimuovi tutti i filtri</button>              </div>
             </div>
           </div>
         </div>
@@ -139,5 +138,10 @@
 <div class="mobile-dropdown-menu" [class.open]="mobileMenuOpen">
   <a routerLink="/" (click)="closeMobileMenu()">Home</a>
   <a routerLink="/liste" (click)="closeMobileMenu()">Liste Consigliate</a>
-  <a *ngIf="isLoggato && getRuolo() === 'ADMIN'" routerLink="/admin" (click)="closeMobileMenu()">Admin</a>
+  <a *ngIf="isLoggato && (getRuolo() === 'ADMIN' || getRuolo() === 'REDATTORE')"
+     routerLink="/admin-messaggi" (click)="closeMobileMenu()">Messaggi</a>
+  <a *ngIf="isLoggato && getRuolo() === 'SPETTATORE'"
+     routerLink="/contattaci" (click)="closeMobileMenu()">Contattaci</a>
+  <a *ngIf="isLoggato && getRuolo() === 'ADMIN'"
+     routerLink="/admin" (click)="closeMobileMenu()">Admin</a>
 </div>

@@ -11,7 +11,6 @@
   margin-bottom: 30px;
 }
 
-/* Messaggio vuoto */
 .empty-box {
   text-align: center;
   margin-top: 80px;
@@ -23,17 +22,17 @@
 }
 .display-title {
   color: #ffffff;
-  font-size: 1.2rem; /* Regola questa grandezza per farla uguale alle altre */
+  font-size: 1.2rem;
   font-weight: 700;
   display: flex;
   align-items: center;
   text-transform: none;
-  gap: 12px; /* Spazio perfetto tra orologio e scritta */
+  gap: 12px;
   margin: 0;
 }
 .display-subtitle {
   color: darkgrey;
-  font-size: 1.0rem; /* Regola questa grandezza per farla uguale alle altre */
+  font-size: 1.0rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -56,7 +55,6 @@
   background-color: #b20710;
 }
 
-/* Griglia film */
 .film-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -100,14 +98,12 @@
   background-color: #141414;
 }
 
-/* Ingrandimento al passaggio del mouse */
 .movie-card:hover {
   transform: scale(1.1);
   z-index: 5;
   box-shadow: 0 10px 20px rgba(0,0,0,0.5);
 }
 
-/* Overlay nero sfumato per i testi */
 .movie-overlay {
   position: absolute;
   top: 0;
@@ -118,12 +114,12 @@
   display: flex;
   align-items: flex-end;
   padding: 15px;
-  opacity: 0; /* Nascosto */
+  opacity: 0;
   transition: opacity 0.3s ease;
 }
 
 .movie-card:hover .movie-overlay {
-  opacity: 1; /* Appare all'hover */
+  opacity: 1;
 }
 
 .overlay-content h6 {
@@ -139,32 +135,44 @@
 }
 
 
-/* --- AGGIUNTA RESPONSIVE PER PREFERITI --- */
+
 @media (max-width: 768px) {
   .favorites-page {
     padding: 20px 15px; /* Riduciamo il padding laterale */
   }
 
+  .container-fluid {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    padding-top: 80px !important;
+  }
+
+  .display-title {
+    font-size: 1.3rem;
+    margin-top: 30px !important;
+    margin-bottom: 15px !important;
+  }
+
   .title {
-    font-size: 28px; /* Titolo più proporzionato */
+    font-size: 28px;
     text-align: center;
     margin-bottom: 20px;
   }
 
-  /* Griglia: 2 colonne fisse su mobile per non farle diventare troppo piccole */
+
   .film-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 15px; /* Spazio ridotto tra le locandine */
+    gap: 15px;
   }
 
-  /* Disattiviamo l'ingrandimento eccessivo su mobile (fastidioso al tocco) */
+
   .movie-card:hover, .film-card:hover {
     transform: scale(1.02);
   }
 
-  /* Rendiamo l'overlay sempre visibile o più facile da leggere su mobile */
+
   .movie-overlay {
-    opacity: 1; /* Su mobile meglio vedere subito i titoli */
+    opacity: 1;
     background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%);
     padding: 8px;
   }
@@ -173,7 +181,7 @@
     font-size: 0.8rem;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Taglia i titoli troppo lunghi con i puntini */
+    text-overflow: ellipsis;
   }
 
   .empty-text {
@@ -181,12 +189,23 @@
   }
 
   .back-btn {
-    width: 100%; /* Bottone "Torna alla Home" bello grande per il pollice */
+    width: 100%;
     font-size: 16px;
+  }
+
+  .display-title {
+    font-size: 1.5rem;
+    margin-top: 30px;
+    margin-bottom: 15px;
+  }
+
+  .display-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
   }
 }
 
-/* Ottimizzazione per schermi piccolissimi (es. iPhone SE) */
+
 @media (max-width: 380px) {
   .film-grid {
     gap: 10px;
