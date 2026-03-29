@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Login } from './login';
 import { FormsModule } from '@angular/forms';
-import { provideRouter } from '@angular/router'; // Necessario per simulare il Router nei test
+import { provideRouter } from '@angular/router';
 
 describe('Login', () => {
   let component: Login;
@@ -9,15 +9,15 @@ describe('Login', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Login, FormsModule], // Aggiungiamo FormsModule qui
+      imports: [Login, FormsModule],
       providers: [
-        provideRouter([]) // Forniamo una configurazione vuota del router per il test
+        provideRouter([])
       ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(Login);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // Inizializza il componente e rileva i cambiamenti
+    fixture.detectChanges();
   });
 
   it('should create', () => {

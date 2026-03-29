@@ -1,6 +1,3 @@
-/* ==========================================================================
-   1. SFONDO MOSAICO (Mantenuto luminoso come richiesto)
-   ========================================================================== */
 .nf-mosaico-background {
   position: fixed;
   top: 0;
@@ -11,7 +8,7 @@
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(3, 1fr);
   gap: 0;
-  filter: blur(10px) brightness(0.6); /* Luminosità alzata per vedere le locandine */
+  filter: blur(10px) brightness(0.6);
   z-index: -1;
   overflow: hidden;
   background-color: #000;
@@ -23,9 +20,6 @@
   object-fit: cover;
 }
 
-/* ==========================================================================
-   2. CONTAINER E BOX LOGIN/REGISTER (Con LED che cammina)
-   ========================================================================== */
 .login-container {
   height: 100vh;
   display: flex;
@@ -42,12 +36,11 @@
   width: 100%;
   max-width: 450px;
   position: relative;
-  overflow: hidden; /* Taglia il gradiente rotante */
+  overflow: hidden;
   z-index: 1;
   box-shadow: 0 15px 35px rgba(0,0,0,0.5);
 }
 
-/* IL LED CHE CAMMINA */
 .login-box::before {
   content: '';
   position: absolute;
@@ -58,7 +51,6 @@
   z-index: -2;
 }
 
-/* SFONDO INTERNO NERO PER IL LED */
 .login-box::after {
   content: '';
   position: absolute;
@@ -82,40 +74,23 @@
   z-index: 2;
 }
 
-/* ==========================================================================
-   3. INPUT E CHECKBOX (Recuperati dal tuo codice originale)
-   ========================================================================== */
-
-/* 1. Stile base dell'input quando NON è selezionato */
 .custom-input {
-  /* Assicurati di avere queste proprietà di base */
   background-color: #333 !important;
-  border: 1px solid transparent !important; /* Rendi il bordo invisibile all'inizio */
+  border: 1px solid transparent !important;
   color: white !important;
   height: 50px;
-  border-radius: 4px; /* O il valore che hai già */
-
-  /* Animazione fluida per il LED */
+  border-radius: 4px;
   transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out !important;
-
-  /* Altre tue proprietà (padding, z-index, etc.) rimangono uguali */
 }
-/* 2. L'EFFETTO LED QUANDO CLICCHI (FOCUS) */
+
 .custom-input:focus {
-  /* Schiarisci leggermente lo sfondo per staccare */
   background-color: #404040 !important;
-
-  /* 3. Il LED INTENSO intorno a tutto l'input (Glow esterno) */
-  border-color: #e50914 !important; /* Il bordo diventa rosso */
-  box-shadow: 0 0 18px rgba(229, 9, 20, 0.7), /* Glow esterno intenso */
-  inset 0 0 8px rgba(229, 9, 20, 0.3) !important; /* Glow interno tenue */
-
-  /* Togli l'outline azzurro di default del browser */
+  border-color: #e50914 !important;
+  box-shadow: 0 0 18px rgba(229, 9, 20, 0.7),
+  inset 0 0 8px rgba(229, 9, 20, 0.3) !important;
   outline: none !important;
 }
 
-
-/* STILE CHECKBOX RICORDAMI */
 .custom-check {
   display: flex;
   align-items: center;
@@ -124,25 +99,20 @@
   z-index: 2;
 }
 
-/* STILE CHECKBOX - ADDIO BLU, BENVENUTO ROSSO */
 .custom-check .form-check-input {
   background-color: #333 !important;
   border: 1px solid #737373 !important;
   width: 1.2em;
   height: 1.2em;
   cursor: pointer;
-
-  /* Questa è la riga magica per cambiare il colore della spunta */
   accent-color: #e50914;
 }
 
-/* Forza il colore rosso quando è selezionata */
 .custom-check .form-check-input:checked {
   background-color: #e50914 !important;
   border-color: #e50914 !important;
 }
 
-/* Rimuove l'alone azzurro di default che mette il browser */
 .custom-check .form-check-input:focus {
   box-shadow: 0 0 0 0.25rem rgba(229, 9, 20, 0.4) !important;
   outline: none !important;
@@ -152,9 +122,6 @@
   color: #fff !important;
 }
 
-/* ==========================================================================
-   4. BOTTONE NETFLIX CON RIFLESSO "SHINE"
-   ========================================================================== */
 .btn-netflix {
   background-color: #e50914;
   color: white;
@@ -191,9 +158,6 @@
   transform: scale(1.02);
 }
 
-/* ==========================================================================
-   5. FOOTER E RESPONSIVE (Recuperati dal tuo codice originale)
-   ========================================================================== */
 .login-footer {
   color: #737373;
   font-size: 0.9rem;
@@ -212,7 +176,6 @@
     box-shadow: none;
   }
 
-  /* Disattiviamo il LED rotante su mobile per pulizia visiva */
   .login-box::before, .login-box::after { display: none; }
 
   .login-title { font-size: 1.7rem; }

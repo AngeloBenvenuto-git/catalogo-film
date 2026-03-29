@@ -14,7 +14,7 @@ import { AuthService } from '../../services/auth.service';
 export class Login {
   email: string = '';
   password: string = '';
-  ricordami: boolean = false; // <--- AGGIUNTO: Variabile per la spunta
+  ricordami: boolean = false;
   errore: string = '';
   caricamento: boolean = false;
 
@@ -39,7 +39,6 @@ export class Login {
       const data = await response.json();
 
       if (response.ok) {
-        // MODIFICATO: Passiamo il valore di ricordami al service
         this.authService.salvaToken(data.token, this.ricordami);
         this.router.navigate(['/']);
       } else {
