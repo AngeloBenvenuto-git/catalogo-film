@@ -15,7 +15,7 @@ export class Navbar implements OnInit {
   isLoggato: boolean = false;
   isScrolled: boolean = false;
   showSearch: boolean = false;
-
+  mobileMenuOpen: boolean = false;
   searchQuery: string = '';
   genereSelezionato: string = '';
   ordinamento: string = '';
@@ -110,6 +110,14 @@ export class Navbar implements OnInit {
   eseguiRicerca() {
     this.genereSelezionato = '';
     this.applicaTutto();
+  }
+
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.mobileMenuOpen = false;
   }
 
   setGenere(genere: string) {
