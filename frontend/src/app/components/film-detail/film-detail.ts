@@ -27,13 +27,11 @@ export class FilmDetail implements OnInit, AfterViewInit {
   nuovaRecensione: string = '';
   nuovoVoto: number = 5;
 
-  // Variabili cinema
   citta: string = '';
   cinema: any[] = [];
   caricamentoCinema: boolean = false;
   erroreCinema: string = '';
 
-  // Variabili per Google Maps
   cinemas: any[] = [];
   center: { lat: number, lng: number } = { lat: 41.9028, lng: 12.4964 };
   zoom = 12;
@@ -41,7 +39,6 @@ export class FilmDetail implements OnInit, AfterViewInit {
   private mappa: any = null;
   private markers: any[] = [];
 
-  // Variabili per i preferiti
   favorites: number[] = [];
   animatedFilmId: number | null = null;
   message: string = "";
@@ -63,7 +60,6 @@ export class FilmDetail implements OnInit, AfterViewInit {
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
-    // Carico il film
     this.filmService.getFilmById(id).subscribe({
       next: (res) => {
         this.film = res;
@@ -79,48 +75,37 @@ export class FilmDetail implements OnInit, AfterViewInit {
       error: (err) => console.error("Errore nel recupero del film", err)
     });
 
-    // Carico recensioni
     this.caricaRecensioni(id);
 
-    // Controllo preferiti SOLO se loggato
     const username = this.authService.getUsername();
     if (username) {
       this.favoriteService.getFavorites(username).subscribe((favs: any[]) => {
-        // LA MAGIA È QUI: Estraiamo l'ID dal nuovo oggetto film arrivato dal backend
         this.favorites = favs.map(f => f.film ? f.film.id : f.filmId);
       });
     }
 
-    // Avvio ricerca cinema
     this.ottieniPosizioneEIniziaRicerca();
   }
 
-  // Aggiungi questa funzione dentro la classe FilmDetail
   salvaInCronologia(film: any) {
     if (!film) return;
 
-    // 1. Recupera la cronologia attuale dal localStorage
     let history = JSON.parse(localStorage.getItem('netfilm_history') || '[]');
 
-    // 2. Crea l'oggetto semplificato del film da salvare
     const movieData = {
       id: film.id,
       titolo: film.titolo,
-      poster: film.posterUrl, // Usiamo posterUrl perché nel tuo codice si chiama così
+      poster: film.posterUrl,
       anno: film.anno,
       data: new Date().getTime()
     };
 
-    // 3. Rimuovi il film se era già presente (per rimetterlo in cima)
     history = history.filter((f: any) => f.id !== movieData.id);
 
-    // 4. Aggiungilo all'inizio della lista
     history.unshift(movieData);
 
-    // 5. Mantieni solo gli ultimi 20 film
     if (history.length > 20) history.pop();
 
-    // 6. Salva tutto nel browser
     localStorage.setItem('netfilm_history', JSON.stringify(history));
   }
 
@@ -148,7 +133,6 @@ export class FilmDetail implements OnInit, AfterViewInit {
     }, 1000);
   }
 
-  // --- LOGICA GOOGLE MAPS & METODI MAPPA ---
 
   inizializzaMappa(lat: number, lng: number) {
     const container = document.getElementById('mappa-container');
@@ -197,7 +181,6 @@ export class FilmDetail implements OnInit, AfterViewInit {
     });
   }
 
-  // --- METODI CINEMA ---
 
   ottieniPosizioneEIniziaRicerca() {
     if (navigator.geolocation) {
@@ -288,7 +271,6 @@ export class FilmDetail implements OnInit, AfterViewInit {
       });
   }
 
-  // --- FINE METODI CINEMA ---
 
   caricaRecensioni(filmId: number) {
     this.recensioneService.getRecensioniFilm(filmId).subscribe({
@@ -424,7 +406,6 @@ export class FilmDetail implements OnInit, AfterViewInit {
   toggleFavorite(): void {
     const username = this.authService.getUsername();
 
-    // 1. Caso: Non loggato
     if (!username) {
       this.message = "Accedi per aggiungere ai preferiti";
       this.showAddedMessage();
@@ -436,7 +417,6 @@ export class FilmDetail implements OnInit, AfterViewInit {
     setTimeout(() => this.animatedFilmId = null, 300);
 
     if (this.isFavoriteFilm(this.film.id)) {
-      // 2. Caso: Rimozione
       this.favoriteService.removeFavorite(username, this.film.id).subscribe({
         next: () => {
           this.favorites = this.favorites.filter(f => f !== this.film.id);
@@ -447,7 +427,6 @@ export class FilmDetail implements OnInit, AfterViewInit {
         error: (err) => console.error("Errore rimozione", err)
       });
     } else {
-      // 3. Caso: Aggiunta
       this.favoriteService.addFavorite(username, this.film.id).subscribe({
         next: (res) => {
           if (res) {

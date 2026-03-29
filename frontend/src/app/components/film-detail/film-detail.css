@@ -1,24 +1,21 @@
-/* ==========================================================================
-   1. STRUTTURA PRINCIPALE (FIX NAVBAR)
-   ========================================================================== */
 
 .detail-container {
-  /* Spazio vitale per non finire sotto la Navbar fixed */
+
   padding-top: 40px !important;
   min-height: 100vh;
-  background-color: #141414; /* Sfondo scuro stile Netflix */
+  background-color: #141414;
   color: white;
   position: relative;
   padding-bottom: 50px;
 }
 
-/* Container di Bootstrap per centrare i contenuti */
+
 .container {
   position: relative;
   z-index: 2;
 }
 
-/* Overlay per lo sfondo (opzionale, se usi un backdrop) */
+
 .backdrop-overlay {
   position: absolute;
   top: 0;
@@ -29,9 +26,6 @@
   z-index: 1;
 }
 
-/* ==========================================================================
-   2. CONTROLLI ADMIN (Modifica/Elimina)
-   ========================================================================== */
 
 .admin-controls {
   margin-bottom: 30px;
@@ -39,10 +33,6 @@
   justify-content: flex-end;
   gap: 15px;
 }
-
-/* ==========================================================================
-   3. BOTTONE PREFERITI (Cuore Animato)
-   ========================================================================== */
 
 .pv-favorite-btn {
   cursor: pointer !important;
@@ -64,7 +54,7 @@
   filter: brightness(1.7) drop-shadow(0 0 12px rgba(255,0,0,0.8)) !important;
 }
 
-/* Animazione click */
+
 @keyframes pulse-fav {
   0% { transform: scale(1); }
   50% { transform: scale(1.4); }
@@ -75,7 +65,7 @@
   animation: pulse-fav 0.3s ease;
 }
 
-/* Messaggio Toast (Aggiunto ai preferiti) */
+
 .pv-added-msg {
   position: fixed;
   top: 90px;
@@ -99,9 +89,6 @@
   100% { opacity: 0; transform: translateY(-10px); }
 }
 
-/* ==========================================================================
-   4. MAPPA E SUGGERIMENTI
-   ========================================================================== */
 
 #mappa-container {
   height: 400px;
@@ -116,24 +103,21 @@
   cursor: pointer;
 }
 
-/* ==========================================================================
-   5. RESPONSIVE (MOBILE & TABLET)
-   ========================================================================== */
 
 @media screen and (max-width: 991px) {
 
   .detail-container {
-    padding-top: 100px !important; /* Leggermente meno su mobile */
+    padding-top: 100px !important;
   }
 
-  /* Forza incolonnamento */
+
   .row {
     flex-direction: column !important;
     align-items: center !important;
     text-align: center !important;
   }
 
-  /* Poster */
+
   .col-md-4 img {
     max-width: 250px !important;
     margin-bottom: 25px !important;
@@ -151,7 +135,7 @@
     align-items: center;
   }
 
-  /* Trailer a tutta larghezza */
+
   .ratio-16x9 {
     margin-left: -15px !important;
     margin-right: -15px !important;
@@ -167,14 +151,14 @@
 }
 
 
-/* --- OTTIMIZZAZIONE EXTRA PER MOBILE (Sotto i 768px) --- */
+
 @media screen and (max-width: 767px) {
 
   .detail-container {
-    padding-top: 20px !important; /* Riduciamo lo spazio per farlo salire */
+    padding-top: 20px !important;
   }
 
-  /* Gestione Testi */
+
   h2 {
     font-size: 1.6rem !important;
     line-height: 1.2;
@@ -186,19 +170,19 @@
     text-align: justify;
   }
 
-  /* Cuore Preferiti: lo riduciamo leggermente per non coprire il testo */
+
   .pv-favorite-btn {
     font-size: 1.8rem;
     margin-top: 10px;
   }
 
-  /* Mappa: riduciamo l'altezza su mobile per non obbligare a scroll infiniti */
+
   #mappa-container {
     height: 250px !important;
     margin-top: 30px;
   }
 
-  /* Bottoni Admin: li mettiamo uno sopra l'altro se lo schermo è strettissimo */
+
   .admin-controls {
     flex-direction: column;
     width: 100%;
@@ -209,7 +193,7 @@
     width: 100%;
   }
 
-  /* Toast Messaggio: lo centriamo in alto per visibilità */
+
   .pv-added-msg {
     left: 50%;
     right: auto;
@@ -219,13 +203,13 @@
     top: 80px;
   }
 
-  /* Badge e Info (Anno, Regista, ecc) */
+
   .badge {
     font-size: 0.75rem;
   }
 }
 
-/* Fix per schermi orizzontali (Landscape) */
+
 @media screen and (max-height: 500px) and (orientation: landscape) {
   .detail-container { padding-top: 10px !important; }
   .col-md-4 img { max-width: 150px !important; }
