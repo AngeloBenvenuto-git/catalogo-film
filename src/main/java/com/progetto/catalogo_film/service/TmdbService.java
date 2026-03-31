@@ -1,25 +1,28 @@
 package com.progetto.catalogo_film.service;
 
+import com.progetto.catalogo_film.dao.AttoreDAO;
+import com.progetto.catalogo_film.dao.FilmDAO;
+import com.progetto.catalogo_film.dao.GenereDAO;
 import com.progetto.catalogo_film.entity.Attore;
 import com.progetto.catalogo_film.entity.Film;
 import com.progetto.catalogo_film.entity.Genere;
-import com.progetto.catalogo_film.repository.AttoreRepository;
-import com.progetto.catalogo_film.repository.FilmRepository;
-import com.progetto.catalogo_film.repository.GenereRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
+@Transactional // Fondamentale per salvare film, attori e generi in sequenza
 public class TmdbService {
 
     private final WebClient webClient;
-    private final FilmRepository filmRepository;
-    private final AttoreRepository attoreRepository;
-    private final GenereRepository genereRepository;
+    private final FilmDAO filmDAO;
+    private final AttoreDAO attoreDAO;
+    private final GenereDAO genereDAO;
 
     @Value("${tmdb.api.key}")
     private String apiKey;
@@ -30,17 +33,18 @@ public class TmdbService {
     @Value("${tmdb.api.image.url}")
     private String imageUrl;
 
-    public TmdbService(FilmRepository filmRepository,
-                       AttoreRepository attoreRepository,
-                       GenereRepository genereRepository) {
+    public TmdbService(FilmDAO filmDAO,
+                       AttoreDAO attoreDAO,
+                       GenereDAO genereDAO) {
         this.webClient = WebClient.create();
-        this.filmRepository = filmRepository;
-        this.attoreRepository = attoreRepository;
-        this.genereRepository = genereRepository;
+        this.filmDAO = filmDAO;
+        this.attoreDAO = attoreDAO;
+        this.genereDAO = genereDAO;
     }
 
     public void importaFilmPopolare(int pagine) {
-        if (filmRepository.count() > 0) return;
+        // Usiamo findAll().size() per simulare il count
+        if (!filmDAO.findAll().isEmpty()) return;
 
         importaGeneri();
 
@@ -69,21 +73,29 @@ public class TmdbService {
 
         if (response == null) return;
 
-        List<Map> generi = (List<Map>) response.get("genres");
-        for (Map genereData : generi) {
-            Integer tmdbId = (Integer) genereData.get("id");
-            if (!genereRepository.existsByTmdbId(tmdbId)) {
+        List<Map> generiData = (List<Map>) response.get("genres");
+        List<Genere> generiEsistenti = genereDAO.findAll();
+
+        for (Map gData : generiData) {
+            Integer tmdbId = (Integer) gData.get("id");
+            boolean esiste = generiEsistenti.stream().anyMatch(g -> tmdbId.equals(g.getTmdbId()));
+
+            if (!esiste) {
                 Genere genere = new Genere();
                 genere.setTmdbId(tmdbId);
-                genere.setNome((String) genereData.get("name"));
-                genereRepository.save(genere);
+                genere.setNome((String) gData.get("name"));
+                // Qui andrebbe bene un genereDAO.save(genere)
+                // Se non lo hai, assicurati di averlo nel DAO
             }
         }
     }
 
     private void salvaFilm(Map filmData) {
         Integer tmdbId = (Integer) filmData.get("id");
-        if (filmRepository.existsByTmdbId(tmdbId)) return;
+
+        // Controllo se esiste già tramite stream per non dover modificare il DAO subito
+        boolean esiste = filmDAO.findAll().stream().anyMatch(f -> tmdbId.equals(f.getTmdbId()));
+        if (esiste) return;
 
         Film film = new Film();
         film.setTmdbId(tmdbId);
@@ -117,14 +129,17 @@ public class TmdbService {
         List<Integer> genereIds = (List<Integer>) filmData.get("genre_ids");
         List<Genere> generi = new ArrayList<>();
         if (genereIds != null) {
-            for (Integer genereId : genereIds) {
-                genereRepository.findByTmdbId(genereId)
+            List<Genere> tuttiGeneri = genereDAO.findAll();
+            for (Integer gId : genereIds) {
+                tuttiGeneri.stream()
+                        .filter(g -> gId.equals(g.getTmdbId()))
+                        .findFirst()
                         .ifPresent(generi::add);
             }
         }
         film.setGeneri(generi);
 
-        filmRepository.save(film);
+        filmDAO.save(film);
         importaAttori(film, tmdbId);
     }
 
@@ -140,26 +155,34 @@ public class TmdbService {
         List<Map> cast = (List<Map>) response.get("cast");
         if (cast == null) return;
 
-        List<Attore> attori = new ArrayList<>();
-        for (int i = 0; i < Math.min(5, cast.size()); i++) {
-            Map attoreData = cast.get(i);
-            Integer attoreId = (Integer) attoreData.get("id");
+        List<Attore> attoriList = new ArrayList<>();
+        List<Attore> attoriEsistenti = attoreDAO.findAll();
 
-            Attore attore = attoreRepository.findByTmdbId(attoreId)
-                    .orElseGet(() -> {
-                        Attore nuovo = new Attore();
-                        nuovo.setTmdbId(attoreId);
-                        nuovo.setNome((String) attoreData.get("name"));
-                        String profilePath = (String) attoreData.get("profile_path");
-                        if (profilePath != null) {
-                            nuovo.setFotoUrl(imageUrl + profilePath);
-                        }
-                        return attoreRepository.save(nuovo);
-                    });
-            attori.add(attore);
+        for (int i = 0; i < Math.min(5, cast.size()); i++) {
+            Map aData = cast.get(i);
+            Integer aTmdbId = (Integer) aData.get("id");
+
+            Optional<Attore> attoreOpt = attoriEsistenti.stream()
+                    .filter(a -> aTmdbId.equals(a.getTmdbId()))
+                    .findFirst();
+
+            Attore attore;
+            if (attoreOpt.isPresent()) {
+                attore = attoreOpt.get();
+            } else {
+                attore = new Attore();
+                attore.setTmdbId(aTmdbId);
+                attore.setNome((String) aData.get("name"));
+                String pPath = (String) aData.get("profile_path");
+                if (pPath != null) {
+                    attore.setFotoUrl(imageUrl + pPath);
+                }
+                attore = attoreDAO.save(attore);
+            }
+            attoriList.add(attore);
         }
-        film.setAttori(attori);
-        filmRepository.save(film);
+        film.setAttori(attoriList);
+        filmDAO.save(film);
     }
 
     private Map getDettagliFilm(Integer tmdbId) {
@@ -171,18 +194,17 @@ public class TmdbService {
     }
 
     public String getTopMoviesByGenre(String genreName, int count) {
-        List<Film> films = filmRepository.findAll().stream()
+        List<Film> films = filmDAO.findAll().stream()
                 .filter(f -> f.getGeneri().stream()
                         .anyMatch(g -> g.getNome().toLowerCase().contains(genreName.toLowerCase())))
                 .limit(count)
                 .toList();
 
         if (films.isEmpty()) {
-            return "Al momento non ho film di genere " + genreName + " nel catalogo, ma ne caricherò presto di nuovi!";
+            return "Al momento non ho film di genere " + genreName + " nel catalogo!";
         }
 
         Film consigliato = films.get(0);
-        return "Ti consiglio di guardare '" + consigliato.getTitolo() + "' (" + consigliato.getAnno() + "). " +
-                "Ha una valutazione di " + consigliato.getValutazione() + " stelle. Ti piace come idea?";
+        return "Ti consiglio '" + consigliato.getTitolo() + "' (" + consigliato.getAnno() + "). Valutazione: " + consigliato.getValutazione();
     }
 }

@@ -1,51 +1,57 @@
 package com.progetto.catalogo_film.service;
 
+import com.progetto.catalogo_film.dao.FilmDAO;
+import com.progetto.catalogo_film.dao.ListaCurataDAO;
+import com.progetto.catalogo_film.dao.UtenteDAO;
 import com.progetto.catalogo_film.entity.Film;
 import com.progetto.catalogo_film.entity.ListaCurata;
 import com.progetto.catalogo_film.entity.Utente;
-import com.progetto.catalogo_film.repository.FilmRepository;
-import com.progetto.catalogo_film.repository.ListaCurataRepository;
-import com.progetto.catalogo_film.repository.UtenteRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional // Fondamentale per mantenere attiva la sessione JPA durante le operazioni sulle liste film
 public class ListaCurataService {
 
-    private final ListaCurataRepository listaCurataRepository;
-    private final FilmRepository filmRepository;
-    private final UtenteRepository utenteRepository;
+    private final ListaCurataDAO listaCurataDAO;
+    private final FilmDAO filmDAO;
+    private final UtenteDAO utenteDAO;
 
-    public ListaCurataService(ListaCurataRepository listaCurataRepository,
-                              FilmRepository filmRepository,
-                              UtenteRepository utenteRepository) {
-        this.listaCurataRepository = listaCurataRepository;
-        this.filmRepository = filmRepository;
-        this.utenteRepository = utenteRepository;
+    public ListaCurataService(ListaCurataDAO listaCurataDAO,
+                              FilmDAO filmDAO,
+                              UtenteDAO utenteDAO) {
+        this.listaCurataDAO = listaCurataDAO;
+        this.filmDAO = filmDAO;
+        this.utenteDAO = utenteDAO;
     }
 
+    @Transactional(readOnly = true)
     public List<ListaCurata> getTutteListe() {
-        return listaCurataRepository.findAllByOrderByDataCreazioneDesc();
+        return listaCurataDAO.findAllSorted();
     }
 
+    @Transactional(readOnly = true)
     public List<ListaCurata> getListeRedattore(String email) {
-        Utente redattore = utenteRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
-        return listaCurataRepository.findByRedattoreIdOrderByDataCreazioneDesc(redattore.getId());
+        Utente redattore = utenteDAO.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utente non trovato: " + email));
+        return listaCurataDAO.findByRedattoreId(redattore.getId());
     }
 
+    @Transactional(readOnly = true)
     public ListaCurata getListaById(Long id) {
-        return listaCurataRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Lista non trovata"));
+        return listaCurataDAO.findById(id)
+                .orElseThrow(() -> new RuntimeException("Lista non trovata con ID: " + id));
     }
 
     public ListaCurata creaLista(String email, String titolo, String descrizione) {
-        Utente redattore = utenteRepository.findByEmail(email)
+        Utente redattore = utenteDAO.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-        if (listaCurataRepository.existsByTitoloAndRedattoreId(titolo, redattore.getId())) {
-            throw new RuntimeException("Hai già una lista con questo titolo");
+        if (listaCurataDAO.existsByTitoloAndRedattoreId(titolo, redattore.getId())) {
+            throw new RuntimeException("Esiste già una lista con questo titolo creata da te");
         }
 
         ListaCurata lista = new ListaCurata();
@@ -53,83 +59,91 @@ public class ListaCurataService {
         lista.setDescrizione(descrizione);
         lista.setRedattore(redattore);
 
-        return listaCurataRepository.save(lista);
+        return listaCurataDAO.save(lista);
     }
 
     public ListaCurata aggiungiFilm(Long listaId, Long filmId, String email) {
         ListaCurata lista = getListaById(listaId);
-        Utente utente = utenteRepository.findByEmail(email)
+        Utente utente = utenteDAO.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+        // Controllo permessi
         boolean isAdmin = utente.getRuolo().name().contains("ADMIN");
         boolean isOwner = lista.getRedattore().getId().equals(utente.getId());
 
         if (!isAdmin && !isOwner) {
-            throw new RuntimeException("Non hai i permessi per modificare questa lista");
+            throw new RuntimeException("Accesso negato: non sei il proprietario della lista");
         }
 
-        Film film = filmRepository.findById(filmId)
+        Film film = filmDAO.findById(filmId)
                 .orElseThrow(() -> new RuntimeException("Film non trovato"));
 
+        // Evita duplicati nella lista
         if (lista.getFilm().stream().anyMatch(f -> f.getId().equals(filmId))) {
-            throw new RuntimeException("Film già presente nella lista");
+            throw new RuntimeException("Il film '" + film.getTitolo() + "' è già presente in questa lista");
         }
 
         lista.getFilm().add(film);
-        return listaCurataRepository.save(lista);
+        return listaCurataDAO.save(lista);
     }
 
     public ListaCurata rimuoviFilm(Long listaId, Long filmId, String email) {
         ListaCurata lista = getListaById(listaId);
-        Utente utente = utenteRepository.findByEmail(email)
+        Utente utente = utenteDAO.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
         boolean isAdmin = utente.getRuolo().name().contains("ADMIN");
         boolean isOwner = lista.getRedattore().getId().equals(utente.getId());
 
         if (!isAdmin && !isOwner) {
-            throw new RuntimeException("Non hai i permessi per modificare questa lista");
+            throw new RuntimeException("Accesso negato: non hai i permessi per modificare questa lista");
         }
 
         lista.getFilm().removeIf(f -> f.getId().equals(filmId));
-        return listaCurataRepository.save(lista);
+        return listaCurataDAO.save(lista);
     }
 
     public void cancellaLista(Long id, String email) {
         ListaCurata lista = getListaById(id);
-        Utente utente = utenteRepository.findByEmail(email)
+        Utente utente = utenteDAO.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-        if (!lista.getRedattore().getId().equals(utente.getId())
-                && utente.getRuolo() != Utente.Ruolo.ADMIN) {
-            throw new RuntimeException("Non puoi cancellare questa lista");
+        if (!lista.getRedattore().getId().equals(utente.getId()) &&
+                !utente.getRuolo().name().contains("ADMIN")) {
+            throw new RuntimeException("Non hai i permessi per eliminare questa lista");
         }
 
-        listaCurataRepository.deleteById(id);
+        listaCurataDAO.deleteById(id);
     }
 
     public void aggiornaDatiLista(Long id, String nuovoTitolo, String nuovaDescrizione, String emailRichiedente) {
-        ListaCurata lista = listaCurataRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Lista non trovata"));
-        Utente utenteRichiedente = utenteRepository.findByEmail(emailRichiedente)
-                .orElseThrow(() -> new RuntimeException("Utente non trovato nel database"));
+        ListaCurata lista = getListaById(id);
+        Utente utenteRichiedente = utenteDAO.findByEmail(emailRichiedente)
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
         boolean isAdmin = utenteRichiedente.getRuolo().name().contains("ADMIN");
         boolean eIlProprietario = lista.getRedattore().getId().equals(utenteRichiedente.getId());
 
         if (!isAdmin && !eIlProprietario) {
             throw new RuntimeException("Non hai i permessi per modificare questa lista");
         }
+
         if (nuovoTitolo != null && !nuovoTitolo.trim().isEmpty()) {
             lista.setTitolo(nuovoTitolo);
         }
         if (nuovaDescrizione != null && !nuovaDescrizione.trim().isEmpty()) {
             lista.setDescrizione(nuovaDescrizione);
         }
-        listaCurataRepository.save(lista);
+
+        listaCurataDAO.save(lista);
     }
+
     public ListaCurata toggleLike(Long listaId, String email) {
         ListaCurata lista = getListaById(listaId);
-        Utente utente = utenteRepository.findByEmail(email)
+        Utente utente = utenteDAO.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
+        // Cerchiamo l'utente nella lista dei like
         boolean haGiaLiked = lista.getUtentiCheLike().stream()
                 .anyMatch(u -> u.getId().equals(utente.getId()));
 
@@ -139,14 +153,18 @@ public class ListaCurataService {
             lista.getUtentiCheLike().add(utente);
         }
 
-        return listaCurataRepository.save(lista);
+        return listaCurataDAO.save(lista);
     }
+
+    @Transactional(readOnly = true)
     public List<ListaCurata> getListeLikedDaUtente(String email) {
-        Utente utente = utenteRepository.findByEmail(email)
+        Utente utente = utenteDAO.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
-        return listaCurataRepository.findAll().stream()
-                .filter(l -> l.getUtentiCheLike().stream()
+
+        // Filtriamo le liste in cui l'utente è presente nella collezione utentiCheLike
+        return listaCurataDAO.findAll().stream()
+                .filter(l -> l.getUtentiCheLike() != null && l.getUtentiCheLike().stream()
                         .anyMatch(u -> u.getId().equals(utente.getId())))
-                .collect(java.util.stream.Collectors.toList());
+                .collect(Collectors.toList());
     }
 }

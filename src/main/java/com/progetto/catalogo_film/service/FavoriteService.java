@@ -1,61 +1,67 @@
 package com.progetto.catalogo_film.service;
 
+import com.progetto.catalogo_film.dao.FavoriteDAO;
+import com.progetto.catalogo_film.dao.FilmDAO;
+import com.progetto.catalogo_film.dao.UtenteDAO;
 import com.progetto.catalogo_film.entity.Favorite;
 import com.progetto.catalogo_film.entity.Film;
 import com.progetto.catalogo_film.entity.Utente;
-import com.progetto.catalogo_film.repository.FavoriteRepository;
-import com.progetto.catalogo_film.repository.FilmRepository;
-import com.progetto.catalogo_film.repository.UtenteRepository;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional // Indispensabile perché usiamo l'EntityManager nel DAO (specialmente per remove e save)
 public class FavoriteService {
 
-    @Autowired
-    private FavoriteRepository favoriteRepository;
+    private final FavoriteDAO favoriteDAO;
+    private final UtenteDAO utenteDAO;
+    private final FilmDAO filmDAO;
 
-    @Autowired
-    private UtenteRepository utenteRepository;
-
-    @Autowired
-    private FilmRepository filmRepository;
-
-    public List<Favorite> getFavorites(String username) {
-        return favoriteRepository.findByUtente_Username(username);
+    // Uso il costruttore per l'iniezione: è la pratica migliore in Spring Boot 3
+    public FavoriteService(FavoriteDAO favoriteDAO, UtenteDAO utenteDAO, FilmDAO filmDAO) {
+        this.favoriteDAO = favoriteDAO;
+        this.utenteDAO = utenteDAO;
+        this.filmDAO = filmDAO;
     }
 
-    public Object addFavorite(String username, Long filmId) {
-        System.out.println("Service: Tento di aggiungere film " + filmId + " per utente " + username);
+    /**
+     * Recupera la lista dei preferiti per un determinato utente
+     */
+    @Transactional(readOnly = true)
+    public List<Favorite> getFavorites(String username) {
+        return favoriteDAO.findByUsername(username);
+    }
 
-        return favoriteRepository.findByUtente_UsernameAndFilm_Id(username, filmId)
-                .map(existing -> {
-                    System.out.println("Service: Film già presente, restituisco l'esistente.");
-                    return (Object) existing;
-                })
+    /**
+     * Aggiunge un film ai preferiti se non è già presente
+     */
+    public Favorite addFavorite(String username, Long filmId) {
+        // Controllo se esiste già usando il DAO manuale
+        return favoriteDAO.findByUsernameAndFilmId(username, filmId)
                 .orElseGet(() -> {
-                    System.out.println("Service: Nuovo preferito, procedo al salvataggio.");
+                    // Se non esiste, recupero Utente e Film dai rispettivi DAO
+                    Utente utente = utenteDAO.findByUsername(username)
+                            .orElseThrow(() -> new RuntimeException("Utente non trovato: " + username));
 
-                    Utente utente = utenteRepository.findByUsername(username)
-                            .orElseThrow(() -> new RuntimeException("Utente non trovato"));
-
-                    Film film = filmRepository.findById(filmId)
-                            .orElseThrow(() -> new RuntimeException("Film non trovato"));
+                    Film film = filmDAO.findById(filmId)
+                            .orElseThrow(() -> new RuntimeException("Film non trovato con ID: " + filmId));
 
                     Favorite fav = new Favorite();
                     fav.setUtente(utente);
                     fav.setFilm(film);
 
-                    return favoriteRepository.save(fav);
+                    // Salvo tramite l'EntityManager del DAO
+                    return favoriteDAO.save(fav);
                 });
     }
 
+    /**
+     * Rimuove un film dai preferiti
+     */
     public void removeFavorite(String username, Long filmId) {
-        System.out.println("Service: Rimuovo film " + filmId + " per utente " + username);
-        favoriteRepository.deleteByUtente_UsernameAndFilm_Id(username, filmId);
+        // Il metodo deleteByUsernameAndFilmId del DAO userà executeUpdate()
+        favoriteDAO.deleteByUsernameAndFilmId(username, filmId);
     }
 }

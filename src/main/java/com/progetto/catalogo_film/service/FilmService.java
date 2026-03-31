@@ -1,72 +1,100 @@
 package com.progetto.catalogo_film.service;
 
+import com.progetto.catalogo_film.dao.FilmDAO;
 import com.progetto.catalogo_film.entity.Film;
-import com.progetto.catalogo_film.repository.FilmRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional // Fondamentale: apre la sessione Hibernate/JPA per tutta la durata del metodo
 public class FilmService {
 
-    private final FilmRepository filmRepository;
+    private final FilmDAO filmDAO;
 
-    public FilmService(FilmRepository filmRepository) {
-        this.filmRepository = filmRepository;
+    public FilmService(FilmDAO filmDAO) {
+        this.filmDAO = filmDAO;
     }
 
+    @Transactional(readOnly = true)
     public List<Film> getTuttiFilm() {
-        return filmRepository.findAll();
+        return filmDAO.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Film getFilmById(Long id) {
-        return filmRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Film non trovato"));
+        return filmDAO.findById(id)
+                .orElseThrow(() -> new RuntimeException("Film con ID " + id + " non trovato nel catalogo"));
     }
 
+    @Transactional(readOnly = true)
     public List<Film> cercaPerTitolo(String titolo) {
-        return filmRepository.findByTitoloContainingIgnoreCase(titolo);
+        if (titolo == null || titolo.trim().isEmpty()) {
+            return filmDAO.findAll();
+        }
+        return filmDAO.findByTitoloContainingIgnoreCase(titolo);
     }
 
+    @Transactional(readOnly = true)
     public List<Film> cercaPerTipologia(String tipologia) {
-        return filmRepository.findByTipologia(tipologia);
+        return filmDAO.findByTipologia(tipologia);
     }
 
+    @Transactional(readOnly = true)
     public List<Film> cercaPerAnno(Integer anno) {
-        return filmRepository.findByAnno(anno);
+        return filmDAO.findByAnno(anno);
     }
 
+    @Transactional(readOnly = true)
     public List<Film> ordinaPerValutazione() {
-        return filmRepository.findAllByOrderByValutazioneDesc();
+        return filmDAO.findAllByOrderByValutazioneDesc();
     }
 
+    @Transactional(readOnly = true)
     public List<Film> ordinaPerAnno() {
-        return filmRepository.findAllByOrderByAnnoDesc();
+        return filmDAO.findAllByOrderByAnnoDesc();
     }
 
+    @Transactional(readOnly = true)
     public List<Film> cercaPerGenere(Long genereId) {
-        return filmRepository.findAll().stream()
-                .filter(f -> f.getGeneri().stream()
+        // Recuperiamo i film dal DAO e filtriamo.
+        // Nota: @Transactional assicura che f.getGeneri() non lanci LazyInitializationException
+        return filmDAO.findAll().stream()
+                .filter(f -> f.getGeneri() != null && f.getGeneri().stream()
                         .anyMatch(g -> g.getId().equals(genereId)))
                 .toList();
     }
 
     public Film aggiungiFilm(Film film) {
-        return filmRepository.save(film);
+        return filmDAO.save(film);
     }
 
     public Film modificaFilm(Long id, Film filmModificato) {
-        Film film = getFilmById(id);
-        film.setTitolo(filmModificato.getTitolo());
-        film.setTrama(filmModificato.getTrama());
-        film.setAnno(filmModificato.getAnno());
-        film.setDurata(filmModificato.getDurata());
-        film.setTipologia(filmModificato.getTipologia());
-        film.setValutazione(filmModificato.getValutazione());
-        return filmRepository.save(film);
+        // Recuperiamo il film esistente (sarà in stato 'managed' dall'EntityManager)
+        Film filmEsistente = getFilmById(id);
+
+        // Aggiorniamo i campi
+        filmEsistente.setTitolo(filmModificato.getTitolo());
+        filmEsistente.setTrama(filmModificato.getTrama());
+        filmEsistente.setAnno(filmModificato.getAnno());
+        filmEsistente.setDurata(filmModificato.getDurata());
+        filmEsistente.setTipologia(filmModificato.getTipologia());
+        filmEsistente.setValutazione(filmModificato.getValutazione());
+
+        // Se hai relazioni come Attori o Generi, andrebbero aggiornate qui
+        if (filmModificato.getAttori() != null) filmEsistente.setAttori(filmModificato.getAttori());
+        if (filmModificato.getGeneri() != null) filmEsistente.setGeneri(filmModificato.getGeneri());
+
+        // Il save del DAO eseguirà l'entityManager.merge()
+        return filmDAO.save(filmEsistente);
     }
 
     public void cancellaFilm(Long id) {
-        filmRepository.deleteById(id);
+        // Verifichiamo prima se esiste per lanciare l'eccezione corretta
+        if (!filmDAO.findById(id).isPresent()) {
+            throw new RuntimeException("Impossibile cancellare: Film non trovato");
+        }
+        filmDAO.deleteById(id);
     }
 }

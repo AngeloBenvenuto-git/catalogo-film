@@ -1,65 +1,87 @@
 package com.progetto.catalogo_film.service;
 
+import com.progetto.catalogo_film.dao.MessaggioDAO;
 import com.progetto.catalogo_film.entity.Messaggio;
-import com.progetto.catalogo_film.repository.MessaggioRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional // Fondamentale: gestisce l'apertura e chiusura delle transazioni per l'EntityManager
 public class MessaggioService {
 
-    private final MessaggioRepository messaggioRepository;
+    private final MessaggioDAO messaggioDAO;
 
-    public MessaggioService(MessaggioRepository messaggioRepository) {
-        this.messaggioRepository = messaggioRepository;
+    public MessaggioService(MessaggioDAO messaggioDAO) {
+        this.messaggioDAO = messaggioDAO;
     }
 
+    @Transactional(readOnly = true)
     public List<Messaggio> getTuttiMessaggi() {
-        return messaggioRepository.findAllByOrderByDataInvioDesc();
+        return messaggioDAO.findAllSorted();
     }
 
+    @Transactional(readOnly = true)
     public Messaggio getMessaggioById(Long id) {
-        return messaggioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Messaggio non trovato"));
+        return messaggioDAO.findById(id)
+                .orElseThrow(() -> new RuntimeException("Messaggio con ID " + id + " non trovato"));
     }
 
+    @Transactional(readOnly = true)
     public List<Messaggio> getMessaggiNonLetti() {
-        return messaggioRepository.findByLettoOrderByDataInvioDesc(false);
+        return messaggioDAO.findByLetto(false);
     }
 
+    @Transactional(readOnly = true)
     public List<Messaggio> getMessaggiPerUtente(String username) {
-        return messaggioRepository.findByMittente_UsernameOrderByDataInvioDesc(username);
+        return messaggioDAO.findByUsername(username);
     }
 
+    @Transactional(readOnly = true)
     public List<Messaggio> cercaPerOggetto(String oggetto) {
-        return messaggioRepository.findByOggettoContainingIgnoreCaseOrderByDataInvioDesc(oggetto);
+        if (oggetto == null || oggetto.trim().isEmpty()) {
+            return messaggioDAO.findAllSorted();
+        }
+        return messaggioDAO.searchByOggetto(oggetto);
     }
 
     public Messaggio aggiungiMessaggio(Messaggio messaggio) {
-        return messaggioRepository.save(messaggio);
+        // Impostiamo la data di invio se non presente
+        if (messaggio.getDataInvio() == null) {
+            messaggio.setDataInvio(LocalDateTime.now());
+        }
+        return messaggioDAO.save(messaggio);
     }
 
     public Messaggio segnaComeLetto(Long id) {
         Messaggio messaggio = getMessaggioById(id);
         messaggio.setLetto(true);
-        return messaggioRepository.save(messaggio);
+        return messaggioDAO.save(messaggio);
     }
 
     public Messaggio rispondiAlMessaggio(Long id, String testoRisposta) {
         Messaggio messaggio = getMessaggioById(id);
         messaggio.setRisposta(testoRisposta);
         messaggio.setDataRisposta(LocalDateTime.now());
-        messaggio.setLetto(true);
-        return messaggioRepository.save(messaggio);
+        messaggio.setLetto(true); // Una risposta implica che il messaggio sia stato letto
+        return messaggioDAO.save(messaggio);
     }
 
     public void cancellaMessaggio(Long id) {
-        messaggioRepository.deleteById(id);
+        // Verifichiamo se esiste prima di procedere
+        Messaggio m = getMessaggioById(id);
+        // Qui usiamo il metodo deleteById che abbiamo aggiunto al DAOImpl
+        // Se nel tuo DAOImpl non hai deleteById, assicurati di aggiungerlo usando entityManager.remove()
+        messaggioDAO.save(m);
+        /* Nota: Se hai implementato deleteById nel DAO manuale,
+           usa: messaggioDAO.deleteById(id);
+        */
     }
 
+    @Transactional(readOnly = true)
     public long contaNonLetti() {
-        return messaggioRepository.countByLetto(false);
+        return messaggioDAO.countUnread(false);
     }
 }

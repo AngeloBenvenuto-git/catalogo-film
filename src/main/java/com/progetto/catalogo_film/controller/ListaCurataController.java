@@ -7,14 +7,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import com.progetto.catalogo_film.entity.ListaCurata;
-import com.progetto.catalogo_film.entity.Utente;
-import com.progetto.catalogo_film.repository.ListaCurataRepository;
-import com.progetto.catalogo_film.repository.UtenteRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.Optional;
 
 import java.util.List;
 import java.util.Map;
@@ -25,13 +17,10 @@ import java.util.stream.Collectors;
 public class ListaCurataController {
 
     private final ListaCurataService listaCurataService;
-    private final ListaCurataRepository listaCurataRepository;
-    private final UtenteRepository utenteRepository;
 
-    public ListaCurataController(ListaCurataService listaCurataService,ListaCurataRepository listaCurataRepository, UtenteRepository utenteRepository) {
+    // Ora il controller inietta SOLO il Service. Pulizia totale!
+    public ListaCurataController(ListaCurataService listaCurataService) {
         this.listaCurataService = listaCurataService;
-        this.listaCurataRepository = listaCurataRepository;
-        this.utenteRepository = utenteRepository;
     }
 
     @GetMapping
@@ -118,7 +107,6 @@ public class ListaCurataController {
         }
     }
 
-
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('REDATTORE', 'ADMIN')")
     public ResponseEntity<?> aggiornaDatiLista(
@@ -137,6 +125,7 @@ public class ListaCurataController {
             return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
         }
     }
+
     @PostMapping("/{id}/like")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> toggleLike(
@@ -149,6 +138,7 @@ public class ListaCurataController {
             return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
         }
     }
+
     @GetMapping("/liked")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ListaCurataDTO>> getListeLiked(
