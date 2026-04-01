@@ -15,4 +15,18 @@ public class GenereDAOImpl implements GenereDAO {
         try { return Optional.of(entityManager.createQuery("SELECT g FROM Genere g WHERE g.nome = :n", Genere.class).setParameter("n", n).getSingleResult()); }
         catch (Exception e) { return Optional.empty(); }
     }
+    @Override
+    public Optional<Genere> findById(Long id) {
+        return Optional.ofNullable(entityManager.find(Genere.class, id));
+    }
+
+    @Override
+    public Genere save(Genere genere) {
+        if (genere.getId() == null) {
+            entityManager.persist(genere);
+            return genere;
+        } else {
+            return entityManager.merge(genere);
+        }
+    }
 }

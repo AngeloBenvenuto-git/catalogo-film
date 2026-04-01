@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class RecensioneDAOImpl implements RecensioneDAO {
@@ -36,5 +37,17 @@ public class RecensioneDAOImpl implements RecensioneDAO {
         if (r != null) {
             entityManager.remove(r);
         }
+    }
+
+    @Override
+    public Optional<Recensione> findById(Long id) {
+        return Optional.ofNullable(entityManager.find(Recensione.class, id));
+    }
+
+    @Override
+    public List<Recensione> findByUtenteId(Long utenteId) {
+        return entityManager.createQuery("SELECT r FROM Recensione r WHERE r.utente.id = :id", Recensione.class)
+                .setParameter("id", utenteId)
+                .getResultList();
     }
 }

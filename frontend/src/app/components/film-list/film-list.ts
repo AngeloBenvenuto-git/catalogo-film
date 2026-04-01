@@ -54,6 +54,10 @@ export class FilmList implements OnInit {
   }
 
   applicaLogicaProfessionale() {
+    console.log('Genere selezionato:', this.genereSelezionato);
+    if (this.films.length > 0) {
+      console.log('Generi primo film:', this.films[0].generi);
+    }
     // Partiamo da una copia pulita dell'intero database
     let risultato = [...this.films];
 

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ public class TmdbService {
     private final AttoreDAO attoreDAO;
     private final GenereDAO genereDAO;
 
+
     @Value("${tmdb.api.key}")
     private String apiKey;
 
@@ -36,7 +38,15 @@ public class TmdbService {
     public TmdbService(FilmDAO filmDAO,
                        AttoreDAO attoreDAO,
                        GenereDAO genereDAO) {
-        this.webClient = WebClient.create();
+
+        ExchangeStrategies strategies = ExchangeStrategies.builder()
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(16 * 1024 * 1024))
+                .build();
+
+        this.webClient = WebClient.builder()
+                .exchangeStrategies(strategies)
+                .build();
+
         this.filmDAO = filmDAO;
         this.attoreDAO = attoreDAO;
         this.genereDAO = genereDAO;
@@ -83,6 +93,7 @@ public class TmdbService {
                 Genere genere = new Genere();
                 genere.setTmdbId(tmdbId);
                 genere.setNome((String) gData.get("name"));
+                genereDAO.save(genere);
             }
         }
     }

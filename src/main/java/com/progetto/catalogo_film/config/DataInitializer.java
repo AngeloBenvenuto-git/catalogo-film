@@ -1,36 +1,24 @@
 package com.progetto.catalogo_film.config;
 
 import com.progetto.catalogo_film.dao.FilmDAO;
-import com.progetto.catalogo_film.dao.UtenteDAO;
-import com.progetto.catalogo_film.entity.Utente;
 import com.progetto.catalogo_film.service.TmdbService;
+import com.progetto.catalogo_film.service.UtenteService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class DataInitializer {
 
     @Bean
-    CommandLineRunner init(UtenteDAO utenteDAO,
+    CommandLineRunner init(UtenteService utenteService,
                            FilmDAO filmDAO,
-                           TmdbService tmdbService,
-                           PasswordEncoder passwordEncoder) {
+                           TmdbService tmdbService) {
         return args -> {
 
-            if (utenteDAO.findByEmail("admin@admin.com").isEmpty()) {
-                Utente admin = new Utente();
-                admin.setUsername("admin");
-                admin.setEmail("admin@admin.com");
-                admin.setPassword(passwordEncoder.encode("admin123"));
-                admin.setRuolo(Utente.Ruolo.ADMIN);
-                admin.setBannato(false);
+            utenteService.creaAdminIniziale("admin", "admin@admin.com", "admin123");
 
-                utenteDAO.save(admin);
-                System.out.println(">>> Sistema: Utente admin creato con successo.");
-            }
-
+            // Controllo sui film
             if (filmDAO.findAll().isEmpty()) {
                 System.out.println(">>> Sistema: Database vuoto, avvio importazione da TMDB...");
                 tmdbService.importaFilmPopolare(5);

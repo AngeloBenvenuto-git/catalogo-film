@@ -20,4 +20,9 @@ public class FilmProxy extends Film {
         }
         return super.getRecensioni();
     }
+    @Override
+    public void setRecensioni(List<Recensione> recensioni) {
+        super.setRecensioni(recensioni);
+        this.recensioniCaricate = true;
+    }
 }

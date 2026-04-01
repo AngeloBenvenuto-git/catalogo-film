@@ -28,15 +28,13 @@ public class RecensioneService {
     }
 
     @Transactional(readOnly = true)
-    public List<Recensione> getRecensioniUtente(Long utenteId) {
-        return recensioneDAO.findByFilmId(null).stream()
-                .filter(r -> r.getUtente().getId().equals(utenteId))
-                .collect(java.util.stream.Collectors.toList());
+    public List<Recensione> getRecensioniFilm(Long filmId) {
+        return recensioneDAO.findByFilmId(filmId);
     }
 
     @Transactional(readOnly = true)
-    public List<Recensione> getRecensioniFilm(Long filmId) {
-        return recensioneDAO.findByFilmId(filmId);
+    public List<Recensione> getRecensioniUtente(Long utenteId) {
+        return recensioneDAO.findByUtenteId(utenteId);
     }
 
     public Recensione aggiungiRecensione(Long filmId, String email, String testo, Integer voto) {
@@ -70,9 +68,7 @@ public class RecensioneService {
     }
 
     public void cancellaRecensione(Long id, String email) {
-        Recensione recensione = recensioneDAO.findByFilmId(null).stream()
-                .filter(r -> r.getId().equals(id))
-                .findFirst()
+        Recensione recensione = recensioneDAO.findById(id)
                 .orElseThrow(() -> new RuntimeException("Recensione non trovata"));
 
         Utente utente = utenteDAO.findByEmail(email)

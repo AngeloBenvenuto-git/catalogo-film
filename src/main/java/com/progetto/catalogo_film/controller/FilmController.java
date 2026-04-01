@@ -31,52 +31,56 @@ public class FilmController {
         );
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<FilmDTO> getFilmById(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(new FilmDTO(filmService.getFilmById(id)));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
     @GetMapping("/cerca")
     public ResponseEntity<List<FilmDTO>> cerca(
             @RequestParam(required = false) String titolo,
             @RequestParam(required = false) String tipologia,
             @RequestParam(required = false) Integer anno,
-            @RequestParam(required = false) Long genereId) {
+            @RequestParam(required = false) String genere) {
 
-        if (titolo != null) return ResponseEntity.ok(
-                filmService.cercaPerTitolo(titolo).stream().map(FilmDTO::new).collect(Collectors.toList()));
-        if (tipologia != null) return ResponseEntity.ok(
-                filmService.cercaPerTipologia(tipologia).stream().map(FilmDTO::new).collect(Collectors.toList()));
-        if (anno != null) return ResponseEntity.ok(
-                filmService.cercaPerAnno(anno).stream().map(FilmDTO::new).collect(Collectors.toList()));
-        if (genereId != null) return ResponseEntity.ok(
-                filmService.cercaPerGenere(genereId).stream().map(FilmDTO::new).collect(Collectors.toList()));
+        List<Film> risultati;
 
-        return ResponseEntity.ok(
-                filmService.getTuttiFilm().stream().map(FilmDTO::new).collect(Collectors.toList()));
+        if (titolo != null && !titolo.isBlank()) {
+            risultati = filmService.cercaPerTitolo(titolo);
+        } else if (genere != null && !genere.isBlank()) {
+            risultati = filmService.cercaPerNomeGenere(genere);
+        } else if (tipologia != null) {
+            risultati = filmService.cercaPerTipologia(tipologia);
+        } else if (anno != null) {
+            risultati = filmService.cercaPerAnno(anno);
+        } else {
+            risultati = filmService.getTuttiFilm();
+        }
+
+        return ResponseEntity.ok(risultati.stream().map(FilmDTO::new).collect(Collectors.toList()));
     }
 
     @GetMapping("/ordina/valutazione")
     public ResponseEntity<List<FilmDTO>> ordinaPerValutazione() {
-        return ResponseEntity.ok(
-                filmService.ordinaPerValutazione().stream().map(FilmDTO::new).collect(Collectors.toList())
-        );
+        return ResponseEntity.ok(filmService.ordinaPerValutazione().stream().map(FilmDTO::new).collect(Collectors.toList()));
     }
 
     @GetMapping("/ordina/anno")
     public ResponseEntity<List<FilmDTO>> ordinaPerAnno() {
-        return ResponseEntity.ok(
-                filmService.ordinaPerAnno().stream().map(FilmDTO::new).collect(Collectors.toList())
-        );
+        return ResponseEntity.ok(filmService.ordinaPerAnno().stream().map(FilmDTO::new).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getFilmById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(new FilmDTO(filmService.getFilmById(id)));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("errore", e.getMessage()));
+        }
     }
 
     @PostMapping
-    public ResponseEntity<FilmDTO> aggiungiFilm(@RequestBody Film film) {
-        return ResponseEntity.ok(new FilmDTO(filmService.aggiungiFilm(film)));
+    public ResponseEntity<?> aggiungiFilm(@RequestBody Film film) {
+        try {
+            return ResponseEntity.ok(new FilmDTO(filmService.aggiungiFilm(film)));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("errore", "Errore aggiunta"));
+        }
     }
 
     @PutMapping("/{id}")
@@ -84,7 +88,7 @@ public class FilmController {
         try {
             return ResponseEntity.ok(new FilmDTO(filmService.modificaFilm(id, film)));
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
         }
     }
 

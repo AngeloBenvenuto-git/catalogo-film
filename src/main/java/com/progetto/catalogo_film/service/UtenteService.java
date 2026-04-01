@@ -126,4 +126,19 @@ public class UtenteService {
 
         return utenteDAO.save(utente);
     }
+
+    @Transactional
+    public void creaAdminIniziale(String username, String email, String password) {
+        if (utenteDAO.findByEmail(email).isEmpty()) {
+            Utente admin = new Utente();
+            admin.setUsername(username);
+            admin.setEmail(email);
+            admin.setPassword(passwordEncoder.encode(password));
+            admin.setRuolo(Utente.Ruolo.ADMIN);
+            admin.setBannato(false);
+
+            utenteDAO.save(admin);
+            System.out.println(">>> Sistema: Utente admin creato con successo tramite Service.");
+        }
+    }
 }

@@ -6,4 +6,6 @@ import java.util.Optional;
 public interface GenereDAO {
     List<Genere> findAll();
     Optional<Genere> findByNome(String nome);
+    Optional<Genere> findById(Long id);
+    Genere save(Genere genere);
 }

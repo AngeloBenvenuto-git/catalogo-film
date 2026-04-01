@@ -56,14 +56,6 @@ public class FilmService {
         return filmDAO.findAllByOrderByAnnoDesc();
     }
 
-    @Transactional(readOnly = true)
-    public List<Film> cercaPerGenere(Long genereId) {
-        return filmDAO.findAll().stream()
-                .filter(f -> f.getGeneri() != null && f.getGeneri().stream()
-                        .anyMatch(g -> g.getId().equals(genereId)))
-                .toList();
-    }
-
     public Film aggiungiFilm(Film film) {
         return filmDAO.save(film);
     }
@@ -89,5 +81,10 @@ public class FilmService {
             throw new RuntimeException("Impossibile cancellare: Film non trovato");
         }
         filmDAO.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Film> cercaPerNomeGenere(String genere) {
+        return filmDAO.findByGenere(genere);
     }
 }

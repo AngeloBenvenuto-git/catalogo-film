@@ -45,14 +45,20 @@ public class FilmDAOImpl implements FilmDAO {
 
     @Override
     public List<Film> findAll() {
-        List<Film> risultati = entityManager.createQuery("SELECT f FROM Film f", Film.class).getResultList();
+        List<Film> risultati = entityManager.createQuery(
+                "SELECT DISTINCT f FROM Film f LEFT JOIN FETCH f.generi",
+                Film.class
+        ).getResultList();
         return risultati.stream().map(this::convertToProxy).collect(Collectors.toList());
     }
 
     @Override
     public Optional<Film> findById(Long id) {
-        Film f = entityManager.find(Film.class, id);
-        return Optional.ofNullable(convertToProxy(f));
+        List<Film> risultati = entityManager.createQuery(
+                "SELECT f FROM Film f LEFT JOIN FETCH f.generi WHERE f.id = :id",
+                Film.class
+        ).setParameter("id", id).getResultList();
+        return risultati.isEmpty() ? Optional.empty() : Optional.of(convertToProxy(risultati.get(0)));
     }
 
     @Override
@@ -104,11 +110,26 @@ public class FilmDAOImpl implements FilmDAO {
 
     @Override
     public Film save(Film f) {
-        if (f.getId() == null) {
-            entityManager.persist(f);
-            return f;
+        Film entityToSave = f;
+        if (f instanceof com.progetto.catalogo_film.entity.FilmProxy) {
+            entityToSave = new Film();
+            entityToSave.setId(f.getId());
+            entityToSave.setTitolo(f.getTitolo());
+            entityToSave.setTrama(f.getTrama());
+            entityToSave.setAnno(f.getAnno());
+            entityToSave.setDurata(f.getDurata());
+            entityToSave.setPosterUrl(f.getPosterUrl());
+            entityToSave.setValutazione(f.getValutazione());
+            entityToSave.setTipologia(f.getTipologia());
+            entityToSave.setTmdbId(f.getTmdbId());
+            entityToSave.setGeneri(f.getGeneri());
+            entityToSave.setAttori(f.getAttori());
+        }
+        if (entityToSave.getId() == null) {
+            entityManager.persist(entityToSave);
+            return entityToSave;
         } else {
-            return entityManager.merge(f);
+            return entityManager.merge(entityToSave);
         }
     }
 
