@@ -14,7 +14,6 @@ import java.util.List;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    // Sostituito UtenteRepository con UtenteDAO
     private final UtenteDAO utenteDAO;
 
     public UserDetailsServiceImpl(UtenteDAO utenteDAO) {
@@ -23,7 +22,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        // Usiamo il metodo findByEmail che abbiamo implementato manualmente nel DAO
         Utente utente = utenteDAO.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Utente non trovato con email: " + email));
 

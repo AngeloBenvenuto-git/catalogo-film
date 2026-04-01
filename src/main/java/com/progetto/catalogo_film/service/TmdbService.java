@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-@Transactional // Fondamentale per salvare film, attori e generi in sequenza
+@Transactional
 public class TmdbService {
 
     private final WebClient webClient;
@@ -43,7 +43,6 @@ public class TmdbService {
     }
 
     public void importaFilmPopolare(int pagine) {
-        // Usiamo findAll().size() per simulare il count
         if (!filmDAO.findAll().isEmpty()) return;
 
         importaGeneri();
@@ -84,16 +83,12 @@ public class TmdbService {
                 Genere genere = new Genere();
                 genere.setTmdbId(tmdbId);
                 genere.setNome((String) gData.get("name"));
-                // Qui andrebbe bene un genereDAO.save(genere)
-                // Se non lo hai, assicurati di averlo nel DAO
             }
         }
     }
 
     private void salvaFilm(Map filmData) {
         Integer tmdbId = (Integer) filmData.get("id");
-
-        // Controllo se esiste già tramite stream per non dover modificare il DAO subito
         boolean esiste = filmDAO.findAll().stream().anyMatch(f -> tmdbId.equals(f.getTmdbId()));
         if (esiste) return;
 

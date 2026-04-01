@@ -19,14 +19,12 @@ public class UtenteDAOImpl implements UtenteDAO {
     @Override
     public Optional<Utente> findByUsername(String username) {
         try {
-            // Query JPQL manuale per cercare l'utente tramite username
             Utente utente = entityManager.createQuery(
                             "SELECT u FROM Utente u WHERE u.username = :username", Utente.class)
                     .setParameter("username", username)
                     .getSingleResult();
             return Optional.of(utente);
         } catch (NoResultException e) {
-            // Se l'utente non esiste, restituisco un Optional vuoto invece di un errore
             return Optional.empty();
         }
     }
@@ -34,7 +32,6 @@ public class UtenteDAOImpl implements UtenteDAO {
     @Override
     public Optional<Utente> findByEmail(String email) {
         try {
-            // Query JPQL manuale per cercare l'utente tramite email
             Utente utente = entityManager.createQuery(
                             "SELECT u FROM Utente u WHERE u.email = :email", Utente.class)
                     .setParameter("email", email)
@@ -48,25 +45,21 @@ public class UtenteDAOImpl implements UtenteDAO {
     @Override
     public Utente save(Utente utente) {
         if (utente.getId() == null) {
-            // Se l'utente non ha ID, è una registrazione (INSERT)
             entityManager.persist(utente);
             return utente;
         } else {
-            // Se l'utente ha già l'ID, è un aggiornamento del profilo (UPDATE)
             return entityManager.merge(utente);
         }
     }
 
     @Override
     public List<Utente> findAll() {
-        // Recupera la lista di tutti gli utenti registrati
         return entityManager.createQuery("SELECT u FROM Utente u", Utente.class)
                 .getResultList();
     }
 
     @Override
     public Optional<Utente> findById(Long id) {
-        // Ricerca classica tramite Chiave Primaria
         Utente utente = entityManager.find(Utente.class, id);
         return Optional.ofNullable(utente);
     }

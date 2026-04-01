@@ -10,7 +10,6 @@ public interface FilmDAO {
     Film save(Film film);
     void deleteById(Long id);
 
-    // Metodi aggiuntivi necessari per il FilmService
     List<Film> findByTitoloContainingIgnoreCase(String titolo);
     List<Film> findByTipologia(String tipologia);
     List<Film> findByAnno(Integer anno);

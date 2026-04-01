@@ -21,17 +21,11 @@ public class FilmDAOImpl implements FilmDAO {
     @Autowired
     private RecensioneDAO recensioneDAO;
 
-    /**
-     * Trasforma un Film persistente in un FilmProxy per gestire
-     * il caricamento Lazy manuale delle recensioni.
-     */
     private Film convertToProxy(Film f) {
         if (f == null) return null;
 
-        // Creiamo il proxy passandogli il DAO delle recensioni
         FilmProxy proxy = new FilmProxy(recensioneDAO);
 
-        // Copiamo i campi semplici
         proxy.setId(f.getId());
         proxy.setTitolo(f.getTitolo());
         proxy.setTrama(f.getTrama());
@@ -42,14 +36,10 @@ public class FilmDAOImpl implements FilmDAO {
         proxy.setDurata(f.getDurata());
         proxy.setTmdbId(f.getTmdbId());
 
-        // FONDAMENTALE: Copiamo i generi altrimenti i filtri frontend non funzionano
         proxy.setGeneri(f.getGeneri());
 
-        // Copiamo anche gli attori se servono nella lista
         proxy.setAttori(f.getAttori());
 
-        // NOTA: NON settiamo le recensioni. Sarà il Proxy a caricarle
-        // tramite getRecensioni() solo quando richiesto.
         return proxy;
     }
 

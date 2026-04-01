@@ -6,8 +6,8 @@ import java.util.Optional;
 
 public interface ListaCurataDAO {
     List<ListaCurata> findAll();
-    List<ListaCurata> findAllSorted(); // Per getTutteListe
-    List<ListaCurata> findByRedattoreId(Long redattoreId); // Per getListeRedattore
+    List<ListaCurata> findAllSorted();
+    List<ListaCurata> findByRedattoreId(Long redattoreId);
     Optional<ListaCurata> findById(Long id);
     ListaCurata save(ListaCurata listaCurata);
     void deleteById(Long id);

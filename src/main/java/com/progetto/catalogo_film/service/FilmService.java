@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional // Fondamentale: apre la sessione Hibernate/JPA per tutta la durata del metodo
+@Transactional
 public class FilmService {
 
     private final FilmDAO filmDAO;
@@ -58,8 +58,6 @@ public class FilmService {
 
     @Transactional(readOnly = true)
     public List<Film> cercaPerGenere(Long genereId) {
-        // Recuperiamo i film dal DAO e filtriamo.
-        // Nota: @Transactional assicura che f.getGeneri() non lanci LazyInitializationException
         return filmDAO.findAll().stream()
                 .filter(f -> f.getGeneri() != null && f.getGeneri().stream()
                         .anyMatch(g -> g.getId().equals(genereId)))
@@ -71,10 +69,8 @@ public class FilmService {
     }
 
     public Film modificaFilm(Long id, Film filmModificato) {
-        // Recuperiamo il film esistente (sarà in stato 'managed' dall'EntityManager)
         Film filmEsistente = getFilmById(id);
 
-        // Aggiorniamo i campi
         filmEsistente.setTitolo(filmModificato.getTitolo());
         filmEsistente.setTrama(filmModificato.getTrama());
         filmEsistente.setAnno(filmModificato.getAnno());
@@ -82,16 +78,13 @@ public class FilmService {
         filmEsistente.setTipologia(filmModificato.getTipologia());
         filmEsistente.setValutazione(filmModificato.getValutazione());
 
-        // Se hai relazioni come Attori o Generi, andrebbero aggiornate qui
         if (filmModificato.getAttori() != null) filmEsistente.setAttori(filmModificato.getAttori());
         if (filmModificato.getGeneri() != null) filmEsistente.setGeneri(filmModificato.getGeneri());
 
-        // Il save del DAO eseguirà l'entityManager.merge()
         return filmDAO.save(filmEsistente);
     }
 
     public void cancellaFilm(Long id) {
-        // Verifichiamo prima se esiste per lanciare l'eccezione corretta
         if (!filmDAO.findById(id).isPresent()) {
             throw new RuntimeException("Impossibile cancellare: Film non trovato");
         }

@@ -14,10 +14,7 @@ public class FilmProxy extends Film {
     @Override
     public List<Recensione> getRecensioni() {
         if (!recensioniCaricate) {
-            // Questo LOG è fondamentale per la demo con il prof!
             System.out.println(">>> [VIRTUAL PROXY] Accesso alle recensioni del film: " + this.getTitolo());
-
-            // Carichiamo i dati tramite il DAO solo in questo istante
             super.setRecensioni(recensioneDAO.findByFilmId(this.getId()));
             recensioniCaricate = true;
         }

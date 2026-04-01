@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional // Indispensabile per garantire l'atomicità delle due operazioni di save
+@Transactional
 public class ValutazioneStoricaService {
 
     private final ValutazioneStoricaDAO valutazioneStoricaDAO;
@@ -29,38 +29,31 @@ public class ValutazioneStoricaService {
 
     @Transactional(readOnly = true)
     public List<ValutazioneStorica> getStorico(Long filmId) {
-        // Recupera la cronologia delle valutazioni per un film tramite il DAO manuale
         return valutazioneStoricaDAO.findAll().stream()
                 .filter(v -> v.getFilm().getId().equals(filmId))
                 .toList();
     }
 
     public ValutazioneStorica aggiornaValutazione(Long filmId, String email, Double nuovoVoto) {
-        // Validazione del range del voto
         if (nuovoVoto < 0 || nuovoVoto > 10) {
             throw new RuntimeException("Il voto critico deve essere compreso tra 0 e 10");
         }
 
-        // Recupero Film tramite FilmDAO
         Film film = filmDAO.findById(filmId)
                 .orElseThrow(() -> new RuntimeException("Film non trovato con ID: " + filmId));
 
-        // Recupero Redattore tramite UtenteDAO
         Utente redattore = utenteDAO.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato nel sistema"));
 
-        // Creazione dell'entità storica per tracciare il cambiamento
         ValutazioneStorica storico = new ValutazioneStorica();
         storico.setFilm(film);
         storico.setRedattore(redattore);
         storico.setVecchioVoto(film.getValutazione());
         storico.setNuovoVoto(nuovoVoto);
 
-        // 1. Aggiorniamo la valutazione corrente sul film (Stato Managed)
         film.setValutazione(nuovoVoto);
         filmDAO.save(film);
 
-        // 2. Salviamo il record storico tramite ValutazioneStoricaDAO
         return valutazioneStoricaDAO.save(storico);
     }
 }

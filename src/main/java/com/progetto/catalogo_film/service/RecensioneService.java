@@ -29,8 +29,6 @@ public class RecensioneService {
 
     @Transactional(readOnly = true)
     public List<Recensione> getRecensioniUtente(Long utenteId) {
-        // Usiamo il DAO per filtrare le recensioni dell'utente
-        // Nota: recuperiamo tutte le recensioni dal DAO e filtriamo per ID utente
         return recensioneDAO.findByFilmId(null).stream()
                 .filter(r -> r.getUtente().getId().equals(utenteId))
                 .collect(java.util.stream.Collectors.toList());
@@ -38,7 +36,6 @@ public class RecensioneService {
 
     @Transactional(readOnly = true)
     public List<Recensione> getRecensioniFilm(Long filmId) {
-        // Il DAO deve implementare findByFilmId (ordinato per data nel DAO se necessario)
         return recensioneDAO.findByFilmId(filmId);
     }
 
@@ -53,7 +50,6 @@ public class RecensioneService {
         Utente utente = utenteDAO.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-        // Controllo se l'utente ha già recensito il film usando il DAO
         boolean giaRecensito = recensioneDAO.findByFilmId(filmId).stream()
                 .anyMatch(r -> r.getUtente().getId().equals(utente.getId()));
 
@@ -74,9 +70,7 @@ public class RecensioneService {
     }
 
     public void cancellaRecensione(Long id, String email) {
-        // Recupero la recensione (il DAO deve avere findById o findByFilmId filtrato)
-        // Se non hai findById nel RecensioneDAO, usa l'EntityManager nel DAOImpl
-        Recensione recensione = recensioneDAO.findByFilmId(null).stream() // Esempio logico, meglio avere findById
+        Recensione recensione = recensioneDAO.findByFilmId(null).stream()
                 .filter(r -> r.getId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Recensione non trovata"));
@@ -105,10 +99,8 @@ public class RecensioneService {
                     .mapToInt(Recensione::getVoto)
                     .average()
                     .orElse(0.0);
-            // Arrotondamento a una cifra decimale
             film.setValutazione(Math.round(media * 10.0) / 10.0);
         }
-        // Salviamo il film con la nuova media tramite il FilmDAO
         filmDAO.save(film);
     }
 }

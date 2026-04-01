@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@Transactional // Fondamentale: gestisce l'apertura e chiusura delle transazioni per l'EntityManager
+@Transactional
 public class MessaggioService {
 
     private final MessaggioDAO messaggioDAO;
@@ -48,7 +48,6 @@ public class MessaggioService {
     }
 
     public Messaggio aggiungiMessaggio(Messaggio messaggio) {
-        // Impostiamo la data di invio se non presente
         if (messaggio.getDataInvio() == null) {
             messaggio.setDataInvio(LocalDateTime.now());
         }
@@ -65,19 +64,13 @@ public class MessaggioService {
         Messaggio messaggio = getMessaggioById(id);
         messaggio.setRisposta(testoRisposta);
         messaggio.setDataRisposta(LocalDateTime.now());
-        messaggio.setLetto(true); // Una risposta implica che il messaggio sia stato letto
+        messaggio.setLetto(true);
         return messaggioDAO.save(messaggio);
     }
 
     public void cancellaMessaggio(Long id) {
-        // Verifichiamo se esiste prima di procedere
         Messaggio m = getMessaggioById(id);
-        // Qui usiamo il metodo deleteById che abbiamo aggiunto al DAOImpl
-        // Se nel tuo DAOImpl non hai deleteById, assicurati di aggiungerlo usando entityManager.remove()
         messaggioDAO.save(m);
-        /* Nota: Se hai implementato deleteById nel DAO manuale,
-           usa: messaggioDAO.deleteById(id);
-        */
     }
 
     @Transactional(readOnly = true)

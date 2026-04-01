@@ -18,7 +18,6 @@ public class ListaCurataController {
 
     private final ListaCurataService listaCurataService;
 
-    // Ora il controller inietta SOLO il Service. Pulizia totale!
     public ListaCurataController(ListaCurataService listaCurataService) {
         this.listaCurataService = listaCurataService;
     }

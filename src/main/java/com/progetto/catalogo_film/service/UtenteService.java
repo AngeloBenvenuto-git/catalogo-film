@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional // Fondamentale per la persistenza manuale tramite DAO
+@Transactional
 public class UtenteService {
 
-    private final UtenteDAO utenteDAO; // Sostituito Repository con DAO
+    private final UtenteDAO utenteDAO;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
@@ -38,7 +38,6 @@ public class UtenteService {
             throw new RuntimeException("Credenziali errate: password non valida");
         }
 
-        // Generazione del token includendo ruolo e username per il frontend Angular
         return jwtService.generaToken(email, utente.getRuolo().name(), utente.getUsername());
     }
 
@@ -55,7 +54,6 @@ public class UtenteService {
         utente.setEmail(email);
         utente.setPassword(passwordEncoder.encode(password));
 
-        // Impostiamo il ruolo di default (Spettatore)
         utente.setRuolo(Utente.Ruolo.SPETTATORE);
         utente.setBannato(false);
 
@@ -98,22 +96,16 @@ public class UtenteService {
     }
 
     public void eliminaUtente(Long id) {
-        // Verifica esistenza prima dell'eliminazione manuale
         if (!utenteDAO.findById(id).isPresent()) {
             throw new RuntimeException("Impossibile eliminare: Utente non trovato");
         }
-        // Il DAO deve implementare un metodo delete o deleteById
-        // Se non lo hai, assicurati di aggiungerlo al DAOImpl
         Utente u = getUtente(id);
-        // Nota: se il tuo DAO non ha deleteById, aggiungilo ora nel DAOImpl
-        // chiamando entityManager.remove(u);
     }
 
     public Utente aggiornaProfilo(String emailCorrente, String nuovoUsername, String nuovaPassword, String fotoBase64) {
         Utente utente = getUtenteByEmail(emailCorrente);
 
         if (nuovoUsername != null && !nuovoUsername.isBlank()) {
-            // Controllo se il nuovo username è già preso da qualcun altro
             boolean usernameOccupato = utenteDAO.findByUsername(nuovoUsername)
                     .map(u -> !u.getEmail().equals(emailCorrente))
                     .orElse(false);

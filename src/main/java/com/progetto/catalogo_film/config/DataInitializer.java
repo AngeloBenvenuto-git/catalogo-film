@@ -1,7 +1,7 @@
 package com.progetto.catalogo_film.config;
 
-import com.progetto.catalogo_film.dao.FilmDAO; // Importiamo il nuovo DAO
-import com.progetto.catalogo_film.dao.UtenteDAO; // Importiamo il nuovo DAO
+import com.progetto.catalogo_film.dao.FilmDAO;
+import com.progetto.catalogo_film.dao.UtenteDAO;
 import com.progetto.catalogo_film.entity.Utente;
 import com.progetto.catalogo_film.service.TmdbService;
 import org.springframework.boot.CommandLineRunner;
@@ -19,7 +19,6 @@ public class DataInitializer {
                            PasswordEncoder passwordEncoder) {
         return args -> {
 
-            // Verifichiamo se l'admin esiste usando il DAO manuale
             if (utenteDAO.findByEmail("admin@admin.com").isEmpty()) {
                 Utente admin = new Utente();
                 admin.setUsername("admin");
@@ -32,7 +31,6 @@ public class DataInitializer {
                 System.out.println(">>> Sistema: Utente admin creato con successo.");
             }
 
-            // Verifichiamo se ci sono film nel DB usando il DAO
             if (filmDAO.findAll().isEmpty()) {
                 System.out.println(">>> Sistema: Database vuoto, avvio importazione da TMDB...");
                 tmdbService.importaFilmPopolare(5);

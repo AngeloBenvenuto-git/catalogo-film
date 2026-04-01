@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional // Fondamentale per mantenere attiva la sessione JPA durante le operazioni sulle liste film
+@Transactional
 public class ListaCurataService {
 
     private final ListaCurataDAO listaCurataDAO;
@@ -67,7 +67,6 @@ public class ListaCurataService {
         Utente utente = utenteDAO.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-        // Controllo permessi
         boolean isAdmin = utente.getRuolo().name().contains("ADMIN");
         boolean isOwner = lista.getRedattore().getId().equals(utente.getId());
 
@@ -78,7 +77,6 @@ public class ListaCurataService {
         Film film = filmDAO.findById(filmId)
                 .orElseThrow(() -> new RuntimeException("Film non trovato"));
 
-        // Evita duplicati nella lista
         if (lista.getFilm().stream().anyMatch(f -> f.getId().equals(filmId))) {
             throw new RuntimeException("Il film '" + film.getTitolo() + "' è già presente in questa lista");
         }
@@ -143,7 +141,6 @@ public class ListaCurataService {
         Utente utente = utenteDAO.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-        // Cerchiamo l'utente nella lista dei like
         boolean haGiaLiked = lista.getUtentiCheLike().stream()
                 .anyMatch(u -> u.getId().equals(utente.getId()));
 
@@ -161,7 +158,6 @@ public class ListaCurataService {
         Utente utente = utenteDAO.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-        // Filtriamo le liste in cui l'utente è presente nella collezione utentiCheLike
         return listaCurataDAO.findAll().stream()
                 .filter(l -> l.getUtentiCheLike() != null && l.getUtentiCheLike().stream()
                         .anyMatch(u -> u.getId().equals(utente.getId())))
