@@ -16,4 +16,5 @@ public interface FilmDAO {
     List<Film> findByAnno(Integer anno);
     List<Film> findAllByOrderByValutazioneDesc();
     List<Film> findAllByOrderByAnnoDesc();
+    List<Film> findByGenere(String genere);
 }
