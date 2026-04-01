@@ -102,7 +102,7 @@ public class UtenteService {
         Utente u = getUtente(id);
     }
 
-    public Utente aggiornaProfilo(String emailCorrente, String nuovoUsername, String nuovaPassword, String fotoBase64) {
+    public String aggiornaProfilo(String emailCorrente, String nuovoUsername, String nuovaPassword, String fotoBase64) {
         Utente utente = getUtenteByEmail(emailCorrente);
 
         if (nuovoUsername != null && !nuovoUsername.isBlank()) {
@@ -124,7 +124,9 @@ public class UtenteService {
             utente.setFotoBase64(fotoBase64);
         }
 
-        return utenteDAO.save(utente);
+        utenteDAO.save(utente);
+
+        return jwtService.generaToken(utente.getEmail(), utente.getRuolo().name(), utente.getUsername());
     }
 
     @Transactional

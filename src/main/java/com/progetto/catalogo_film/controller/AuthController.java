@@ -52,13 +52,16 @@ public class AuthController {
             @RequestBody Map<String, String> body,
             @org.springframework.security.core.annotation.AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails userDetails) {
         try {
-            utenteService.aggiornaProfilo(
+            String nuovoToken = utenteService.aggiornaProfilo(
                     userDetails.getUsername(),
                     body.get("username"),
                     body.get("password"),
                     body.get("fotoBase64")
             );
-            return ResponseEntity.ok(Map.of("messaggio", "Profilo aggiornato con successo"));
+            return ResponseEntity.ok(Map.of(
+                    "messaggio", "Profilo aggiornato con successo",
+                    "token", nuovoToken
+            ));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
         }

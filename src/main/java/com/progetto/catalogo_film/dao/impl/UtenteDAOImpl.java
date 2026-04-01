@@ -5,12 +5,14 @@ import com.progetto.catalogo_film.entity.Utente;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.NoResultException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
+@Transactional
 public class UtenteDAOImpl implements UtenteDAO {
 
     @PersistenceContext
