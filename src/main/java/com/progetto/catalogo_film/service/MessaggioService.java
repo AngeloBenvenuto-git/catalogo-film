@@ -69,8 +69,8 @@ public class MessaggioService {
     }
 
     public void cancellaMessaggio(Long id) {
-        Messaggio m = getMessaggioById(id);
-        messaggioDAO.save(m);
+        getMessaggioById(id);
+        messaggioDAO.deleteById(id);
     }
 
     @Transactional(readOnly = true)

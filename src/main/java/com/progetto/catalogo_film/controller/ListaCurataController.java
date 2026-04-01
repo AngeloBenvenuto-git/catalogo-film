@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/liste")
@@ -24,16 +23,13 @@ public class ListaCurataController {
 
     @GetMapping
     public ResponseEntity<List<ListaCurataDTO>> getTutteListe() {
-        return ResponseEntity.ok(
-                listaCurataService.getTutteListe()
-                        .stream().map(ListaCurataDTO::new).collect(Collectors.toList())
-        );
+        return ResponseEntity.ok(listaCurataService.getTutteListe());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ListaCurataDTO> getListaById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(new ListaCurataDTO(listaCurataService.getListaById(id)));
+            return ResponseEntity.ok(listaCurataService.getListaDtoById(id));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
@@ -43,10 +39,7 @@ public class ListaCurataController {
     @PreAuthorize("hasAnyRole('REDATTORE', 'ADMIN')")
     public ResponseEntity<List<ListaCurataDTO>> getListeRedattore(
             @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(
-                listaCurataService.getListeRedattore(userDetails.getUsername())
-                        .stream().map(ListaCurataDTO::new).collect(Collectors.toList())
-        );
+        return ResponseEntity.ok(listaCurataService.getListeRedattore(userDetails.getUsername()));
     }
 
     @PostMapping
@@ -142,9 +135,6 @@ public class ListaCurataController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ListaCurataDTO>> getListeLiked(
             @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(
-                listaCurataService.getListeLikedDaUtente(userDetails.getUsername())
-                        .stream().map(ListaCurataDTO::new).collect(Collectors.toList())
-        );
+        return ResponseEntity.ok(listaCurataService.getListeLikedDaUtente(userDetails.getUsername()));
     }
 }

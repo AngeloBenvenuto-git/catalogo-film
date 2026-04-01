@@ -3,6 +3,7 @@ package com.progetto.catalogo_film.service;
 import com.progetto.catalogo_film.dao.FilmDAO;
 import com.progetto.catalogo_film.dao.ListaCurataDAO;
 import com.progetto.catalogo_film.dao.UtenteDAO;
+import com.progetto.catalogo_film.dto.ListaCurataDTO;
 import com.progetto.catalogo_film.entity.Film;
 import com.progetto.catalogo_film.entity.ListaCurata;
 import com.progetto.catalogo_film.entity.Utente;
@@ -29,15 +30,36 @@ public class ListaCurataService {
     }
 
     @Transactional(readOnly = true)
-    public List<ListaCurata> getTutteListe() {
-        return listaCurataDAO.findAllSorted();
+    public List<ListaCurataDTO> getTutteListe() {
+        return listaCurataDAO.findAllSorted().stream()
+                .map(ListaCurataDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<ListaCurata> getListeRedattore(String email) {
+    public List<ListaCurataDTO> getListeRedattore(String email) {
         Utente redattore = utenteDAO.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato: " + email));
-        return listaCurataDAO.findByRedattoreId(redattore.getId());
+        return listaCurataDAO.findByRedattoreId(redattore.getId()).stream()
+                .map(ListaCurataDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ListaCurataDTO getListaDtoById(Long id) {
+        return new ListaCurataDTO(getListaById(id));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ListaCurataDTO> getListeLikedDaUtente(String email) {
+        Utente utente = utenteDAO.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+        return listaCurataDAO.findAll().stream()
+                .filter(l -> l.getUtentiCheLike() != null && l.getUtentiCheLike().stream()
+                        .anyMatch(u -> u.getId().equals(utente.getId())))
+                .map(ListaCurataDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -151,16 +173,5 @@ public class ListaCurataService {
         }
 
         return listaCurataDAO.save(lista);
-    }
-
-    @Transactional(readOnly = true)
-    public List<ListaCurata> getListeLikedDaUtente(String email) {
-        Utente utente = utenteDAO.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
-
-        return listaCurataDAO.findAll().stream()
-                .filter(l -> l.getUtentiCheLike() != null && l.getUtentiCheLike().stream()
-                        .anyMatch(u -> u.getId().equals(utente.getId())))
-                .collect(Collectors.toList());
     }
 }

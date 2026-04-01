@@ -62,4 +62,12 @@ public class MessaggioDAOImpl implements MessaggioDAO {
     public Optional<Messaggio> findById(Long id) {
         return Optional.ofNullable(entityManager.find(Messaggio.class, id));
     }
+
+    @Override
+    public void deleteById(Long id) {
+        Messaggio m = entityManager.find(Messaggio.class, id);
+        if (m != null) {
+            entityManager.remove(m);
+        }
+    }
 }

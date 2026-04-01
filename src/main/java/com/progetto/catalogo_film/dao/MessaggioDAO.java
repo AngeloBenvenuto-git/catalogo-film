@@ -12,4 +12,5 @@ public interface MessaggioDAO {
     long countUnread(Boolean letto);
     Messaggio save(Messaggio messaggio);
     Optional<Messaggio> findById(Long id);
+    void deleteById(Long id);
 }
